@@ -1,0 +1,263 @@
+# Retry: Create the standalone HTML file again.
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jeopardy — Shmuel Aleph (Perek Aleph & Bet)</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --muted: #334155;
+      --text: #e2e8f0;
+      --text-dim: #94a3b8;
+      --primary: #1d4ed8;
+      --primary-2: #2563eb;
+      --ok: #059669;
+      --teal: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; background: #0f172a; color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial }
+    .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+    .header { display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .title { font-size: clamp(20px, 3vw, 28px); font-weight: 800; }
+    .subtitle { color: var(--text-dim); margin-top: 4px; }
+    .row { display:flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .btn { background: #0b1325; border:1px solid var(--muted); color: var(--text); padding: 8px 12px; border-radius: 12px; cursor: pointer; }
+    .btn:hover { background: #101a33; }
+    .btn.primary { background: var(--primary); border-color: #1e40af; }
+    .btn.primary:hover { background: var(--primary-2); }
+    .btn.ok { background: var(--ok); border-color: #047857; }
+    .scores { display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px;}
+    .card { background: #0b1220; border: 1px solid var(--muted); border-radius: 16px; padding: 12px 14px; display:flex; align-items:center; justify-content:space-between; }
+    .score-val { font-size: 24px; font-weight: 800; width: 90px; text-align: center; }
+    .score-btn { background: #0b1325; border:1px solid var(--muted); color: var(--text); border-radius: 8px; padding: 6px 10px; cursor:pointer; }
+    .score-btn:hover { background: #101a33; }
+    .progress { color: var(--text-dim); font-size: 14px; margin-top: 6px; }
+    .board { margin-top: 18px; overflow-x:auto; }
+    .grid { display:grid; grid-template-columns: repeat(5, 1fr); gap: 8px; min-width: 900px; }
+    .cat-col { display:flex; flex-direction: column; gap: 8px; }
+    .cat { text-align: center; font-weight: 700; background: #0c162c; border:1px solid var(--muted); border-radius: 12px; padding: 10px; }
+    .tile { border-radius: 12px; padding: 26px 8px; font-size: 28px; font-weight: 900; text-align:center; cursor:pointer; color: #dbeafe; background: #1d4ed8cc; border: 1px solid #1d4ed8; }
+    .tile:hover { background: #1d4ed8; }
+    .tile.used { background: #0f172a; color: #64748b; border-color: #334155; cursor: not-allowed; }
+    .modal-wrap { position: fixed; inset: 0; display:none; align-items:center; justify-content:center; padding: 16px; }
+    .modal-wrap.show { display:flex; }
+    .modal-mask { position:absolute; inset:0; background:rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+    .modal { position: relative; width: min(880px, 96%); background: #0b1220; border:1px solid var(--muted); border-radius: 16px; padding: 16px; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; gap: 8px; }
+    .modal-title { font-weight: 800; font-size: 20px; }
+    .modal-body { margin-top: 12px; font-size: clamp(18px, 2.2vw, 24px); line-height: 1.5; }
+    .hint { color: #bfdbfe; font-weight: 700; }
+    .answer { color: #6ee7b7; font-weight: 700; }
+    .modal-actions { margin-top: 14px; display:flex; gap: 8px; align-items:center; flex-wrap: wrap;}
+    .pill { border:1px solid var(--muted); background: #0b1325; color: var(--text-dim); padding: 6px 10px; border-radius: 999px; font-size: 14px;}
+    .timer-box { border-radius: 12px; background: #0b1325; border:1px solid var(--muted); padding: 8px 12px; font-variant-numeric: tabular-nums; }
+    .rtl { direction: rtl; }
+    .footer-note { color: var(--text-dim); font-size: 12px; margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    (function() {
+      const root = document.getElementById('root');
+
+      function buildGameData() {
+        return {
+          categories: [
+            {
+              title: "Characters & People / דמויות",
+              clues: [
+                { value: 100, question: "Who were the two wives of אלקנה?", answer: "חנה ופנינה" },
+                { value: 200, question: "Who made חנה cry — and why (per חז״ל)?", answer: "פנינה; כדי שחנה תתפלל יותר" },
+                { value: 300, question: "What was wrong with בני עלי’s behavior in the Mishkan?", answer: "לקיחת בשר לפני הקטרת החלב; זלזול בקדשים; שחיתות" },
+                { value: 400, question: "Who blessed חנה that she would have a child?", answer: "עלי הכהן" },
+                { value: 500, question: "Who delivered the punishment prophecy to עלי?", answer: "אִישׁ הָאֱלֹהִים (נביא אלמוני)" }
+              ]
+            },
+            {
+              title: "Pasuk Power / מי אמר למי",
+              clues: [
+                { value: 100, question: "על מי נאמר: ‘מָרַת נָפֶשׁ’?", answer: "חנה" },
+                { value: 200, question: "מי אמר: ‘לָמָּה תִבְכִּי?’", answer: "אלקנה אל חנה (שמואל א׳ א׳:ח׳)" },
+                { value: 300, question: "מי אמר: ‘עַד מָתַי תִּשְׁתַּכָּרִין?’", answer: "עלי אל חנה (שמואל א׳ א׳:י״ד)" },
+                { value: 400, question: "על מי נאמר: ‘בְּנֵי בְּלִיַּעַל’?", answer: "בני עלי (שמואל א׳ ב׳:י״ב)" },
+                { value: 500, question: "מי אמר: ‘ואם לא – לָקַחְתִּי בְּחָזְקָה’?", answer: "נער הכהן" }
+              ]
+            },
+            {
+              title: "Tefillat Chana / תפילת חנה",
+              clues: [
+                { value: 100, question: "Why is חנה happy in פסוק א׳?", answer: "ישועת ה׳ – נענה תפילתה" },
+                { value: 200, question: "What central idea is taught in פסוק ג׳?", answer: "ה׳ אל דֵעוֹת; שׁוֹקֵל עלילות; נגד גאווה" },
+                { value: 300, question: "Give one pair of opposites (ניגודים) from the שירה.", answer: "ה׳ מֵמִית וּמְחַיֶּה; מוֹרִישׁ וּמַעֲשִׁיר; מַשְׁפִּיל אַף מְרוֹמֵם" },
+                { value: 400, question: "Which verse is the structural ‘center’ and why?", answer: "פסוק ג׳ – מכריז על ידיעת ה׳ ומשפטו; פס׳ ד–י מפרטים" },
+                { value: 500, question: "How does פסוק י׳ shift from personal to national?", answer: "‘וְיִתֵּן־עֹז לְמַלְכּוֹ’ – חזון מלכותי/לאומי" }
+              ]
+            },
+            {
+              title: "Vocabulary / מילים קשות",
+              clues: [
+                { value: 100, question: "Translate: רֶחֶם", answer: "Womb" },
+                { value: 200, question: "Translate: מְשָׁרֵת (לִפְנֵי ה׳)", answer: "Serving / ministering (before Hashem)" },
+                { value: 300, question: "Translate (korban context): חֵלֶב", answer: "Fat of the offering" },
+                { value: 400, question: "Translate: בְּחָזְקָה", answer: "By force / violently" },
+                { value: 500, question: "Translate: מָשִׁיחַ", answer: "Anointed one – king" }
+              ]
+            },
+            {
+              title: "Places & Objects / מקומות וחפצים",
+              clues: [
+                { value: 100, question: "Where did אלקנה’s family go every year?", answer: "שִׁלוֹ" },
+                { value: 200, question: "Name one pot בני עלי took meat from.", answer: "כִּיּוֹר / דּוּד / קַלַּחַת / פָּרוּר" },
+                { value: 300, question: "Where did חנה leave שמואל?", answer: "במשכן שִׁלוֹ, לפני ה׳" },
+                { value: 400, question: "What did חנה bring to שמואל each year?", answer: "מְעִיל קָטֹן" },
+                { value: 500, question: "What are the ‘שִׁנַּיִם’ in פרק ב׳?", answer: "Prongs (teeth) of the fork" }
+              ]
+            }
+          ]
+        };
+      }
+
+      const data = buildGameData();
+      const used = new Set();
+      let rtl = true;
+      let active = null;
+      let revealed = false;
+      let teamScores = [0,0,0];
+      let timer = { on: false, left: 20, id: null };
+
+      function el(tag, props={}, children=[]) {
+        const e = document.createElement(tag);
+        Object.entries(props).forEach(([k,v]) => {
+          if (k === 'class') e.className = v;
+          else if (k === 'text') e.textContent = v;
+          else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.substring(2).toLowerCase(), v);
+          else if (k === 'html') e.innerHTML = v;
+          else if (v !== null && v !== undefined) e.setAttribute(k, v);
+        });
+        (Array.isArray(children) ? children : [children]).forEach(c => c && e.appendChild(c));
+        return e;
+      }
+      function gridKey(c,r){ return c + '-' + r; }
+      function resetTimer(){ timer.on=false; timer.left=20; if (timer.id) { clearTimeout(timer.id); timer.id=null; } }
+      function tickTimer(){
+        if (!timer.on) return;
+        if (timer.left <= 0) { timer.on=false; render(); return; }
+        timer.left -= 1; render();
+        timer.id = setTimeout(tickTimer, 1000);
+      }
+      function sanitize(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\n/g, '<br/>');
+      }
+
+      function render() {
+        root.innerHTML = '';
+        const container = el('div', { class: 'container' + (rtl ? ' rtl' : '') });
+
+        const headerLeft = el('div', {}, [
+          el('div', { class: 'title', text: '🟦 Jeopardy — שמואל א׳ (פרק א׳ & ב׳)' }),
+          el('div', { class: 'subtitle', text: 'Categories: Characters, Pasuk Power, Tefillat Chana, Vocabulary, Places & Objects' })
+        ]);
+        const headerRight = el('div', { class: 'row' }, [
+          el('button', { class: 'btn', onClick: ()=>alert('How to Play:\\n1) Click a tile to open a clue.\\n2) Read the question. Optional: start timer.\\n3) Reveal the answer.\\n4) Mark as used.\\n5) Adjust team scores as needed.'), text: 'Help / עזרה' }),
+          el('label', { class: 'row' }, [
+            el('input', { type: 'checkbox', checked: rtl ? 'checked' : null, onChange: ()=>{ rtl = !rtl; render(); } }),
+            el('span', { text: 'RTL (עברית)' })
+          ])
+        ]);
+        const header = el('div', { class:'header' }, [headerLeft, headerRight]);
+        container.appendChild(header);
+
+        const scores = el('div', { class: 'scores' }, teamScores.map((score, i) => {
+          return el('div', { class:'card' }, [
+            el('div', { class:'row' }, [ el('div', { text: '🏅' }), el('div', { text: 'Team ' + (i+1) }) ]),
+            el('div', { class:'row' }, [
+              el('button', { class:'score-btn', onClick: ()=>{ teamScores[i] -= 100; render(); }, text: '−100' }),
+              el('div', { class:'score-val', text: String(score) }),
+              el('button', { class:'score-btn', onClick: ()=>{ teamScores[i] += 100; render(); }, text: '+100' })
+            ])
+          ]);
+        }));
+        container.appendChild(scores);
+
+        const total = data.categories.reduce((s,c)=> s + c.clues.length, 0);
+        const usedCount = used.size;
+        container.appendChild(el('div', { class:'progress', text: 'Used: ' + usedCount + '/' + total }));
+
+        const grid = el('div', { class:'grid' },
+          data.categories.map((cat, ci) => {
+            const col = el('div', { class:'cat-col' });
+            col.appendChild(el('div', { class:'cat', text: cat.title }));
+            cat.clues.forEach((clue, qi) => {
+              const key = gridKey(ci, qi);
+              const isUsed = used.has(key);
+              const tile = el('button', {
+                class: 'tile' + (isUsed ? ' used' : ''),
+                onClick: () => {
+                  if (isUsed) return;
+                  active = { catIndex: ci, qIndex: qi };
+                  revealed = false;
+                  resetTimer();
+                  render();
+                }
+              }, [document.createTextNode(String(clue.value))]);
+              col.appendChild(tile);
+            });
+            return col;
+          })
+        );
+        container.appendChild(el('div', { class: 'board' }, grid));
+
+        const modalWrap = el('div', { class: 'modal-wrap' + (active ? ' show' : '') });
+        const mask = el('div', { class: 'modal-mask', onClick: ()=>{ active=null; resetTimer(); render(); } });
+        const modal = el('div', { class: 'modal' });
+        const modalHead = el('div', { class: 'modal-head' }, [
+          el('div', { class:'modal-title', text: active ? data.categories[active.catIndex].title : '' }),
+          el('button', { class:'btn', onClick: ()=>{ active=null; resetTimer(); render(); }, text: '✕' })
+        ]);
+        const body = el('div', { class:'modal-body' }, [
+          !revealed
+            ? el('div', {}, [ el('div', { class:'hint', text: 'Question / שאלה:' }), el('div', { html: active ? sanitize(data.categories[active.catIndex].clues[active.qIndex].question) : '' }) ])
+            : el('div', {}, [ el('div', { class:'answer', text: 'Answer / תשובה:' }), el('div', { html: active ? sanitize(data.categories[active.catIndex].clues[active.qIndex].answer) : '' }) ])
+        ]);
+        const actions = el('div', { class:'modal-actions' }, [
+          el('button', { class:'btn primary', onClick: ()=>{ revealed = !revealed; render(); }, text: (revealed ? 'Hide Answer / הסתר תשובה' : 'Reveal Answer / הצג תשובה') }),
+          el('button', { class:'btn', onClick: ()=>{ if (!timer.on) { timer.on = true; tickTimer(); } else { timer.on = false; } render(); }, text: (timer.on ? '⏸ Pause Timer' : '⏱ Start 20s Timer') }),
+          el('div', { class:'timer-box', text: 'Time: ' + String(timer.left) + 's' }),
+          el('span', { class:'pill', text: 'Value: ' + (active ? data.categories[active.catIndex].clues[active.qIndex].value : '') }),
+          el('span', { class:'pill', text: 'Tile: ' + (active ? (active.catIndex+1) + '-' + (active.qIndex+1) : '') }),
+          el('span', { class:'pill', text: rtl ? 'RTL: on' : 'RTL: off' }),
+          el('div', { style:'flex:1' }),
+          el('button', { class:'btn ok', onClick: ()=>{
+            if (!active) return;
+            const key = gridKey(active.catIndex, active.qIndex);
+            used.add(key);
+            active = null;
+            resetTimer();
+            render();
+          }, text: 'Mark as Used' })
+        ]);
+        modal.appendChild(modalHead);
+        modal.appendChild(body);
+        modal.appendChild(actions);
+        modalWrap.appendChild(mask);
+        modalWrap.appendChild(modal);
+        container.appendChild(modalWrap);
+
+        container.appendChild(el('div', { class:'footer-note', text: 'Tip: Toggle RTL for Hebrew layout. Works offline in any modern browser.' }));
+
+        root.appendChild(container);
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>'''
+with open('/mnt/data/jeopardy_shmuel.html','w', encoding='utf-8') as f:
+    f.write(html)
+
+print("Saved to /mnt/data/jeopardy_shmuel.html")
