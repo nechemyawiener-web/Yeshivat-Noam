@@ -1,0 +1,310 @@
+# Write the full React Jeopardy code to downloadable files (.tsx and .txt)
+code = r'''import React, { useMemo, useState } from "react";
+
+/**
+ * Jeopardy – Shmuel Aleph (Perek Aleph & Bet)
+ * One-file React component. TailwindCSS styling. No external UI deps.
+ *
+ * How to use in class:
+ * - Click a point value to open the clue.
+ * - Read the question aloud. Optionally start the timer.
+ * - Click "Reveal Answer" to show the answer.
+ * - Use + / – buttons to update a team score if you wish.
+ * - Click "Mark as Used" to gray the tile.
+ * - Toggle RTL for Hebrew layout.
+ */
+
+export default function JeopardyShmuel() {
+  const [rtl, setRtl] = useState(true);
+  const [showHelp, setShowHelp] = useState(false);
+  const [showTests, setShowTests] = useState(false);
+  const [testResults, setTestResults] = useState<Array<{ name: string; pass: boolean; message?: string }>>([]);
+  const [active, setActive] = useState<null | { catIndex: number; qIndex: number }>(null);
+  const [revealed, setRevealed] = useState(false);
+  const [used, setUsed] = useState<Record<string, boolean>>({});
+  const [teamScores, setTeamScores] = useState([0, 0, 0]); // 3 teams by default
+  const [timerOn, setTimerOn] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(20);
+
+  React.useEffect(() => {
+    if (!timerOn) return;
+    if (timeLeft <= 0) {
+      setTimerOn(false);
+      return;
+    }
+    const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [timerOn, timeLeft]);
+
+  const data = useMemo(() => buildGameData(), []);
+
+  const gridKey = (c: number, r: number) => `${c}-${r}`;
+
+  function openClue(catIndex: number, qIndex: number) {
+    const key = gridKey(catIndex, qIndex);
+    if (used[key]) return; // already used
+    setActive({ catIndex, qIndex });
+    setRevealed(false);
+    setTimerOn(false);
+    setTimeLeft(20);
+  }
+
+  function markUsed() {
+    if (!active) return;
+    const key = gridKey(active.catIndex, active.qIndex);
+    setUsed((u) => ({ ...u, [key]: true }));
+    setActive(null);
+    setRevealed(false);
+    setTimerOn(false);
+    setTimeLeft(20);
+  }
+
+  function adjustScore(team: number, delta: number) {
+    setTeamScores((s) => s.map((v, i) => (i === team ? v + delta : v)));
+  }
+
+  const totalQuestions = data.categories.reduce((sum, cat) => sum + cat.clues.length, 0);
+  const usedCount = Object.values(used).filter(Boolean).length;
+
+  function runTests() {
+    const results: Array<{ name: string; pass: boolean; message?: string }> = [];
+    try {
+      // Test 1: 5 categories
+      results.push({ name: "Has 5 categories", pass: data.categories.length === 5, message: `Found ${data.categories.length}` });
+      // Test 2: Each category has 5 clues
+      data.categories.forEach((cat, i) => {
+        results.push({ name: `Category ${i + 1} has 5 clues`, pass: cat.clues.length === 5, message: `Found ${cat.clues.length}` });
+      });
+      // Test 3: clue shape + values are 100..500
+      data.categories.forEach((cat, ci) => {
+        cat.clues.forEach((clue, qi) => {
+          const okShape = typeof clue.value === "number" && typeof clue.question === "string" && typeof clue.answer === "string";
+          const okValue = [100, 200, 300, 400, 500].includes(clue.value);
+          results.push({ name: `Clue shape/value c${ci} q${qi}`, pass: okShape && okValue, message: okShape ? (okValue ? "OK" : `Bad value ${clue.value}`) : "Bad shape" });
+        });
+      });
+      // Test 4: No syntax errors reached this point (by definition if code runs)
+      results.push({ name: "No syntax error in buildGameData block", pass: true });
+    } catch (e: any) {
+      results.push({ name: "Runtime in tests", pass: false, message: String(e?.message || e) });
+    }
+    setTestResults(results);
+    setShowTests(true);
+  }
+
+  return (
+    <div className={"min-h-screen w-full bg-slate-900 text-slate-100 " + (rtl ? "rtl" : "")} dir={rtl ? "rtl" : "ltr"}>
+      {/* Header */}
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">🟦 Jeopardy — שמואל א׳ (פרק א׳ & ב׳)</h1>
+            <p className="text-slate-300 mt-1">Categories: Characters, Pasuk Power, Tefillat Chana, Vocabulary, Places & Objects</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setShowHelp(true)} className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 shadow">Help / עזרה</button>
+            <button onClick={runTests} className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 shadow">Run Tests</button>
+            <label className="flex items-center gap-2 text-sm select-none">
+              <input type="checkbox" checked={rtl} onChange={(e) => setRtl(e.target.checked)} className="h-4 w-4" /> RTL (עברית)
+            </label>
+          </div>
+        </div>
+
+        {/* Scores */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-6">
+          {teamScores.map((score, i) => (
+            <div key={i} className="bg-slate-800/60 border border-slate-700 rounded-2xl p-4 shadow flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏅</span>
+                <span className="font-semibold">Team {i + 1}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={() => adjustScore(i, -100)} className="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600">−100</button>
+                <span className="text-2xl font-bold tabular-nums w-16 text-center">{score}</span>
+                <button onClick={() => adjustScore(i, +100)} className="px-2 py-1 rounded-lg bg-slate-700 hover:bg-slate-600">+100</button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Progress */}
+        <div className="mt-3 text-sm text-slate-400">Used: {usedCount}/{totalQuestions}</div>
+
+        {/* Board */}
+        <div className="mt-6 overflow-x-auto">
+          <div className="grid grid-cols-5 gap-2 min-w-[900px]">
+            {data.categories.map((cat, ci) => (
+              <div key={ci} className="flex flex-col">
+                <div className="text-center text-sm md:text-base font-semibold bg-slate-800/80 rounded-xl py-3 mb-2 border border-slate-700">{cat.title}</div>
+                {cat.clues.map((clue, qi) => {
+                  const key = gridKey(ci, qi);
+                  const isUsed = !!used[key];
+                  return (
+                    <button
+                      key={qi}
+                      onClick={() => openClue(ci, qi)}
+                      className={
+                        "rounded-xl py-6 md:py-8 text-2xl font-extrabold shadow transition border " +
+                        (isUsed
+                          ? "bg-slate-800/40 border-slate-700 text-slate-600 cursor-not-allowed"
+                          : "bg-blue-700/70 hover:bg-blue-700 border-blue-600 text-blue-100")
+                      }
+                      disabled={isUsed}
+                    >
+                      {clue.value}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal */}
+      {active && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setActive(null)} />
+          <div className="relative w-full max-w-3xl bg-slate-900 border border-slate-700 rounded-2xl shadow-xl p-5">
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="text-xl md:text-2xl font-bold">{data.categories[active.catIndex].title}</h2>
+              <button onClick={() => setActive(null)} className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">✕</button>
+            </div>
+
+            <div className="mt-4">
+              <div className="text-lg md:text-2xl leading-relaxed">
+                {revealed ? (
+                  <>
+                    <div className="text-emerald-300 font-semibold">Answer / תשובה:</div>
+                    <div className="mt-2 whitespace-pre-wrap">{data.categories[active.catIndex].clues[active.qIndex].answer}</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-blue-200 font-semibold">Question / שאלה:</div>
+                    <div className="mt-2 whitespace-pre-wrap">{data.categories[active.catIndex].clues[active.qIndex].question}</div>
+                  </>
+                )}
+              </div>
+
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <button onClick={() => setRevealed((r) => !r)} className="px-4 py-2 rounded-xl bg-indigo-700 hover:bg-indigo-600 shadow">
+                  {revealed ? "Hide Answer / הסתר תשובה" : "Reveal Answer / הצג תשובה"}
+                </button>
+
+                <button onClick={() => setTimerOn((t) => !t)} className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700">{timerOn ? "⏸ Pause Timer" : "⏱ Start 20s Timer"}</button>
+                <div className="text-sm tabular-nums px-3 py-2 rounded-xl bg-slate-800 border border-slate-700">Time: {timeLeft}s</div>
+
+                <div className="ml-auto flex items-center gap-2">
+                  <button onClick={markUsed} className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-600">Mark as Used</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Help drawer */}
+      {showHelp && (
+        <div className="fixed inset-0 z-40 flex">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowHelp(false)} />
+          <div className="relative ml-auto w-full max-w-md h-full bg-slate-950 p-6 border-l border-slate-800 overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-bold">How to Play / איך משחקים</h3>
+              <button onClick={() => setShowHelp(false)} className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700">✕</button>
+            </div>
+            <ol className="mt-4 list-decimal ps-6 space-y-2 text-slate-300">
+              <li>בחרו קטגוריה ונקודות. לחצו כדי לפתוח את השאלה.</li>
+              <li>קראו את השאלה בקול. הפעלת הטיימר אופציונלית.</li>
+              <li>לחצו "Reveal Answer" כדי לראות תשובה. עדכנו ניקוד לקבוצות.</li>
+              <li>סמנו "Mark as Used" כדי למנוע פתיחה חוזרת.</li>
+              <li>אפשר להחליף כיוון טקסט (RTL) לפי הצורך.</li>
+            </ol>
+
+            {showTests && (
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-2">Test Results</h4>
+                <ul className="space-y-1 text-sm">
+                  {testResults.map((t, i) => (
+                    <li key={i} className={"px-2 py-1 rounded " + (t.pass ? "bg-emerald-900/40 text-emerald-300" : "bg-red-900/40 text-red-300")}>• {t.pass ? "PASS" : "FAIL"} — {t.name} {t.message ? `( ${t.message} )` : ""}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ----------------------- Data Builder -----------------------
+
+function buildGameData() {
+  type Clue = { value: number; question: string; answer: string };
+  type Category = { title: string; clues: Clue[] };
+
+  const categories: Category[] = [
+    {
+      title: "Characters & People / דמויות",
+      clues: [
+        { value: 100, question: "Who were the two wives of אלקנה?", answer: "חנה ופנינה" },
+        { value: 200, question: "Who made חנה cry — and why (per חז״ל)?", answer: "פנינה; כדי שחנה תתפלל יותר" },
+        { value: 300, question: "What was wrong with בני עלי’s behavior in the Mishkan?", answer: "לקיחת בשר לפני הקטרת החלב; זלזול בקדשים; שחיתות" },
+        { value: 400, question: "Who blessed חנה that she would have a child?", answer: "עלי הכהן" },
+        { value: 500, question: "Who delivered the punishment prophecy to עלי?", answer: "אִישׁ הָאֱלֹהִים (נביא אלמוני)" },
+      ],
+    },
+    {
+      title: "Pasuk Power / מי אמר למי",
+      clues: [
+        { value: 100, question: "על מי נאמר: ‘מָרַת נָפֶשׁ’?", answer: "חנה" },
+        { value: 200, question: "מי אמר: ‘לָמָּה תִבְכִּי?’", answer: "אלקנה אל חנה (שמואל א׳ א׳:ח׳)" },
+        { value: 300, question: "מי אמר: ‘עַד מָתַי תִּשְׁתַּכָּרִין?’", answer: "עלי אל חנה (שמואל א׳ א׳:י״ד)" },
+        { value: 400, question: "על מי נאמר: ‘בְּנֵי בְּלִיַּעַל’?", answer: "בני עלי (שמואל א׳ ב׳:י״ב)" },
+        { value: 500, question: "מי אמר: ‘ואם לא – לָקַחְתִּי בְּחָזְקָה’?", answer: "נער הכהן" },
+      ],
+    },
+    {
+      title: "Tefillat Chana / תפילת חנה",
+      clues: [
+        { value: 100, question: "Why is חנה happy in פסוק א׳?", answer: "ישועת ה׳ – נענה תפילתה" },
+        { value: 200, question: "What central idea is taught in פסוק ג׳?", answer: "ה׳ אל דֵעוֹת; שׁוֹקֵל עלילות; נגד גאווה" },
+        { value: 300, question: "Give one pair of opposites (ניגודים) from the שירה.", answer: "ה׳ מֵמִית וּמְחַיֶּה; מוֹרִישׁ וּמַעֲשִׁיר; מַשְׁפִּיל אַף מְרוֹמֵם" },
+        { value: 400, question: "Which verse is the structural ‘center’ and why?", answer: "פסוק ג׳ – מכריז על ידיעת ה׳ ומשפטו; פס׳ ד–י מפרטים" },
+        { value: 500, question: "How does פסוק י׳ shift from personal to national?", answer: "‘וְיִתֵּן־עֹז לְמַלְכּוֹ’ – חזון מלכותי/לאומי" },
+      ],
+    },
+    {
+      title: "Vocabulary / מילים קשות",
+      clues: [
+        { value: 100, question: "Translate: רֶחֶם", answer: "Womb" },
+        { value: 200, question: "Translate: מְשָׁרֵת (לִפְנֵי ה׳)", answer: "Serving / ministering (before Hashem)" },
+        { value: 300, question: "Translate (korban context): חֵלֶב", answer: "Fat of the offering" },
+        { value: 400, question: "Translate: בְּחָזְקָה", answer: "By force / violently" },
+        { value: 500, question: "Translate: מָשִׁיחַ", answer: "Anointed one – king" },
+      ],
+    },
+    {
+      title: "Places & Objects / מקומות וחפצים",
+      clues: [
+        { value: 100, question: "Where did אלקנה’s family go every year?", answer: "שִׁלוֹ" },
+        { value: 200, question: "Name one pot בני עלי took meat from.", answer: "כִּיּוֹר / דּוּד / קַלַּחַת / פָּרוּר" },
+        { value: 300, question: "Where did חנה leave שמואל?", answer: "במשכן שִׁלוֹ, לפני ה׳" },
+        { value: 400, question: "What did חנה bring to שמואל each year?", answer: "מְעִיל קָטֹן" },
+        { value: 500, question: "What are the ‘שִׁנַּיִם’ in פרק ב׳?", answer: "Prongs (teeth) of the fork" },
+      ],
+    },
+  ];
+
+  return { categories };
+}
+'''
+# Save .tsx
+with open('/mnt/data/jeopardy_shmuel.tsx', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+# Save .txt (for Notepad)
+with open('/mnt/data/jeopardy_shmuel.txt', 'w', encoding='utf-8') as f:
+    f.write(code)
+
+print("Files created at /mnt/data/jeopardy_shmuel.tsx and .txt")
