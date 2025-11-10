@@ -5,14 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jeopardy: שמואל א פרק ב</title>
   <style>
-# Retry: Create the standalone HTML file again.
-html = r'''<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Jeopardy — Shmuel Aleph (Perek Aleph & Bet)</title>
-  <style>
     :root {
       --bg: #0f172a;
       --muted: #334155;
@@ -24,8 +16,8 @@ html = r'''<!DOCTYPE html>
       --teal: #0f766e;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; background: #0f172a; color: var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial }
+    html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial }
     .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
     .header { display:flex; gap:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
     .title { font-size: clamp(20px, 3vw, 28px); font-weight: 800; }
@@ -78,10 +70,10 @@ html = r'''<!DOCTYPE html>
               title: "Characters & People / דמויות",
               clues: [
                 { value: 100, question: "Who were the two wives of אלקנה?", answer: "חנה ופנינה" },
-                { value: 200, question: "Who made חנה cry — and why (per חז״ל)?", answer: "פנינה; כדי שחנה תתפלל יותר" },
-                { value: 300, question: "What was wrong with בני עלי’s behavior in the Mishkan?", answer: "לקיחת בשר לפני הקטרת החלב; זלזול בקדשים; שחיתות" },
+                { value: 200, question: "Who made חנה cry — and why (per חז"""ל)?", answer: "פנינה; כדי שחנה תתפלל יותר" },
+                { value: 300, question: "What was wrong with בני עלי’s behavior in the Mishkan?", answer: "לקיחת בשר לפני הקטרת החלב; זלזול בקדשים; שחיתות באכילת הקודשים" },
                 { value: 400, question: "Who blessed חנה that she would have a child?", answer: "עלי הכהן" },
-                { value: 500, question: "Who delivered the punishment prophecy to עלי?", answer: "אִישׁ הָאֱלֹהִים (נביא אלמוני)" }
+                { value: 500, question: "Who delivered the punishment prophecy to עלי?", answer: "איש האלקים — נביא אלמוני" }
               ]
             },
             {
@@ -89,7 +81,7 @@ html = r'''<!DOCTYPE html>
               clues: [
                 { value: 100, question: "על מי נאמר: ‘מָרַת נָפֶשׁ’?", answer: "חנה" },
                 { value: 200, question: "מי אמר: ‘לָמָּה תִבְכִּי?’", answer: "אלקנה אל חנה (שמואל א׳ א׳:ח׳)" },
-                { value: 300, question: "מי אמר: ‘עַד מָתַי תִּשְׁתַּכָּרִין?’", answer: "עלי אל חנה (שמואל א׳ א׳:י״ד)" },
+                { value: 300, question: "מי אמר: ‘עַד מָתַי תִּשְׁתַּכָּרִין?’", answer: "עלי אל בניו (שמואל א׳ א׳:י״ד)" },
                 { value: 400, question: "על מי נאמר: ‘בְּנֵי בְּלִיַּעַל’?", answer: "בני עלי (שמואל א׳ ב׳:י״ב)" },
                 { value: 500, question: "מי אמר: ‘ואם לא – לָקַחְתִּי בְּחָזְקָה’?", answer: "נער הכהן" }
               ]
@@ -97,11 +89,11 @@ html = r'''<!DOCTYPE html>
             {
               title: "Tefillat Chana / תפילת חנה",
               clues: [
-                { value: 100, question: "Why is חנה happy in פסוק א׳?", answer: "ישועת ה׳ – נענה תפילתה" },
-                { value: 200, question: "What central idea is taught in פסוק ג׳?", answer: "ה׳ אל דֵעוֹת; שׁוֹקֵל עלילות; נגד גאווה" },
-                { value: 300, question: "Give one pair of opposites (ניגודים) from the שירה.", answer: "ה׳ מֵמִית וּמְחַיֶּה; מוֹרִישׁ וּמַעֲשִׁיר; מַשְׁפִּיל אַף מְרוֹמֵם" },
-                { value: 400, question: "Which verse is the structural ‘center’ and why?", answer: "פסוק ג׳ – מכריז על ידיעת ה׳ ומשפטו; פס׳ ד–י מפרטים" },
-                { value: 500, question: "How does פסוק י׳ shift from personal to national?", answer: "‘וְיִתֵּן־עֹז לְמַלְכּוֹ’ – חזון מלכותי/לאומי" }
+                { value: 100, question: "Why is חנה happy in פסוק א׳?", answer: "Because her prayer was answered and she was consoled" },
+                { value: 200, question: "What central idea is taught in פסוק ג׳?", answer: "ה׳ יודע לב ובוחן מחשבות — humility and reversal of fortunes" },
+                { value: 300, question: "Give one pair of opposites (ניגודים) from the שירה.", answer: "ה׳ מֵמִית וּמְחַיֶּה; מוֹרִישׁ וּמַעֲשִׁיר" },
+                { value: 400, question: "Which verse is the structural ‘center’ and why?", answer: "פסוק ג׳ — it declares God’s knowledge and justice" },
+                { value: 500, question: "How does פסוק י׳ shift from personal to national?", answer: "It speaks of giving strength to a king — a national horizon" }
               ]
             },
             {
@@ -111,17 +103,17 @@ html = r'''<!DOCTYPE html>
                 { value: 200, question: "Translate: מְשָׁרֵת (לִפְנֵי ה׳)", answer: "Serving / ministering (before Hashem)" },
                 { value: 300, question: "Translate (korban context): חֵלֶב", answer: "Fat of the offering" },
                 { value: 400, question: "Translate: בְּחָזְקָה", answer: "By force / violently" },
-                { value: 500, question: "Translate: מָשִׁיחַ", answer: "Anointed one – king" }
+                { value: 500, question: "Translate: מָשִׁיחַ", answer: "Anointed one — king" }
               ]
             },
             {
               title: "Places & Objects / מקומות וחפצים",
               clues: [
-                { value: 100, question: "Where did אלקנה’s family go every year?", answer: "שִׁלוֹ" },
+                { value: 100, question: "Where did אלקנה’s family go every year?", answer: "שִׁילוֹ" },
                 { value: 200, question: "Name one pot בני עלי took meat from.", answer: "כִּיּוֹר / דּוּד / קַלַּחַת / פָּרוּר" },
-                { value: 300, question: "Where did חנה leave שמואל?", answer: "במשכן שִׁלוֹ, לפני ה׳" },
+                { value: 300, question: "Where did חנה leave שמואל?", answer: "במשכן שִׁILO, לפני ה׳" },
                 { value: 400, question: "What did חנה bring to שמואל each year?", answer: "מְעִיל קָטֹן" },
-                { value: 500, question: "What are the ‘שִׁנַּיִם’ in פרק ב׳?", answer: "Prongs (teeth) of the fork" }
+                { value: 500, question: "What are the ‘שִׁנַּיִם’ in פרק ב׳?", answer: "Prongs (teeth) of the fork / parts of a utensil" }
               ]
             }
           ]
@@ -157,7 +149,7 @@ html = r'''<!DOCTYPE html>
         timer.id = setTimeout(tickTimer, 1000);
       }
       function sanitize(s) {
-        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\n/g, '<br/>');
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
       }
 
       function render() {
@@ -169,7 +161,7 @@ html = r'''<!DOCTYPE html>
           el('div', { class: 'subtitle', text: 'Categories: Characters, Pasuk Power, Tefillat Chana, Vocabulary, Places & Objects' })
         ]);
         const headerRight = el('div', { class: 'row' }, [
-          el('button', { class: 'btn', onClick: ()=>alert('How to Play:\\n1) Click a tile to open a clue.\\n2) Read the question. Optional: start timer.\\n3) Reveal the answer.\\n4) Mark as used.\\n5) Adjust team scores as needed.'), text: 'Help / עזרה' }),
+          el('button', { class: 'btn', onClick: ()=>alert('How to Play:\n1) Click a tile to open a clue.\n2) Read the question. Optional: start timer.\n3) Reveal the answer.\n4) Mark as used.') , text: 'How to Play' }),
           el('label', { class: 'row' }, [
             el('input', { type: 'checkbox', checked: rtl ? 'checked' : null, onChange: ()=>{ rtl = !rtl; render(); } }),
             el('span', { text: 'RTL (עברית)' })
@@ -221,7 +213,7 @@ html = r'''<!DOCTYPE html>
         const modalWrap = el('div', { class: 'modal-wrap' + (active ? ' show' : '') });
         const mask = el('div', { class: 'modal-mask', onClick: ()=>{ active=null; resetTimer(); render(); } });
         const modal = el('div', { class: 'modal' });
-        const modalHead = el('div', { class: 'modal-head' }, [
+        const modalHead = el('div', { class:'modal-head' }, [
           el('div', { class:'modal-title', text: active ? data.categories[active.catIndex].title : '' }),
           el('button', { class:'btn', onClick: ()=>{ active=null; resetTimer(); render(); }, text: '✕' })
         ]);
@@ -232,7 +224,7 @@ html = r'''<!DOCTYPE html>
         ]);
         const actions = el('div', { class:'modal-actions' }, [
           el('button', { class:'btn primary', onClick: ()=>{ revealed = !revealed; render(); }, text: (revealed ? 'Hide Answer / הסתר תשובה' : 'Reveal Answer / הצג תשובה') }),
-          el('button', { class:'btn', onClick: ()=>{ if (!timer.on) { timer.on = true; tickTimer(); } else { timer.on = false; } render(); }, text: (timer.on ? '⏸ Pause Timer' : '⏱ Start 20s Timer') }),
+          el('button', { class:'btn', onClick: ()=>{ if (!timer.on) { timer.on = true; tickTimer(); } else { timer.on = false; } render(); }, text: (timer.on ? '⏸ Pause Timer' : '⏱ Start 20s') }),
           el('div', { class:'timer-box', text: 'Time: ' + String(timer.left) + 's' }),
           el('span', { class:'pill', text: 'Value: ' + (active ? data.categories[active.catIndex].clues[active.qIndex].value : '') }),
           el('span', { class:'pill', text: 'Tile: ' + (active ? (active.catIndex+1) + '-' + (active.qIndex+1) : '') }),
@@ -263,9 +255,4 @@ html = r'''<!DOCTYPE html>
     })();
   </script>
 </body>
-</html>'''
-with open('/mnt/data/jeopardy_shmuel.html','w', encoding='utf-8') as f:
-    f.write(html)
-
-print("Saved to /mnt/data/jeopardy_shmuel.html")
-
+</html>
