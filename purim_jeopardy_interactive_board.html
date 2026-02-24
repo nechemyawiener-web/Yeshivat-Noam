@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Purim L'Halacha Jeopardy</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1e3a8a;
+  color: white;
+  text-align: center;
+}
+h1 {
+  margin-top: 20px;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
+  width: 95%;
+  margin: 20px auto;
+}
+.category {
+  background-color: #facc15;
+  color: black;
+  font-weight: bold;
+  padding: 15px 5px;
+  font-size: 14px;
+}
+.clue {
+  background-color: #2563eb;
+  padding: 30px 5px;
+  font-size: 20px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.clue.used {
+  background-color: #1e40af;
+  color: #1e40af;
+  cursor: default;
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+.modal-content {
+  background: white;
+  color: black;
+  padding: 40px;
+  border-radius: 20px;
+  max-width: 800px;
+  font-size: 24px;
+}
+button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<h1>🎭 Purim L'Halacha Jeopardy 🎭</h1>
+
+<div style="display:flex; justify-content:center; gap:40px; margin-top:20px;">
+  <div>
+    <h2>Team 1</h2>
+    <div id="score1" style="font-size:28px;">0</div>
+    <button onclick="updateScore(1,100)">+100</button>
+    <button onclick="updateScore(1,-100)">-100</button>
+  </div>
+  <div>
+    <h2>Team 2</h2>
+    <div id="score2" style="font-size:28px;">0</div>
+    <button onclick="updateScore(2,100)">+100</button>
+    <button onclick="updateScore(2,-100)">-100</button>
+  </div>
+  <div>
+    <h2>Team 3</h2>
+    <div id="score3" style="font-size:28px;">0</div>
+    <button onclick="updateScore(3,100)">+100</button>
+    <button onclick="updateScore(3,-100)">-100</button>
+  </div>
+</div>
+
+<div class="board">
+  <div class="category">Megillah Reading</div>
+  <div class="category">Mishloach Manot</div>
+  <div class="category">Matanot La’Evyonim</div>
+  <div class="category">Seudat Purim</div>
+  <div class="category">Purim Prep</div>
+
+  <!-- Row 1 -->
+  <div class="clue" onclick="showClue(this,'This level of obligation applies to Megillah at night.','What is מדרבנן?')">$100</div>
+  <div class="clue" onclick="showClue(this,'You must give this minimum number of food/drink items.','What are two different types?')">$100</div>
+  <div class="clue" onclick="showClue(this,'You must give money to this number of poor people.','What are two poor people?')">$100</div>
+  <div class="clue" onclick="showClue(this,'You must eat this food at the Purim Seudah.','What is bread?')">$100</div>
+  <div class="clue" onclick="showClue(this,'Parshat Shekalim discusses this topic','What is the dontation of מחצית השקל?')">$100</div>
+
+  <!-- Row 2 -->
+  <div class="clue" onclick="showClue(this,'This higher-level דרבנן obligation applies during the day.','What is דברי קבלה?')">$200</div>
+  <div class="clue" onclick="showClue(this,'You must send Mishloach Manot to this many people (minimum).','What is one friend?')">$200</div>
+  <div class="clue" onclick="showClue(this,'Ideally one should give enough money for this.','What is enough to purchase a meal?')">$200</div>
+  <div class="clue" onclick="showClue(this,'Ideally the meal should include this type of food.','What is meat?')">$200</div>
+  <div class="clue" onclick="showClue(this,'Parshat Shekalim is read on this Shabbat.','What is the Shabbat before Rosh Chodesh Adar?')">$200</div>
+
+  <!-- Row 3 -->
+  <div class="clue" onclick="showClue(this,'These three brachot are abbreviated מנ"ח.','What are מקרא מגילה, שעשה נסים, שהחיינו?')">$300</div>
+  <div class="clue" onclick="showClue(this,'Explain if one can give two pieces of chicken for Mishloach Manot ','Yes, if cooked differently')">$300</div>
+  <div class="clue" onclick="showClue(this,'Strictly speaking, this minimal amount fulfills the mitzvah.','What is a pruta?')">$300</div>
+  <div class="clue" onclick="showClue(this,'The seudah should be filled with this besides food.','What are praising Hashem and Divrei Torah?')">$300</div>
+    <div class="clue" onclick="showClue(this,'When is Parshat Zachor read?','The Shabbat before Purim?')">$300</div>
+
+  <!-- Row 4 -->
+  <div class="clue" onclick="showClue(this,'If you miss one word of the Megillah, you must do this.','What is quickly read it until you catch up?')">$400</div>
+  <div class="clue" onclick="showClue(this,'What do we learn from _משלוח _מנות_ איש _לרעהו.','You only need to give two gifts to one person')">$400</div>
+  <div class="clue" onclick="showClue(this,'What do we learn from _מתנות לאביונ_ים.','You must give two people one gift')">$400</div>
+  <div class="clue" onclick="showClue(this,'Why do celebrate specifically with a meal','Haman tried to kill us physically, so we celebrate physically')">$400</div>
+  <div class="clue" onclick="showClue(this,'What is the one kriat hatorah that is for sure required from the Torah','Parshat Zachor')">$400</div>
+
+  <!-- Row 5 -->
+  <div class="clue" onclick="showClue(this,'What are the three mitzvot that women are obligated in for being included in the miracle','Megilla, Channuka Canldes, 4 cups of wine')">$500</div>
+  <div class="clue" onclick="showClue(this,'If you have extra money, this is the best way to spend it on Purim.','What is Matanot La’Evyonim?')">$500</div>
+  <div class="clue" onclick="showClue(this,'What are the two reasons for משלוח מנות','Simcha: Extra food for the meal, Ahava: Increases friendships ')">$500</div>
+  <div class="clue" onclick="showClue(this,'According to Rama and Rambam, one should do this instead of getting very drunk.','What is drink a little more than usual and take a nap?')">$500</div>
+  <div class="clue" onclick="showClue(this,'Who was Hamans great great... grandfather, mentioned in the Megila','Agag')">$500</div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content" id="modal-content">
+    <div id="question"></div>
+    <button onclick="showAnswer()">Show Answer</button>
+    <div id="answer" style="margin-top:20px;font-weight:bold;"></div>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+let currentAnswer = '';
+function showClue(element, question, answer) {
+  if (element.classList.contains('used')) return;
+  currentAnswer = answer;
+  document.getElementById('question').innerText = question;
+  document.getElementById('answer').innerText = '';
+  document.getElementById('modal').style.display = 'flex';
+  element.classList.add('used');
+}
+function showAnswer() {
+  document.getElementById('answer').innerText = currentAnswer;
+}
+function updateScore(team, amount) {
+  const scoreElement = document.getElementById('score' + team);
+  let currentScore = parseInt(scoreElement.innerText);
+  scoreElement.innerText = currentScore + amount;
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
