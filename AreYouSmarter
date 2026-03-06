@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Are You Smarter Than a 5th Grader?</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container {
+  background: rgba(0,0,0,0.7);
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+}
+h1 { font-size: 28px; }
+.question { font-size: 22px; margin: 20px 0; }
+button {
+  background: #ffcc00;
+  border: none;
+  padding: 12px 20px;
+  margin: 10px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+button:hover { background: #ffaa00; transform: scale(1.05); }
+.score { margin-top: 15px; font-size: 18px; }
+.level { font-size: 18px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🧠 Are You Smarter Than a 5th Grader?</h1>
+<div class="level" id="level"></div>
+<div class="question" id="question"></div>
+<div id="answer" style="display:none; font-weight:bold; margin-top:10px;"></div>
+<button onclick="revealAnswer()">Reveal Answer</button>
+<button onclick="nextQuestion()">Next Question</button>
+<div class="score" id="score">Score: 0</div>
+</div>
+
+<script>
+const questions = [
+  // EASY (1 point)
+  {q:"What planet do we live on?", a:"Earth", level:"Easy", points:1},
+  {q:"How many days are in a week?", a:"7", level:"Easy", points:1},
+  {q:"What is 9 x 6?", a:"54", level:"Easy", points:1},
+  {q:"What gas do humans breathe in?", a:"Oxygen", level:"Easy", points:1},
+  {q:"Who wrote Harry Potter?", a:"J.K. Rowling", level:"Easy", points:1},
+  {q:"What is the largest mammal?", a:"Blue Whale", level:"Easy", points:1},
+  {q:"How many continents are there?", a:"7", level:"Easy", points:1},
+
+  // MEDIUM (2 points)
+  {q:"What is the capital of France?", a:"Paris", level:"Medium", points:2},
+  {q:"What is 144 ÷ 12?", a:"12", level:"Medium", points:2},
+  {q:"What state is the Grand Canyon in?", a:"Arizona", level:"Medium", points:2},
+  {q:"How many bones are in the human body?", a:"206", level:"Medium", points:2},
+  {q:"What is the largest ocean?", a:"Pacific Ocean", level:"Medium", points:2},
+  {q:"Who was the first U.S. president?", a:"George Washington", level:"Medium", points:2},
+  {q:"What is the boiling point of water (°F)?", a:"212", level:"Medium", points:2},
+
+  // HARD (3 points)
+  {q:"What is the smallest prime number?", a:"2", level:"Hard", points:3},
+  {q:"What is 15% of 200?", a:"30", level:"Hard", points:3},
+  {q:"What process do plants use to make food?", a:"Photosynthesis", level:"Hard", points:3},
+  {q:"What does WWW stand for?", a:"World Wide Web", level:"Hard", points:3},
+  {q:"What is the square root of 169?", a:"13", level:"Hard", points:3},
+  {q:"What year did the Titanic sink?", a:"1912", level:"Hard", points:3}
+];
+
+let currentIndex = 0;
+let score = 0;
+
+function loadQuestion() {
+  if(currentIndex >= questions.length) {
+    document.getElementById("question").innerHTML = "🎉 Game Over! Final Score: " + score;
+    document.getElementById("level").innerHTML = "";
+    document.getElementById("answer").style.display = "none";
+    return;
+  }
+  const current = questions[currentIndex];
+  document.getElementById("question").innerHTML = current.q;
+  document.getElementById("level").innerHTML = "Difficulty: " + current.level + " (" + current.points + " pts)";
+  document.getElementById("answer").style.display = "none";
+}
+
+function revealAnswer() {
+  const current = questions[currentIndex];
+  document.getElementById("answer").innerHTML = "Answer: " + current.a;
+  document.getElementById("answer").style.display = "block";
+  score += current.points;
+  document.getElementById("score").innerHTML = "Score: " + score;
+}
+
+function nextQuestion() {
+  currentIndex++;
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
