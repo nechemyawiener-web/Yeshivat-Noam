@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bava Metzia 78b — Learning Games</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fbf7ee;color:#1e2761;min-height:100vh;padding:1.5rem}
+.game{max-width:680px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hub-title{font-size:22px;font-weight:600;color:#1e2761;margin-bottom:.25rem}
+.hub-sub{font-size:14px;color:#4a4a6a;margin-bottom:1.25rem}
+.hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:1rem}
+.mode-card{background:#fff;border:1px solid #d0c8a0;border-radius:12px;padding:1.25rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;text-align:left}
+.mode-card:hover{border-color:#c99a2b;box-shadow:0 2px 8px rgba(30,39,97,.08)}
+.mode-icon{font-size:24px;margin-bottom:8px}
+.mode-title{font-size:15px;font-weight:600;color:#1e2761;margin-bottom:4px}
+.mode-desc{font-size:12px;color:#4a4a6a;line-height:1.5}
+.score-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #e8e0cc}
+.score-pill{background:#f0ebd8;border-radius:20px;padding:4px 14px;font-size:13px;color:#4a4a6a}
+.score-pill span{font-weight:600;color:#1e2761}
+.back-btn{font-size:13px;color:#888;cursor:pointer;background:none;border:none;padding:0;display:flex;align-items:center;gap:4px}
+.back-btn:hover{color:#1e2761}
+.q-label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem}
+.q-text{font-size:15px;font-weight:600;color:#1e2761;line-height:1.5;margin-bottom:.25rem}
+.q-hebrew{font-size:17px;color:#4a4a6a;direction:rtl;font-family:Georgia,serif;margin-bottom:1rem;text-align:right}
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.opt{width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;color:#333;transition:background .12s,border-color .12s;line-height:1.4;font-family:inherit}
+.opt:hover:not(:disabled){background:#f5f0e8;border-color:#c99a2b}
+.opt.correct{background:#eaf3de;border-color:#639922;color:#27500a}
+.opt.wrong{background:#fcebeb;border-color:#a32d2d;color:#501313}
+.opt:disabled{cursor:default}
+.feedback{font-size:13px;padding:10px 14px;border-radius:8px;line-height:1.6;margin-bottom:.75rem}
+.feedback.correct{background:#eaf3de;color:#27500a}
+.feedback.wrong{background:#fcebeb;color:#501313}
+.next-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #c99a2b;background:transparent;color:#1e2761;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:background .12s}
+.next-btn:hover{background:#f5f0e8}
+.progress-dots{display:flex;gap:5px;margin-bottom:1rem}
+.dot{height:4px;flex:1;border-radius:2px;background:#e0d9c8}
+.dot.done{background:#639922}.dot.current{background:#c99a2b}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-item{padding:10px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;color:#333;line-height:1.4;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.match-item:hover{border-color:#c99a2b;background:#fdf8ee}
+.match-item.selected{border-color:#378add;background:#e6f1fb;color:#0c447c}
+.match-item.matched{border-color:#639922;background:#eaf3de;color:#27500a;cursor:default}
+.match-item.wrong-flash{border-color:#a32d2d;background:#fcebeb;color:#501313}
+.match-item.right-col{font-family:Georgia,serif;font-size:15px;direction:rtl;text-align:right;justify-content:flex-end}
+.sort-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;min-height:44px;padding:8px;border:1px dashed #c99a2b;border-radius:8px;background:#fffdf5}
+.sort-item{padding:7px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;color:#333;transition:background .12s,border-color .12s;line-height:1.4;font-family:inherit}
+.sort-item:hover{background:#f5f0e8;border-color:#c99a2b}
+.sort-item.placed{opacity:.3;cursor:default;pointer-events:none}
+.sort-slots{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.sort-slot{padding:10px 14px;border-radius:8px;border:1px dashed #bbb;background:#f9f6ee;font-size:13px;color:#aaa;min-height:44px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:border-color .12s,background .12s}
+.sort-slot:hover{border-color:#c99a2b;background:#fdf8ee}
+.sort-slot.filled{background:#fff;border-style:solid;border-color:#bbb;color:#333;cursor:pointer}
+.sort-slot.filled:hover{border-color:#c99a2b}
+.sort-slot.correct{border-color:#639922;background:#eaf3de;color:#27500a;cursor:default}
+.sort-slot.wrong{border-color:#a32d2d;background:#fcebeb;color:#501313;cursor:default}
+.slot-num{font-size:11px;font-weight:700;color:#bbb;min-width:18px}
+.sort-slot.correct .slot-num{color:#639922}
+.sort-slot.wrong .slot-num{color:#a32d2d}
+.result-screen{text-align:center;padding:1rem 0}
+.result-score{font-size:52px;font-weight:700;color:#1e2761;margin:1rem 0 .25rem}
+.result-label{font-size:14px;color:#4a4a6a;margin-bottom:1.5rem}
+.result-msg{font-size:15px;color:#4a4a6a;margin-bottom:1.5rem;line-height:1.6}
+.tally{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem}
+.tally-card{background:#f0ebd8;border-radius:8px;padding:.75rem;text-align:center}
+.tally-n{font-size:24px;font-weight:700;color:#1e2761}
+.tally-lbl{font-size:12px;color:#4a4a6a}
+.replay-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #c99a2b;background:transparent;color:#1e2761;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:8px;font-family:inherit;transition:background .12s}
+.replay-btn:hover{background:#f5f0e8}
+.sec-label{font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
+.scenario-box{background:#f0ebd8;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#4a4a6a;line-height:1.6}
+@media(max-width:480px){.hub-grid{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="game">
+
+<div class="screen active" id="hub">
+  <div class="hub-title">&#x1F4DA; Bava Metzia 78b</div>
+  <div class="hub-sub">Learning games &mdash; choose one to play</div>
+  <div class="hub-grid">
+    <div class="mode-card" onclick="startQuiz()">
+      <div class="mode-icon">&#x2753;</div>
+      <div class="mode-title">Quiz challenge</div>
+      <div class="mode-desc">8 questions on both proofs, the &#x05D3;&#x05D7;&#x05D9;&#x05D5;&#x05EA;, and R. Meir vs R. Yehuda</div>
+    </div>
+    <div class="mode-card" onclick="startMatch()">
+      <div class="mode-icon">&#x1F500;</div>
+      <div class="mode-title">Match it</div>
+      <div class="mode-desc">Match each English idea to its Aramaic/Hebrew term from the sugya</div>
+    </div>
+    <div class="mode-card" onclick="startSort()">
+      <div class="mode-icon">&#x1F522;</div>
+      <div class="mode-title">Put it in order</div>
+      <div class="mode-desc">Arrange the Gemara&rsquo;s argument steps in the right sequence</div>
+    </div>
+    <div class="mode-card" onclick="startScenario()">
+      <div class="mode-icon">&#x1F9FE;</div>
+      <div class="mode-title">What do they owe?</div>
+      <div class="mode-desc">R. Meir or R. Yehuda? Solve real payment scenarios</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="quiz-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <div class="score-pill">score <span id="q-score">0</span> / <span id="q-total">8</span></div>
+  </div>
+  <div class="progress-dots" id="q-dots"></div>
+  <div class="q-label" id="q-num">Question 1 of 8</div>
+  <div class="q-text" id="q-text"></div>
+  <div class="q-hebrew" id="q-hebrew"></div>
+  <div class="opts" id="q-opts"></div>
+  <div class="feedback" id="q-feedback" style="display:none"></div>
+  <button class="next-btn" id="q-next" style="display:none" onclick="nextQ()">Next question</button>
+</div>
+
+<div class="screen" id="match-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <div class="score-pill">matched <span id="m-done">0</span> / <span id="m-total">6</span></div>
+  </div>
+  <div class="q-text" style="margin-bottom:.25rem">Match each term to its meaning</div>
+  <div style="font-size:13px;color:#4a4a6a;margin-bottom:1rem">Click a term on the left, then its match on the right</div>
+  <div class="match-grid">
+    <div class="match-col" id="m-left"></div>
+    <div class="match-col" id="m-right"></div>
+  </div>
+  <div class="feedback" id="m-feedback" style="display:none"></div>
+  <button class="next-btn" id="m-done-btn" style="display:none" onclick="showMatchResult()">See results</button>
+</div>
+
+<div class="screen" id="sort-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <div class="score-pill">placed <span id="sort-placed">0</span> / 5</div>
+  </div>
+  <div class="q-text" style="margin-bottom:.25rem">Put the Gemara&rsquo;s argument in order</div>
+  <div style="font-size:13px;color:#4a4a6a;margin-bottom:1rem">Click a step to select it, then click the slot where it belongs</div>
+  <div class="sec-label">Steps (click to select)</div>
+  <div class="sort-pool" id="sort-pool"></div>
+  <div class="sec-label">Sequence (click a slot to place)</div>
+  <div class="sort-slots" id="sort-slots"></div>
+  <div class="feedback" id="sort-feedback" style="display:none"></div>
+  <button class="next-btn" id="sort-check-btn" style="display:none" onclick="checkSort()">Check my order</button>
+</div>
+
+<div class="screen" id="scenario-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <div class="score-pill">score <span id="sc-score">0</span> / <span id="sc-total">4</span></div>
+  </div>
+  <div class="progress-dots" id="sc-dots"></div>
+  <div class="q-label" id="sc-num">Scenario 1 of 4</div>
+  <div class="q-text" id="sc-text"></div>
+  <div class="scenario-box" id="sc-data"></div>
+  <div class="opts" id="sc-opts"></div>
+  <div class="feedback" id="sc-feedback" style="display:none"></div>
+  <button class="next-btn" id="sc-next" style="display:none" onclick="nextScenario()">Next scenario</button>
+</div>
+
+<div class="screen" id="result-screen">
+  <div class="result-screen">
+    <div style="font-size:14px;color:#4a4a6a;margin-bottom:.5rem" id="res-game-name">Complete</div>
+    <div class="result-score" id="res-score"></div>
+    <div class="result-label" id="res-label"></div>
+    <div class="tally" id="res-tally"></div>
+    <div class="result-msg" id="res-msg"></div>
+    <button class="replay-btn" id="res-replay">Play again</button>
+    <button class="replay-btn" onclick="goHub()">Try a different game</button>
+  </div>
+</div>
+
+</div>
+<script>
+var Qs=[
+  {q:"What is R. Meir's general principle according to R. Yochanan?",heb:"\u05DB\u05B8\u05DC \u05D4\u05DE\u05BC\u05B7\u05E2\u05B2\u05D1\u05B4\u05D9\u05E8 \u05E2\u05B7\u05DC \u05D3\u05B7\u05E2\u05B7\u05EA \u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA \u05E0\u05B4\u05E7\u05B0\u05E8\u05B8\u05D0 \u05D2\u05B7\u05D6\u05B0\u05DC\u05B8\u05DF",opts:["Anyone who steals sheep is a robber","Anyone who deviates from the owner's instructions is called a robber","A dyer who changes the color owes double","A poor person who buys the wrong item is forgiven"],ans:1,exp:"The Gemara is trying to prove R. Meir holds this rule: even without taking anything by force, going against the owner's instructions makes you legally a robber."},
+  {q:"In the dyer case, what does R. Meir say the dyer must pay?",heb:"\u05E0\u05D5\u05EA\u05DF \u05DC\u05D5 \u05D3\u05DE\u05D9 \u05E6\u05DE\u05E8\u05D5",opts:["The improvement value (\u05E9\u05B6\u05D1\u05B7\u05D7) only","The cost of dyeing (\u05D9\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4) only","The original value of the wool","Half the wool's value"],ans:2,exp:"R. Meir treats the dyer as a \u05D2\u05D6\u05DC\u05DF who acquired the wool entirely. He pays the original wool value and keeps the dyed result \u2014 the harshest ruling."},
+  {q:"According to R. Yehuda, if the improvement (\u05E9\u05B6\u05D1\u05B7\u05D7) is GREATER than the cost (\u05D9\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4), what does the dyer pay?",heb:"\u05D0\u05B4\u05DD \u05D4\u05B7\u05E9\u05BC\u05B0\u05D1\u05B7\u05D7 \u05D9\u05B8\u05EA\u05B5\u05E8 \u05E2\u05B7\u05DC \u05D4\u05B7\u05D9\u05BC\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4 \u05E0\u05D5\u05EA\u05DF \u05DC\u05D5 \u05D0\u05EA \u05D4\u05D9\u05E6\u05D9\u05D0\u05D4",opts:["He pays the improvement value","He pays the cost of dyeing","He pays the original wool value","He pays nothing"],ans:1,exp:"When improvement > cost, R. Yehuda says: pay the cost. The owner gets compensated for what the dyer spent and keeps the improved wool."},
+  {q:"Why does the Gemara reject the dyer case as proof of R. Meir's principle?",heb:"\u05D3\u05BC\u05B4\u05DC\u05B0\u05DE\u05B8\u05D0 \u05E9\u05B8\u05C1\u05D0\u05E0\u05B5\u05D9 \u05D4\u05B8\u05EA\u05B8\u05DD \u05D3\u05B0\u05E7\u05B7\u05E0\u05B0\u05D9\u05B5\u05D4\u05D5\u05BC \u05D1\u05B0\u05E9\u05B4\u05C1\u05D9\u05E0\u05BC\u05D5\u05BC\u05D9 \u05DE\u05B7\u05E2\u05B2\u05E9\u05C2\u05B6\u05D4",opts:["Because the dyer was working for free","Because R. Meir agrees with R. Yehuda in that case","Because the dyer performed a physical act of transformation (\u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4)","Because the owner never gave permission"],ans:2,exp:"The pushback: maybe the dyer only becomes a \u05D2\u05D6\u05DC\u05DF because he physically transformed the object \u2014 not because of the general deviation rule. \u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4 is a separate way to acquire something."},
+  {q:"In the tzedakah case, what does R. Meir say the poor person may NOT do?",heb:"\u05D4\u05B7\u05E0\u05BC\u05D5\u05B9\u05EA\u05B5\u05DF \u05D3\u05B4\u05D9\u05E0\u05B8\u05E8 \u05DC\u05B0\u05E2\u05B8\u05E0\u05B4\u05D9 \u05DC\u05B4\u05D9\u05E7\u05BC\u05B7\u05D7 \u05DC\u05D5\u05B9 \u05D7\u05B8\u05DC\u05D5\u05BC\u05E7 \u05DC\u05D0 \u05D9\u05B4\u05E7\u05BC\u05B7\u05D7 \u05D1\u05D5\u05B9 \u05D8\u05B7\u05DC\u05BC\u05B4\u05D9\u05EA",opts:["Give the money to someone else","Buy a cloak instead of a shirt","Save the money for later","Haggle for a better price"],ans:1,exp:"If told to buy a \u05D7\u05DC\u05D5\u05E7 (shirt), the poor person may not buy a \u05D8\u05DC\u05D9\u05EA (cloak) instead \u2014 and vice versa. R. Meir says he must follow the donor's exact instructions."},
+  {q:"What is the second pushback against the tzedakah proof?",heb:"\u05D5\u05B0\u05D3\u05B4\u05DC\u05B0\u05DE\u05B8\u05D0 \u05E9\u05B8\u05C1\u05D0\u05E0\u05B5\u05D9 \u05D4\u05B8\u05EA\u05B8\u05DD \u05D3\u05B0\u05D0\u05B8\u05EA\u05D5\u05BC \u05DC\u05B0\u05DE\u05B4\u05D7\u05B0\u05E9\u05B0\u05C1\u05D3\u05B5\u05D9\u05D4\u05D5\u05BC",opts:["Maybe the donor always has to specify","Maybe the poor person is exempt from all rules","Maybe the rule is only to prevent suspicion falling on the donor","Maybe R. Meir retracted this opinion"],ans:2,exp:"The Gemara suggests: maybe the poor person must follow instructions not because deviation = robbery, but to prevent people from suspecting the donor of lying about the donation."},
+  {q:"How does the Gemara prove the tzedakah ruling is about R. Meir's principle \u2014 not suspicion?",heb:"\u05D0\u05B4\u05DD \u05DB\u05B5\u05DF \u05DC\u05B4\u05D9\u05EA\u05B0\u05E0\u05B5\u05D9 \u05DE\u05B4\u05E4\u05BC\u05B0\u05E0\u05B5\u05D9 \u05D4\u05B7\u05D7\u05B2\u05E9\u05B8\u05C1\u05D3",opts:["Because R. Meir says it twice","Because the Baraita uses the word \u05D2\u05D6\u05DC\u05DF","Because if it were about suspicion the Baraita would have said \u05DE\u05E4\u05E0\u05D9 \u05D4\u05D7\u05E9\u05D3","Because R. Shimon ben Elazar confirms it"],ans:2,exp:"Sharp textual proof: if the reason were suspicion, the Baraita would say \u05DE\u05B4\u05E4\u05BC\u05B0\u05E0\u05B5\u05D9 \u05D4\u05B7\u05D7\u05B2\u05E9\u05B8\u05C1\u05D3. Instead it says \u05DE\u05B4\u05E4\u05BC\u05B0\u05E0\u05B5\u05D9 \u05E9\u05B6\u05C1\u05DE\u05BC\u05B7\u05E2\u05B2\u05D1\u05B4\u05D9\u05E8 \u05E2\u05B7\u05DC \u05D3\u05B7\u05E2\u05B0\u05EA\u05D5\u05B9 \u05E9\u05B6\u05C1\u05DC \u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA. The wording is the ruling."},
+  {q:"Who quotes R. Meir's ruling in the tzedakah case?",heb:"\u05E8\u05B7\u05D1\u05BC\u05B4\u05D9 \u05E9\u05B4\u05C1\u05DE\u05B0\u05E2\u05D5\u05B9\u05DF \u05D1\u05B6\u05BC\u05DF \u05D0\u05B6\u05DC\u05B0\u05E2\u05B8\u05D6\u05B8\u05E8 \u05D0\u05D5\u05B9\u05DE\u05B5\u05E8 \u05DE\u05B4\u05E9\u05BC\u05C1\u05D5\u05BC\u05DD \u05E8\u05B7\u05D1\u05BC\u05B4\u05D9 \u05DE\u05B5\u05D0\u05B4\u05D9\u05E8",opts:["R. Yochanan","R. Yehuda","R. Shimon ben Elazar","R. Akiva"],ans:2,exp:"R. Shimon ben Elazar quotes this ruling in the name of R. Meir \u2014 it comes from a Baraita, not the Mishnah."}
+];
+
+var matchPairs=[
+  {eng:"Physical act of transformation",heb:"\u05E9\u05B4\u05C1\u05D9\u05E0\u05BC\u05D5\u05BC\u05D9 \u05DE\u05B7\u05E2\u05B2\u05E9\u05C2\u05B6\u05D4"},
+  {eng:"The improvement / added value",heb:"\u05E9\u05B6\u05D1\u05B7\u05D7"},
+  {eng:"The cost / expenses",heb:"\u05D9\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4"},
+  {eng:"The owner / donor",heb:"\u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA"},
+  {eng:"Learn from this (conclusion)",heb:"\u05E9\u05B0\u05DE\u05B7\u05E2 \u05DE\u05B4\u05E0\u05BC\u05B7\u05D4\u05D4"},
+  {eng:"Because of suspicion",heb:"\u05DE\u05B4\u05E4\u05BC\u05B0\u05E0\u05B5\u05D9 \u05D4\u05B7\u05D7\u05B2\u05E9\u05B8\u05C1\u05D3"}
+];
+
+var sortSteps=[
+  {id:0,text:"The Gemara asks: which teaching of R. Meir proves he holds 'deviation = robbery'?"},
+  {id:1,text:"Proof attempt 1: the dyer case \u2014 R. Meir treats him as a full robber"},
+  {id:2,text:"Pushback: maybe it's only because of \u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4 (physical change)"},
+  {id:3,text:"Proof attempt 3: the tzedakah case \u2014 Baraita says 'because he deviates from owner's intent'"},
+  {id:4,text:"Final clincher: if it were suspicion, the Baraita would say \u05DE\u05E4\u05E0\u05D9 \u05D4\u05D7\u05E9\u05D3 \u2014 so it must be the principle"}
+];
+
+var scenarios=[
+  {text:"Berel gives Shmerel a white T-shirt worth $10 to paint 'Yeshivat Noam 25' on it. Shmerel paints the logo instead.",data:"Shirt original value: $10\nShirt after painting: $15\nCost of spray paint: $4",q:"According to R. MEIR, what does Shmerel owe Berel?",opts:["$4 (cost of spray paint)","$5 (the improvement)","$10 (original shirt value)","Nothing \u2014 Berel benefits"],ans:2,exp:"R. Meir treats Shmerel as a \u05D2\u05D6\u05DC\u05DF. He pays the original $10. The now-$15 shirt stays with Shmerel as his 'acquisition.' Shmerel also absorbs his own $4 paint cost."},
+  {text:"Same T-shirt scenario.",data:"Shirt original value: $10\nShirt after painting: $15\nCost of spray paint: $4",q:"According to R. YEHUDA (improvement $5 > cost $4), what does Berel owe Shmerel?",opts:["Nothing","$4 (the cost of painting)","$5 (the improvement)","$10 (original value)"],ans:1,exp:"Improvement ($5) > cost ($4). R. Yehuda: Shmerel returns the shirt + Berel pays the \u05D9\u05E6\u05D9\u05D0\u05D4 ($4) back to Shmerel for his work."},
+  {text:"Same T-shirt, but spray paint now costs $6.",data:"Shirt original value: $10\nShirt after painting: $15\nCost of spray paint: $6",q:"According to R. YEHUDA (cost $6 > improvement $5), what does Berel owe Shmerel?",opts:["$6 (full cost of paint)","$5 (the improvement = $15\u2212$10)","$10 (original shirt value)","Nothing"],ans:1,exp:"Cost ($6) > improvement ($5). R. Yehuda says: pay the \u05E9\u05D1\u05D7 (improvement). Berel owes Shmerel $5 \u2014 only what the shirt actually gained in value."},
+  {text:"A donor gives an \u05E2\u05E0\u05D9 a coin and says 'buy a \u05D7\u05DC\u05D5\u05E7 (shirt).' The \u05E2\u05E0\u05D9 sees a great deal on a \u05D8\u05DC\u05D9\u05EA (cloak) \u2014 same price, better quality.",data:"Coin value: 1 dinar\nIntended item: \u05D7\u05DC\u05D5\u05E7 (shirt)\nActual deal available: \u05D8\u05DC\u05D9\u05EA (cloak) at same price",q:"According to R. Meir, what should the \u05E2\u05E0\u05D9 do?",opts:["Buy the \u05D8\u05DC\u05D9\u05EA \u2014 same price, better value","Buy the \u05D7\u05DC\u05D5\u05E7 \u2014 follow the donor's instructions","Ask the donor first, then decide","Buy neither and return the money"],ans:1,exp:"R. Meir: \u05DE\u05B4\u05E4\u05BC\u05B0\u05E0\u05B5\u05D9 \u05E9\u05B6\u05C1\u05DE\u05BC\u05B7\u05E2\u05B2\u05D1\u05B4\u05D9\u05E8 \u05E2\u05B7\u05DC \u05D3\u05B7\u05E2\u05B0\u05EA\u05D5\u05B9 \u05E9\u05B6\u05C1\u05DC \u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA. The donor's intent governs \u2014 regardless of whether the \u05D8\u05DC\u05D9\u05EA is a better deal."}
+];
+
+var qIdx=0,qScore=0,mSelected=null,mMatched=0,mWrong=0,mPairs=[],sortSelected=null,sortPlaced=[],scIdx=0,scScore=0;
+
+function goHub(){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById('hub').classList.add('active')}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+
+function showResult(name,score,total,replayFn){
+  document.getElementById('res-game-name').textContent=name+' complete';
+  document.getElementById('res-score').textContent=score+' / '+total;
+  var pct=Math.round(score/total*100);
+  document.getElementById('res-label').textContent=pct+'% correct';
+  var msg=pct>=88?'Excellent! You really know this sugya.':pct>=63?'Good work \u2014 review the parts you missed.':'Keep reviewing \u2014 this material takes time to sink in.';
+  document.getElementById('res-msg').textContent=msg;
+  document.getElementById('res-tally').innerHTML='<div class="tally-card"><div class="tally-n" style="color:#27500a">'+score+'</div><div class="tally-lbl">correct</div></div><div class="tally-card"><div class="tally-n" style="color:#a32d2d">'+(total-score)+'</div><div class="tally-lbl">missed</div></div>';
+  document.getElementById('res-replay').onclick=replayFn;
+  showScreen('result-screen');
+}
+
+function buildDots(cid,total,cur){
+  var c=document.getElementById(cid);c.innerHTML='';
+  for(var i=0;i<total;i++){var d=document.createElement('div');d.className='dot'+(i<cur?' done':i===cur?' current':'');c.appendChild(d);}
+}
+
+function startQuiz(){qIdx=0;qScore=0;showScreen('quiz-screen');renderQ()}
+function renderQ(){
+  var q=Qs[qIdx];
+  document.getElementById('q-num').textContent='Question '+(qIdx+1)+' of '+Qs.length;
+  document.getElementById('q-score').textContent=qScore;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-hebrew').textContent=q.heb;
+  buildDots('q-dots',Qs.length,qIdx);
+  var o=document.getElementById('q-opts');o.innerHTML='';
+  q.opts.forEach(function(txt,i){
+    var b=document.createElement('button');b.className='opt';b.textContent=txt;
+    b.onclick=function(){answerQ(i)};o.appendChild(b);
+  });
+  document.getElementById('q-feedback').style.display='none';
+  document.getElementById('q-next').style.display='none';
+}
+function answerQ(i){
+  var q=Qs[qIdx],btns=document.querySelectorAll('#q-opts .opt');
+  btns.forEach(function(b){b.disabled=true});
+  btns[i].classList.add(i===q.ans?'correct':'wrong');
+  if(i!==q.ans)btns[q.ans].classList.add('correct');
+  if(i===q.ans)qScore++;
+  var fb=document.getElementById('q-feedback');
+  fb.className='feedback '+(i===q.ans?'correct':'wrong');
+  fb.textContent=(i===q.ans?'Correct! ':'Not quite. ')+q.exp;
+  fb.style.display='block';
+  var nx=document.getElementById('q-next');
+  nx.textContent=qIdx<Qs.length-1?'Next question':'See results';
+  nx.style.display='block';
+}
+function nextQ(){qIdx++;if(qIdx>=Qs.length){showResult('Quiz',qScore,Qs.length,startQuiz);return}renderQ()}
+
+function startMatch(){
+  mSelected=null;mMatched=0;mWrong=0;
+  mPairs=[...matchPairs].sort(function(){return Math.random()-.5});
+  var rights=[...mPairs].sort(function(){return Math.random()-.5});
+  document.getElementById('m-done').textContent='0';
+  document.getElementById('m-total').textContent=mPairs.length;
+  document.getElementById('m-feedback').style.display='none';
+  document.getElementById('m-done-btn').style.display='none';
+  var left=document.getElementById('m-left'),right=document.getElementById('m-right');
+  left.innerHTML='';right.innerHTML='';
+  mPairs.forEach(function(p,i){
+    var l=document.createElement('div');l.className='match-item';l.textContent=p.eng;
+    l.dataset.idx=i;l.onclick=function(){clickMatch(l,'left',i)};left.appendChild(l);
+  });
+  rights.forEach(function(p){
+    var r=document.createElement('div');r.className='match-item right-col';r.textContent=p.heb;
+    var oi=mPairs.findIndex(function(x){return x.heb===p.heb});
+    r.dataset.idx=oi;r.onclick=function(){clickMatch(r,'right',oi)};right.appendChild(r);
+  });
+  showScreen('match-screen');
+}
+function clickMatch(el,side,idx){
+  if(el.classList.contains('matched'))return;
+  if(mSelected===null){
+    document.querySelectorAll('.match-item.selected').forEach(function(x){x.classList.remove('selected')});
+    el.classList.add('selected');mSelected={el:el,side:side,idx:idx};
+  } else {
+    if(mSelected.side===side){mSelected.el.classList.remove('selected');el.classList.add('selected');mSelected={el:el,side:side,idx:idx};return}
+    var ok=mSelected.idx===idx;
+    if(ok){
+      el.classList.add('matched');mSelected.el.classList.add('matched');
+      el.classList.remove('selected');mSelected.el.classList.remove('selected');
+      mMatched++;document.getElementById('m-done').textContent=mMatched;
+      var fb=document.getElementById('m-feedback');fb.className='feedback correct';
+      fb.textContent='Matched! '+mPairs[idx].eng+' = '+mPairs[idx].heb;fb.style.display='block';
+      if(mMatched===mPairs.length)document.getElementById('m-done-btn').style.display='block';
+    } else {
+      el.classList.add('wrong-flash');mSelected.el.classList.add('wrong-flash');mWrong++;
+      var fb2=document.getElementById('m-feedback');fb2.className='feedback wrong';fb2.textContent='Not a match \u2014 try again!';fb2.style.display='block';
+      var e1=el,e2=mSelected.el;
+      setTimeout(function(){e1.classList.remove('wrong-flash','selected');e2.classList.remove('wrong-flash','selected')},600);
+    }
+    mSelected=null;
+  }
+}
+function showMatchResult(){showResult('Match it',Math.max(0,mPairs.length-Math.floor(mWrong/2)),mPairs.length,startMatch)}
+
+function startSort(){
+  sortSelected=null;sortPlaced=new Array(sortSteps.length).fill(null);
+  var shuffled=[...sortSteps].sort(function(){return Math.random()-.5});
+  document.getElementById('sort-placed').textContent='0';
+  document.getElementById('sort-feedback').style.display='none';
+  document.getElementById('sort-check-btn').style.display='none';
+  var pool=document.getElementById('sort-pool');pool.innerHTML='';
+  shuffled.forEach(function(step){
+    var el=document.createElement('div');el.className='sort-item';el.textContent=step.text;
+    el.dataset.id=step.id;el.onclick=function(){selectSortItem(el,step.id)};pool.appendChild(el);
+  });
+  var slots=document.getElementById('sort-slots');slots.innerHTML='';
+  sortSteps.forEach(function(_,i){
+    var el=document.createElement('div');el.className='sort-slot';
+    el.innerHTML='<span class="slot-num">'+(i+1)+'</span><span class="slot-text" style="color:#aaa;font-size:13px">click to place here</span>';
+    el.dataset.slot=i;el.onclick=function(){placeInSlot(i)};slots.appendChild(el);
+  });
+  showScreen('sort-screen');
+}
+function selectSortItem(el,id){
+  if(el.classList.contains('placed'))return;
+  document.querySelectorAll('.sort-item').forEach(function(x){x.style.background='';x.style.borderColor=''});
+  if(sortSelected&&sortSelected.id===id){sortSelected=null;return}
+  sortSelected={el:el,id:id};el.style.background='#e6f1fb';el.style.borderColor='#378add';
+}
+function placeInSlot(slotIdx){
+  if(!sortSelected)return;
+  if(sortPlaced[slotIdx]!==null){
+    var prev=sortPlaced[slotIdx];
+    document.querySelectorAll('.sort-item').forEach(function(x){if(parseInt(x.dataset.id)===prev){x.classList.remove('placed');x.style.opacity='';x.style.pointerEvents=''}});
+    sortPlaced[slotIdx]=null;
+  }
+  sortPlaced[slotIdx]=sortSelected.id;
+  sortSelected.el.classList.add('placed');sortSelected.el.style.background='';sortSelected.el.style.borderColor='';
+  var slot=document.querySelectorAll('.sort-slot')[slotIdx];
+  slot.classList.add('filled');
+  slot.querySelector('.slot-text').textContent=sortSteps.find(function(s){return s.id===sortSelected.id}).text;
+  slot.querySelector('.slot-text').style.color='#333';
+  sortSelected=null;
+  var cnt=sortPlaced.filter(function(x){return x!==null}).length;
+  document.getElementById('sort-placed').textContent=cnt;
+  if(cnt===sortSteps.length)document.getElementById('sort-check-btn').style.display='block';
+}
+function checkSort(){
+  var correct=0,slots=document.querySelectorAll('.sort-slot');
+  sortPlaced.forEach(function(id,i){var ok=id===i;if(ok)correct++;slots[i].classList.add(ok?'correct':'wrong')});
+  var fb=document.getElementById('sort-feedback');
+  fb.className='feedback '+(correct===sortSteps.length?'correct':'wrong');
+  fb.textContent=correct===sortSteps.length?'Perfect order! You know how the Gemara builds its argument.':correct+' of '+sortSteps.length+' in the right place. Correct order: Question \u2192 Proof 1 \u2192 Pushback \u2192 Proof 3 \u2192 Clincher.';
+  fb.style.display='block';
+  document.getElementById('sort-check-btn').textContent='See results';
+  document.getElementById('sort-check-btn').onclick=function(){showResult('Sort',correct,sortSteps.length,startSort)};
+}
+
+function startScenario(){scIdx=0;scScore=0;showScreen('scenario-screen');renderScenario()}
+function renderScenario(){
+  var sc=scenarios[scIdx];
+  document.getElementById('sc-num').textContent='Scenario '+(scIdx+1)+' of '+scenarios.length;
+  document.getElementById('sc-score').textContent=scScore;
+  document.getElementById('sc-text').textContent=sc.text+' '+sc.q;
+  document.getElementById('sc-data').textContent=sc.data;
+  buildDots('sc-dots',scenarios.length,scIdx);
+  var o=document.getElementById('sc-opts');o.innerHTML='';
+  sc.opts.forEach(function(txt,i){
+    var b=document.createElement('button');b.className='opt';b.textContent=txt;
+    b.onclick=function(){answerScenario(i)};o.appendChild(b);
+  });
+  document.getElementById('sc-feedback').style.display='none';
+  document.getElementById('sc-next').style.display='none';
+}
+function answerScenario(i){
+  var sc=scenarios[scIdx],btns=document.querySelectorAll('#sc-opts .opt');
+  btns.forEach(function(b){b.disabled=true});
+  btns[i].classList.add(i===sc.ans?'correct':'wrong');
+  if(i!==sc.ans)btns[sc.ans].classList.add('correct');
+  if(i===sc.ans)scScore++;
+  var fb=document.getElementById('sc-feedback');
+  fb.className='feedback '+(i===sc.ans?'correct':'wrong');
+  fb.textContent=(i===sc.ans?'Correct! ':'Not quite. ')+sc.exp;
+  fb.style.display='block';
+  var nx=document.getElementById('sc-next');
+  nx.textContent=scIdx<scenarios.length-1?'Next scenario':'See results';
+  nx.style.display='block';
+}
+function nextScenario(){scIdx++;if(scIdx>=scenarios.length){showResult('Scenarios',scScore,scenarios.length,startScenario);return}renderScenario()}
+</script>
+</body>
+</html>
