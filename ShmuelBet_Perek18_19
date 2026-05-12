@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)file:///C:/Users/nywie/Downloads/shmuel-bet-games_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>שמואל ב פרקים יח–יט — Learning Games</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f0e8;color:#1e2761;min-height:100vh;padding:1.5rem}
+.game{max-width:700px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* HUB */
+.hub-title{font-size:22px;font-weight:700;color:#1e2761;margin-bottom:.15rem}
+.hub-heb{font-size:18px;font-family:Georgia,serif;color:#5a3e00;margin-bottom:.25rem}
+.hub-sub{font-size:13px;color:#6a6a8a;margin-bottom:1.25rem}
+.hub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:1rem}
+.mode-card{background:#fff;border:1px solid #d8c898;border-radius:12px;padding:1.25rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;text-align:left}
+.mode-card:hover{border-color:#c99a2b;box-shadow:0 2px 10px rgba(30,39,97,.1)}
+.mode-card.full{grid-column:1/-1}
+.mode-icon{font-size:26px;margin-bottom:8px}
+.mode-title{font-size:15px;font-weight:600;color:#1e2761;margin-bottom:4px}
+.mode-desc{font-size:12px;color:#5a5a7a;line-height:1.5}
+/* SHARED */
+.score-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #e0d4b0}
+.score-pill{background:#f5ecd8;border-radius:20px;padding:4px 14px;font-size:13px;color:#5a4a2a}
+.score-pill span{font-weight:700;color:#1e2761}
+.back-btn{font-size:13px;color:#888;cursor:pointer;background:none;border:none;padding:0;font-family:inherit}
+.back-btn:hover{color:#1e2761}
+.feedback{font-size:13px;padding:10px 14px;border-radius:8px;line-height:1.6;margin-bottom:.75rem}
+.feedback.correct{background:#eaf3de;color:#27500a}
+.feedback.wrong{background:#fcebeb;color:#501313}
+.feedback.info{background:#e6f1fb;color:#0c447c}
+.next-btn{width:100%;padding:10px;border-radius:8px;border:1px solid #c99a2b;background:transparent;color:#1e2761;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;transition:background .12s}
+.next-btn:hover{background:#f5ead0}
+.pdots{display:flex;gap:5px;margin-bottom:1rem}
+.pd{height:4px;flex:1;border-radius:2px;background:#e0d4b0}
+.pd.done{background:#639922}.pd.cur{background:#c99a2b}
+/* QUIZ */
+.q-label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#aaa;margin-bottom:.4rem}
+.q-text{font-size:15px;font-weight:600;color:#1e2761;line-height:1.5;margin-bottom:.2rem}
+.q-heb{font-size:17px;color:#4a3a1a;direction:rtl;font-family:Georgia,serif;margin-bottom:1rem;text-align:right;background:#fdf8ee;padding:8px 12px;border-radius:8px;border-right:3px solid #c99a2b}
+.opts{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.opt{width:100%;text-align:left;padding:10px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:14px;color:#333;transition:background .12s,border-color .12s;line-height:1.4;font-family:inherit}
+.opt:hover:not(:disabled){background:#fdf5e0;border-color:#c99a2b}
+.opt.correct{background:#eaf3de;border-color:#639922;color:#27500a}
+.opt.wrong{background:#fcebeb;border-color:#a32d2d;color:#501313}
+.opt:disabled{cursor:default}
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.mi{padding:10px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:13px;color:#333;line-height:1.4;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.mi:hover{border-color:#c99a2b;background:#fdf8ee}
+.mi.sel{border-color:#378add;background:#e6f1fb;color:#0c447c}
+.mi.matched{border-color:#639922;background:#eaf3de;color:#27500a;cursor:default}
+.mi.wflash{border-color:#a32d2d;background:#fcebeb;color:#501313}
+.mi.heb{font-family:Georgia,serif;font-size:15px;direction:rtl;text-align:right;justify-content:flex-end}
+/* CONNECTIONS */
+.conn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:1rem}
+.ct{background:#f0ede8;border:1.5px solid #e0ddd7;border-radius:10px;padding:.55rem .3rem;cursor:pointer;text-align:center;font-size:12px;color:#222;transition:background .12s,border-color .12s,transform .1s;min-height:56px;display:flex;align-items:center;justify-content:center;line-height:1.3;user-select:none}
+.ct.heb{font-family:Georgia,serif;font-size:14px}
+.ct:hover{background:#e8e4de;border-color:#c99a2b}
+.ct.csel{background:#e6f1fb;border-color:#378add;color:#0c447c}
+.ct.csolved{cursor:default;border-color:transparent;color:#fff;font-weight:600}
+.ct.cshake{animation:cshk .4s ease}
+@keyframes cshk{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.crow{border-radius:10px;padding:.7rem 1rem;margin-bottom:6px;color:#fff;animation:pop .3s ease}
+.crow-lbl{font-size:10px;opacity:.85;margin-bottom:2px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.crow-words{font-size:12px;opacity:.95}
+.cmist{display:flex;align-items:center;gap:7px;font-size:13px;color:#666;margin-bottom:.75rem}
+.cdot{width:10px;height:10px;border-radius:50%;background:#ddd;display:inline-block}
+.cdot.used{background:#a32d2d}
+.csub{width:100%;padding:9px;border-radius:8px;border:1.5px solid #1e2761;background:#1e2761;color:#fff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;margin-bottom:8px}
+.csub:hover{opacity:.85}
+.csub:disabled{opacity:.35;cursor:default}
+.cbtns{display:flex;gap:8px;margin-bottom:1rem}
+.cbtn{padding:7px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;cursor:pointer;font-size:13px;font-family:inherit}
+.cbtn:hover{background:#f5f0e8}
+/* RESULT */
+.res-wrap{text-align:center;padding:1rem 0}
+.res-score{font-size:52px;font-weight:700;color:#1e2761;margin:1rem 0 .25rem}
+.res-lbl{font-size:14px;color:#5a5a7a;margin-bottom:1.5rem}
+.res-msg{font-size:15px;color:#5a5a7a;margin-bottom:1.5rem;line-height:1.6}
+.tally{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.5rem}
+.tc{background:#f5ead8;border-radius:8px;padding:.75rem;text-align:center}
+.tn{font-size:24px;font-weight:700}
+.tl{font-size:12px;color:#5a5a7a}
+.rbtn{width:100%;padding:10px;border-radius:8px;border:1px solid #c99a2b;background:transparent;color:#1e2761;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:8px;font-family:inherit}
+.rbtn:hover{background:#f5ead0}
+@media(max-width:480px){.hub-grid{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr}.conn-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="game">
+
+<!-- HUB -->
+<div class="screen active" id="hub">
+  <div class="hub-heb">שמואל ב — פרקים יח–יט</div>
+  <div class="hub-title">Shmuel Bet Learning Games</div>
+  <div class="hub-sub">8th Grade Navi — choose a game</div>
+  <div class="hub-grid">
+    <div class="mode-card" onclick="startQuiz()">
+      <div class="mode-icon">❓</div>
+      <div class="mode-title">Quiz</div>
+      <div class="mode-desc">12 questions on both perakim — events, characters, and פסוקים</div>
+    </div>
+    <div class="mode-card" onclick="startMatch()">
+      <div class="mode-icon">🔀</div>
+      <div class="mode-title">מי אמר למי / על מי</div>
+      <div class="mode-desc">Match each quote to its speaker or subject</div>
+    </div>
+    <div class="mode-card full" onclick="startConnections()">
+      <div class="mode-icon">🔗</div>
+      <div class="mode-title">Connections</div>
+      <div class="mode-desc">Group 16 terms from פרקים יח–יט into 4 categories</div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="quiz-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">← games</button>
+    <div class="score-pill">score <span id="q-score">0</span> / <span id="q-total">12</span></div>
+  </div>
+  <div class="pdots" id="q-dots"></div>
+  <div class="q-label" id="q-num"></div>
+  <div class="q-text" id="q-text"></div>
+  <div class="q-heb" id="q-heb" style="display:none"></div>
+  <div class="opts" id="q-opts"></div>
+  <div class="feedback" id="q-fb" style="display:none"></div>
+  <button class="next-btn" id="q-next" style="display:none" onclick="nextQ()">Next</button>
+</div>
+
+<!-- MATCH -->
+<div class="screen" id="match-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">← games</button>
+    <div class="score-pill">matched <span id="m-done">0</span> / <span id="m-total">8</span></div>
+  </div>
+  <div class="q-text" style="margin-bottom:.2rem">Match the quote to its speaker or subject</div>
+  <div style="font-size:13px;color:#6a6a8a;margin-bottom:1rem">Click a quote on the left, then the name on the right</div>
+  <div class="match-grid">
+    <div class="match-col" id="m-left"></div>
+    <div class="match-col" id="m-right"></div>
+  </div>
+  <div class="feedback" id="m-fb" style="display:none"></div>
+  <button class="next-btn" id="m-done-btn" style="display:none" onclick="showMatchResult()">See results</button>
+</div>
+
+<!-- CONNECTIONS -->
+<div class="screen" id="conn-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">← games</button>
+    <div class="score-pill">found <span id="c-found">0</span> / 4</div>
+  </div>
+  <div class="cmist" id="c-mist"></div>
+  <div id="c-solved"></div>
+  <div class="conn-grid" id="c-grid"></div>
+  <div class="feedback" id="c-fb" style="display:none"></div>
+  <button class="csub" id="c-sub" onclick="cSubmit()" disabled="">Submit</button>
+  <div class="cbtns">
+    <button class="cbtn" onclick="cShuffle()">Shuffle</button>
+    <button class="cbtn" onclick="cDesel()">Deselect all</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="result-screen">
+  <div class="res-wrap">
+    <div style="font-size:14px;color:#5a5a7a;margin-bottom:.5rem" id="r-name"></div>
+    <div class="res-score" id="r-score"></div>
+    <div class="res-lbl" id="r-lbl"></div>
+    <div class="tally" id="r-tally"></div>
+    <div class="res-msg" id="r-msg"></div>
+    <button class="rbtn" id="r-replay">Play again</button>
+    <button class="rbtn" onclick="goHub()">Different game</button>
+  </div>
+</div>
+
+</div>
+<script>
+// ── QUIZ DATA ─────────────────────────────────────────────────────────────
+var Qs = [
+  // PEREK 18
+  {q:"Who said 'לְאַט-לִי לַנַּעַר לְאַבְשָׁלוֹם' and what did it mean?",heb:"לְאַט-לִי לַנַּעַר לְאַבְשָׁלוֹם",opts:["Yoav — kill Avshalom quickly","David — deal gently with Avshalom","Achima'atz — bring me news of Avshalom","The soldier — I found Avshalom"],ans:1,exp:"David commanded his officers to deal gently with Avshalom. He loved his son even though Avshalom had rebelled against him."},
+  {q:"How was Avshalom killed?",opts:["Struck by an arrow from Yoav","Captured and executed by David's soldiers","His head got caught in a tree, then Yoav stabbed him","He drowned crossing the Yarden"],ans:2,exp:"Avshalom's head got caught in the branches of a terebinth tree (אֵלָה). A man saw him and told Yoav, who then thrust three spears into Avshalom's heart."},
+  {q:"Why did the soldier who found Avshalom refuse to kill him?",opts:["He didn't have a weapon","He feared David's command to spare Avshalom","Avshalom escaped before he could act","He didn't recognize Avshalom"],ans:1,exp:"The soldier said: 'לֹא-אֶשְׁלַח יָדִי אֶל-בֶּן-הַמֶּלֶךְ' — he heard the king's explicit command to spare Avshalom and feared the consequences."},
+  {q:"Why did Yoav tell Achima'atz 'לֹא אִישׁ בְּשֹׂרָה אַתָּה הַיּוֹם הַזֶּה'?",heb:"לֹא אִישׁ בְּשֹׂרָה אַתָּה הַיּוֹם הַזֶּה",opts:["Because Achima'atz was too slow to run","Because the news of victory was mixed with the bad news of Avshalom's death","Because the Kushi was faster","Because Yoav wanted to deliver the news himself"],ans:1,exp:"According to the Malbim, Yoav understood that the good news of victory was intertwined with the bad news of Avshalom's death. He didn't want Achima'atz to be the one to deliver that painful message to David."},
+  {q:"What did David ask both messengers?",opts:["Did we win the battle?","שָׁלוֹם לַנַּעַר לְאַבְשָׁלוֹם — Is the young man Avshalom safe?","How many soldiers were lost?","Where is Yoav?"],ans:1,exp:"David's first and only concern was his son Avshalom — שָׁלוֹם לַנַּעַר לְאַבְשָׁלוֹם. This shows the depth of his love for Avshalom despite the rebellion."},
+  {q:"What did David do when he heard of Avshalom's death?",opts:["He celebrated the victory","He punished Yoav immediately","He went up to the upper chamber and wept, saying 'בְּנִי אַבְשָׁלוֹם'","He returned to Yerushalayim immediately"],ans:2,exp:"David was overcome with grief and went to the upper chamber, weeping and crying 'בְּנִי אַבְשָׁלוֹם בְּנִי בְנִי אַבְשָׁלוֹם מִי יִתֵּן מוּתִי אֲנִי תַחְתֶּיךָ' — I wish I had died instead of you."},
+  // PEREK 19
+  {q:"What did Yoav say to David about his mourning?",opts:["He consoled David and told him to mourn as long as needed","He said David was shaming his soldiers who saved his life by mourning the one who sought to kill him","He reported on the battle in detail","He asked permission to bury Avshalom with honor"],ans:1,exp:"Yoav rebuked David sharply: 'הֲבַשְׁתָּ הַיּוֹם אֶת-פְּנֵי כָּל-עֲבָדֶיךָ' — you have shamed all your servants. The soldiers who saved you feel humiliated because you mourn the one who hated you."},
+  {q:"Why did Shim'i ben Gera come to greet David at the Yarden?",opts:["To join David's army","To beg forgiveness for cursing David when he fled Yerushalayim","To bring a gift from Binyamin","To spy on David for the remaining rebels"],ans:1,exp:"Shim'i had cursed and thrown stones at David when he fled from Avshalom. Now he rushed to be the first to greet David on his return, begging forgiveness: 'כִּי יָדַע עַבְדְּךָ כִּי אֲנִי חָטָאתִי'."},
+  {q:"What did Avishai want to do to Shim'i, and how did David respond?",opts:["Avishai wanted to honor Shim'i; David agreed","Avishai wanted to execute Shim'i; David said no and swore Shim'i would not die","Avishai wanted to exile Shim'i; David agreed","Avishai wanted to pardon Shim'i; David refused"],ans:1,exp:"Avishai said Shim'i deserved death for cursing מְשִׁיחַ ה'. David rebuked the sons of Tzruya for being 'שָׂטָן' to him, and swore 'לֹא תָמוּת' to Shim'i — today is a day of victory, not execution."},
+  {q:"What was the dispute between Tziva and Mephiboshet?",opts:["Over land belonging to Shaul","Tziva claimed Mephiboshet stayed in Yerushalayim hoping to reclaim the throne; Mephiboshet said Tziva refused to saddle his donkey and lied to the king","Over who was more loyal to David","Over who would receive David's inheritance"],ans:1,exp:"Tziva had told David (Ch. 16) that Mephiboshet hoped to regain the kingdom. Mephiboshet said this was slander — Tziva refused to saddle the donkey for him because he was lame. David split the field between them."},
+  {q:"Why did Barzilai refuse David's invitation to come to Yerushalayim?",opts:["He didn't trust David","He was too poor to maintain life in the palace","He was 80 years old and said he could no longer enjoy food, drink, or music — he would only be a burden","He wanted to stay and fight the remaining rebels"],ans:2,exp:"Barzilai said: 'בֶּן-שְׁמֹנִים שָׁנָה אָנֹכִי הַיּוֹם' — I am 80 years old. He could no longer taste food, hear singers. He asked to die in his own city near his parents' graves, and sent his son Kimham in his place."},
+  {q:"What was the argument between Yisrael and Yehuda at the end of perek 19?",opts:["Over the spoils of war","Over who had the right to escort David back — Yehuda said the king was close to them; Yisrael said they had ten portions in the king","Over who would be the next general","Over the territory of Binyamin"],ans:1,exp:"The men of Yisrael accused Yehuda of 'stealing' the king by escorting him without them. Yehuda responded that the king was close to them. Yisrael countered that they had ten portions in the king. This rivalry foreshadowed the later split of the kingdom."}
+];
+
+// ── MATCH DATA ─────────────────────────────────────────────────────────────
+var matchPairs = [
+  {quote:"לְאַט-לִי לַנַּעַר לְאַבְשָׁלוֹם",name:"דוד המלך"},
+  {quote:"לֹא-אֶשְׁלַח יָדִי אֶל-בֶּן-הַמֶּלֶךְ",name:"האיש שמצא אבשלום"},
+  {quote:"הֲבַשְׁתָּ הַיּוֹם אֶת-פְּנֵי כָּל-עֲבָדֶיךָ",name:"יואב"},
+  {quote:"כִּי יָדַע עַבְדְּךָ כִּי אֲנִי חָטָאתִי",name:"שמעי בן גרא"},
+  {quote:"הֲתַחַת זֹאת לֹא יוּמַת שִׁמְעִי",name:"אבישי בן צרויה"},
+  {quote:"אֲדֹנִי הַמֶּלֶךְ עַבְדִּי רִמָּנִי",name:"מפיבשת"},
+  {quote:"גַּם אֶת-הַכֹּל יִקָּח",name:"מפיבשת"},
+  {quote:"כַּמָּה יְמֵי שְׁנֵי חַיַּי",name:"ברזלי הגלעדי"},
+];
+
+// ── CONNECTIONS DATA ───────────────────────────────────────────────────────
+var CONN_CATS = [
+  {
+    label:"Characters who came to greet David at the Yarden",
+    color:"#185FA5",
+    items:[
+      {t:"שמעי בן גרא",h:true},
+      {t:"ציבא",h:true},
+      {t:"מפיבשת",h:true},
+      {t:"ברזלי",h:true}
+    ]
+  },
+  {
+    label:"Things Avshalom did / happened to him",
+    color:"#993C1D",
+    items:[
+      {t:"נתלה באלה",h:true},
+      {t:"Rebelled against David",h:false},
+      {t:"Killed by Yoav",h:false},
+      {t:"Built a monument",h:false}
+    ]
+  },
+  {
+    label:"Reasons Barzilai gave for refusing to go to Yerushalayim",
+    color:"#3B6D11",
+    items:[
+      {t:"Age 80",h:false},
+      {t:"Can't taste food",h:false},
+      {t:"Can't hear music",h:false},
+      {t:"Wants to die near parents",h:false}
+    ]
+  },
+  {
+    label:"People who argued / rebuked David in perek יט",
+    color:"#533AB7",
+    items:[
+      {t:"יואב",h:true},
+      {t:"אבישי",h:true},
+      {t:"איש ישראל",h:true},
+      {t:"איש יהודה",h:true}
+    ]
+  }
+];
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+var qIdx=0,qScore=0;
+var mSel=null,mMatched=0,mWrong=0,mPairs=[];
+var cTiles=[],cSel=[],cMist=0,cSolved=[],cOver=false;
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function goHub(){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById('hub').classList.add('active')}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active')}
+function buildDots(id,total,cur){var c=document.getElementById(id);c.innerHTML='';for(var i=0;i<total;i++){var d=document.createElement('div');d.className='pd'+(i<cur?' done':i===cur?' cur':'');c.appendChild(d);}}
+function showResult(name,score,total,fn){
+  document.getElementById('r-name').textContent=name+' complete';
+  document.getElementById('r-score').textContent=score+' / '+total;
+  var p=Math.round(score/total*100);
+  document.getElementById('r-lbl').textContent=p+'% correct';
+  document.getElementById('r-msg').textContent=p>=85?'Excellent! You know this perek well.':p>=60?'Good work — review what you missed.':'Keep reviewing — you\'ll get it!';
+  document.getElementById('r-tally').innerHTML='<div class="tc"><div class="tn" style="color:#27500a">'+score+'</div><div class="tl">correct</div></div><div class="tc"><div class="tn" style="color:#a32d2d">'+(total-score)+'</div><div class="tl">missed</div></div>';
+  document.getElementById('r-replay').onclick=fn;
+  showScreen('result-screen');
+}
+
+// ── QUIZ ───────────────────────────────────────────────────────────────────
+function startQuiz(){qIdx=0;qScore=0;showScreen('quiz-screen');renderQ()}
+function renderQ(){
+  var q=Qs[qIdx];
+  document.getElementById('q-num').textContent='Question '+(qIdx+1)+' of '+Qs.length;
+  document.getElementById('q-score').textContent=qScore;
+  document.getElementById('q-text').textContent=q.q;
+  var heb=document.getElementById('q-heb');
+  if(q.heb){heb.textContent=q.heb;heb.style.display='block';}else{heb.style.display='none';}
+  buildDots('q-dots',Qs.length,qIdx);
+  var o=document.getElementById('q-opts');o.innerHTML='';
+  q.opts.forEach(function(txt,i){var b=document.createElement('button');b.className='opt';b.textContent=txt;b.onclick=function(){ansQ(i)};o.appendChild(b);});
+  document.getElementById('q-fb').style.display='none';
+  document.getElementById('q-next').style.display='none';
+}
+function ansQ(i){
+  var q=Qs[qIdx],btns=document.querySelectorAll('#q-opts .opt');
+  btns.forEach(function(b){b.disabled=true});
+  btns[i].classList.add(i===q.ans?'correct':'wrong');
+  if(i!==q.ans)btns[q.ans].classList.add('correct');
+  if(i===q.ans)qScore++;
+  var fb=document.getElementById('q-fb');
+  fb.className='feedback '+(i===q.ans?'correct':'wrong');
+  fb.textContent=(i===q.ans?'Correct! ':'Not quite. ')+q.exp;
+  fb.style.display='block';
+  var nx=document.getElementById('q-next');
+  nx.textContent=qIdx<Qs.length-1?'Next':'See results';
+  nx.style.display='block';
+}
+function nextQ(){qIdx++;if(qIdx>=Qs.length){showResult('Quiz',qScore,Qs.length,startQuiz);return}renderQ()}
+
+// ── MATCH ──────────────────────────────────────────────────────────────────
+function startMatch(){
+  mSel=null;mMatched=0;mWrong=0;
+  mPairs=[...matchPairs].sort(function(){return Math.random()-.5});
+  var rights=[...mPairs].sort(function(){return Math.random()-.5});
+  document.getElementById('m-done').textContent='0';
+  document.getElementById('m-total').textContent=mPairs.length;
+  document.getElementById('m-fb').style.display='none';
+  document.getElementById('m-done-btn').style.display='none';
+  var L=document.getElementById('m-left'),R=document.getElementById('m-right');
+  L.innerHTML='';R.innerHTML='';
+  mPairs.forEach(function(p,i){
+    var l=document.createElement('div');l.className='mi heb';l.textContent=p.quote;
+    l.onclick=function(){clickM(l,'left',i)};L.appendChild(l);
+  });
+  rights.forEach(function(p){
+    var r=document.createElement('div');r.className='mi';r.textContent=p.name;
+    var oi=mPairs.findIndex(function(x){return x.name===p.name&&x.quote===p.quote});
+    // handle duplicate names (מפיבשת appears twice) — match by index order
+    r.onclick=function(){clickM(r,'right',oi)};R.appendChild(r);
+  });
+  showScreen('match-screen');
+}
+function clickM(el,side,idx){
+  if(el.classList.contains('matched'))return;
+  if(mSel===null){
+    document.querySelectorAll('.mi.sel').forEach(function(x){x.classList.remove('sel')});
+    el.classList.add('sel');mSel={el:el,side:side,idx:idx};
+  } else {
+    if(mSel.side===side){mSel.el.classList.remove('sel');el.classList.add('sel');mSel={el:el,side:side,idx:idx};return}
+    var leftIdx=mSel.side==='left'?mSel.idx:idx;
+    var rightIdx=mSel.side==='right'?mSel.idx:idx;
+    var ok=mPairs[leftIdx].name===mPairs[rightIdx].name;
+    if(ok){
+      el.classList.add('matched');mSel.el.classList.add('matched');
+      el.classList.remove('sel');mSel.el.classList.remove('sel');
+      mMatched++;document.getElementById('m-done').textContent=mMatched;
+      var fb=document.getElementById('m-fb');fb.className='feedback correct';
+      fb.textContent='\u2713 Matched: '+mPairs[leftIdx].quote+' \u2014 '+mPairs[leftIdx].name;fb.style.display='block';
+      if(mMatched===mPairs.length)document.getElementById('m-done-btn').style.display='block';
+    } else {
+      el.classList.add('wflash');mSel.el.classList.add('wflash');mWrong++;
+      var fb2=document.getElementById('m-fb');fb2.className='feedback wrong';fb2.textContent='Not a match \u2014 try again!';fb2.style.display='block';
+      var e1=el,e2=mSel.el;
+      setTimeout(function(){e1.classList.remove('wflash','sel');e2.classList.remove('wflash','sel')},600);
+    }
+    mSel=null;
+  }
+}
+function showMatchResult(){showResult('Match it',Math.max(0,mPairs.length-Math.floor(mWrong/2)),mPairs.length,startMatch)}
+
+// ── CONNECTIONS ────────────────────────────────────────────────────────────
+function startConnections(){
+  cTiles=[];cSel=[];cMist=0;cSolved=[];cOver=false;
+  CONN_CATS.forEach(function(cat,ci){
+    cat.items.forEach(function(item){cTiles.push({t:item.t,h:item.h,ci:ci,solved:false});});
+  });
+  cTiles=[...cTiles].sort(function(){return Math.random()-.5});
+  showScreen('conn-screen');
+  renderC();
+}
+function cShuffle(){cTiles=[...cTiles].sort(function(){return Math.random()-.5});cSel=[];renderC();}
+function cDesel(){cSel=[];renderC();}
+function renderC(){
+  var mr=document.getElementById('c-mist');
+  mr.innerHTML='Mistakes remaining: '+Array.from({length:4},function(_,i){return '<span class="cdot'+(i<cMist?' used':'')+'"></span>';}).join('');
+  var sa=document.getElementById('c-solved');sa.innerHTML='';
+  cSolved.forEach(function(ci){
+    var cat=CONN_CATS[ci];
+    var row=document.createElement('div');row.className='crow';row.style.background=cat.color;
+    row.innerHTML='<div class="crow-lbl">'+cat.label+'</div><div class="crow-words">'+cat.items.map(function(i){return i.t;}).join(' \u00B7 ')+'</div>';
+    sa.appendChild(row);
+  });
+  var grid=document.getElementById('c-grid');grid.innerHTML='';
+  cTiles.filter(function(t){return !t.solved;}).forEach(function(tile){
+    var d=document.createElement('div');
+    d.className='ct'+(tile.h?' heb':'')+(cSel.indexOf(tile)>-1?' csel':'');
+    d.textContent=tile.t;
+    d.onclick=function(){cToggle(tile);};
+    grid.appendChild(d);
+  });
+  document.getElementById('c-found').textContent=cSolved.length;
+  document.getElementById('c-sub').disabled=cSel.length!==4;
+  var fb=document.getElementById('c-fb');
+  if(!window._cmsg){fb.style.display='none';}
+  else{fb.className='feedback '+window._cmsgtype;fb.textContent=window._cmsg;fb.style.display='block';}
+}
+function cToggle(tile){
+  if(tile.solved||cOver)return;
+  var idx=cSel.indexOf(tile);
+  if(idx>-1){cSel.splice(idx,1);}else if(cSel.length<4){cSel.push(tile);}
+  window._cmsg=null;renderC();
+}
+function cSubmit(){
+  if(cSel.length!==4)return;
+  var cats=cSel.map(function(t){return t.ci;});
+  var allSame=cats.every(function(c){return c===cats[0];});
+  if(allSame){
+    var ci=cats[0];
+    cSel.forEach(function(t){t.solved=true;});
+    cSolved.push(ci);cSel=[];
+    if(cSolved.length===4){
+      window._cmsg='\uD83C\uDFC6 All 4 categories found! Excellent work!';
+      window._cmsgtype='correct';
+      renderC();
+      document.getElementById('c-sub').style.display='none';
+      return;
+    }
+    window._cmsg='\u2713 Correct! '+CONN_CATS[ci].label;
+    window._cmsgtype='correct';
+  } else {
+    cMist++;
+    var counts={};cats.forEach(function(c){counts[c]=(counts[c]||0)+1;});
+    var oneAway=Math.max.apply(null,Object.values(counts))===3;
+    window._cmsg=oneAway?'One away!':'Not quite \u2014 try again!';
+    window._cmsgtype='wrong';
+    renderC();
+    document.querySelectorAll('.ct.csel').forEach(function(el){
+      el.classList.add('cshake');setTimeout(function(){el.classList.remove('cshake');},400);
+    });
+    setTimeout(function(){
+      cSel=[];
+      if(cMist>=4){
+        cOver=true;
+        CONN_CATS.forEach(function(_,i){if(cSolved.indexOf(i)===-1)cSolved.push(i);});
+        cTiles.forEach(function(t){t.solved=true;});
+        window._cmsg='Out of guesses \u2014 here are the answers!';
+        window._cmsgtype='wrong';
+        document.getElementById('c-sub').style.display='none';
+      }
+      renderC();
+    },700);
+    return;
+  }
+  renderC();
+}
+</script>
+
+
+</body></html>
