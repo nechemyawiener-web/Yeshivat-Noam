@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0057)file:///C:/Users/nywie/Downloads/bava_metzia_games_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bava Metzia 78b — Learning Games</title>
 <style>
@@ -75,42 +75,67 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .replay-btn:hover{background:#f5f0e8}
 .sec-label{font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px;letter-spacing:.05em;text-transform:uppercase}
 .scenario-box{background:#f0ebd8;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;color:#4a4a6a;line-height:1.6}
-@media(max-width:480px){.hub-grid{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr}}
+.conn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:1rem}
+.conn-tile{background:#f0ede8;border:1.5px solid #e0ddd7;border-radius:10px;padding:.55rem .3rem;cursor:pointer;text-align:center;font-size:12px;color:#222;transition:background .12s,border-color .12s,transform .1s;min-height:54px;display:flex;align-items:center;justify-content:center;line-height:1.3;user-select:none}
+.conn-tile.heb{font-family:Georgia,serif;font-size:14px}
+.conn-tile:hover:not(.conn-solved){background:#e8e4de;border-color:#c99a2b}
+.conn-tile.conn-sel{background:#e6f1fb;border-color:#378add;color:#0c447c}
+.conn-tile.conn-solved{cursor:default;border-color:transparent;color:#fff;font-weight:600}
+.conn-tile.conn-shake{animation:cshake .4s ease}
+@keyframes cshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.conn-row{border-radius:10px;padding:.7rem 1rem;margin-bottom:6px;color:#fff;animation:pop .3s ease}
+.conn-row-label{font-size:10px;opacity:.85;margin-bottom:2px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.conn-row-words{font-size:12px;opacity:.95}
+.conn-mistakes{display:flex;align-items:center;gap:7px;font-size:13px;color:#666;margin-bottom:.75rem}
+.conn-dot{width:10px;height:10px;border-radius:50%;background:#ddd;display:inline-block;transition:background .3s}
+.conn-dot.used{background:#a32d2d}
+.conn-submit{width:100%;padding:9px;border-radius:8px;border:1.5px solid #1e2761;background:#1e2761;color:#fff;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;margin-bottom:8px;transition:opacity .12s}
+.conn-submit:hover{opacity:.85}
+.conn-submit:disabled{opacity:.35;cursor:default}
+.conn-btns{display:flex;gap:8px;margin-bottom:1rem}
+.conn-btn{padding:7px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;cursor:pointer;font-size:13px;font-family:inherit;transition:background .12s}
+.conn-btn:hover{background:#f5f0e8}
+@media(max-width:480px){.hub-grid{grid-template-columns:1fr}.match-grid{grid-template-columns:1fr}.conn-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <div class="game">
 
 <div class="screen active" id="hub">
-  <div class="hub-title">&#x1F4DA; Bava Metzia 78b</div>
-  <div class="hub-sub">Learning games &mdash; choose one to play</div>
+  <div class="hub-title">📚 Bava Metzia 78b</div>
+  <div class="hub-sub">Learning games — choose one to play</div>
   <div class="hub-grid">
     <div class="mode-card" onclick="startQuiz()">
-      <div class="mode-icon">&#x2753;</div>
+      <div class="mode-icon">❓</div>
       <div class="mode-title">Quiz challenge</div>
-      <div class="mode-desc">8 questions on both proofs, the &#x05D3;&#x05D7;&#x05D9;&#x05D5;&#x05EA;, and R. Meir vs R. Yehuda</div>
+      <div class="mode-desc">8 questions on both proofs, the דחיות, and R. Meir vs R. Yehuda</div>
     </div>
     <div class="mode-card" onclick="startMatch()">
-      <div class="mode-icon">&#x1F500;</div>
+      <div class="mode-icon">🔀</div>
       <div class="mode-title">Match it</div>
       <div class="mode-desc">Match each English idea to its Aramaic/Hebrew term from the sugya</div>
     </div>
     <div class="mode-card" onclick="startSort()">
-      <div class="mode-icon">&#x1F522;</div>
+      <div class="mode-icon">🔢</div>
       <div class="mode-title">Put it in order</div>
-      <div class="mode-desc">Arrange the Gemara&rsquo;s argument steps in the right sequence</div>
+      <div class="mode-desc">Arrange the Gemara’s argument steps in the right sequence</div>
     </div>
     <div class="mode-card" onclick="startScenario()">
-      <div class="mode-icon">&#x1F9FE;</div>
+      <div class="mode-icon">🧾</div>
       <div class="mode-title">What do they owe?</div>
       <div class="mode-desc">R. Meir or R. Yehuda? Solve real payment scenarios</div>
+    </div>
+    <div class="mode-card" onclick="startConnections()" style="grid-column:1/-1">
+      <div class="mode-icon">🔗</div>
+      <div class="mode-title">Connections</div>
+      <div class="mode-desc">Group 16 terms from the sugya into 4 categories — NYT Connections style</div>
     </div>
   </div>
 </div>
 
 <div class="screen" id="quiz-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <button class="back-btn" onclick="goHub()">← games</button>
     <div class="score-pill">score <span id="q-score">0</span> / <span id="q-total">8</span></div>
   </div>
   <div class="progress-dots" id="q-dots"></div>
@@ -124,7 +149,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="screen" id="match-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <button class="back-btn" onclick="goHub()">← games</button>
     <div class="score-pill">matched <span id="m-done">0</span> / <span id="m-total">6</span></div>
   </div>
   <div class="q-text" style="margin-bottom:.25rem">Match each term to its meaning</div>
@@ -139,10 +164,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="screen" id="sort-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <button class="back-btn" onclick="goHub()">← games</button>
     <div class="score-pill">placed <span id="sort-placed">0</span> / 5</div>
   </div>
-  <div class="q-text" style="margin-bottom:.25rem">Put the Gemara&rsquo;s argument in order</div>
+  <div class="q-text" style="margin-bottom:.25rem">Put the Gemara’s argument in order</div>
   <div style="font-size:13px;color:#4a4a6a;margin-bottom:1rem">Click a step to select it, then click the slot where it belongs</div>
   <div class="sec-label">Steps (click to select)</div>
   <div class="sort-pool" id="sort-pool"></div>
@@ -154,7 +179,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="screen" id="scenario-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">&#8592; games</button>
+    <button class="back-btn" onclick="goHub()">← games</button>
     <div class="score-pill">score <span id="sc-score">0</span> / <span id="sc-total">4</span></div>
   </div>
   <div class="progress-dots" id="sc-dots"></div>
@@ -179,9 +204,131 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 </div>
+<div class="screen" id="conn-screen">
+  <div class="score-bar">
+    <button class="back-btn" onclick="goHub()">← games</button>
+    <div class="score-pill">found <span id="conn-found">0</span> / 4</div>
+  </div>
+  <div class="conn-mistakes" id="conn-mistakes-row"></div>
+  <div id="conn-solved-area"></div>
+  <div class="conn-grid" id="conn-grid"></div>
+  <div class="feedback" id="conn-feedback" style="display:none"></div>
+  <button class="conn-submit" id="conn-submit" onclick="connSubmit()" disabled="">Submit</button>
+  <div class="conn-btns">
+    <button class="conn-btn" onclick="connShuffle()">Shuffle</button>
+    <button class="conn-btn" onclick="connDeselect()">Deselect all</button>
+  </div>
+</div>
+
 <script>
-var Qs=[
-  {q:"What is R. Meir's general principle according to R. Yochanan?",heb:"\u05DB\u05B8\u05DC \u05D4\u05DE\u05BC\u05B7\u05E2\u05B2\u05D1\u05B4\u05D9\u05E8 \u05E2\u05B7\u05DC \u05D3\u05B7\u05E2\u05B7\u05EA \u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA \u05E0\u05B4\u05E7\u05B0\u05E8\u05B8\u05D0 \u05D2\u05B7\u05D6\u05B0\u05DC\u05B8\u05DF",opts:["Anyone who steals sheep is a robber","Anyone who deviates from the owner's instructions is called a robber","A dyer who changes the color owes double","A poor person who buys the wrong item is forgiven"],ans:1,exp:"The Gemara is trying to prove R. Meir holds this rule: even without taking anything by force, going against the owner's instructions makes you legally a robber."},
+var CONN_CATS=[
+  {label:"The four \u05E9\u05D5\u05DE\u05E8\u05D9\u05DD",color:"#3B6D11",items:[{t:"\u05E9\u05D5\u05DE\u05E8 \u05D7\u05D9\u05E0\u05DD",h:true},{t:"\u05E9\u05D5\u05DE\u05E8 \u05E9\u05DB\u05E8",h:true},{t:"\u05E9\u05D5\u05DB\u05E8",h:true},{t:"\u05E9\u05D5\u05D0\u05DC",h:true}]},
+  {label:"R. Meir's principle \u2014 key terms",color:"#185FA5",items:[{t:"\u05D2\u05D6\u05DC\u05DF",h:true},{t:"\u05D3\u05E2\u05EA \u05D1\u05E2\u05DC \u05D4\u05D1\u05D9\u05EA",h:true},{t:"\u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4",h:true},{t:"\u05DE\u05E2\u05D1\u05D9\u05E8",h:true}]},
+  {label:"The dyer case \u2014 R. Yehuda's rule",color:"#993C1D",items:[{t:"\u05E9\u05D1\u05D7",h:true},{t:"\u05D9\u05E6\u05D9\u05D0\u05D4",h:true},{t:"Pay the lesser",h:false},{t:"Improvement vs. cost",h:false}]},
+  {label:"The 4 answers to the Gemara's \u05E9\u05D0\u05DC\u05D4",color:"#533AB7",items:[{t:"\u05DE\u05D7\u05DE\u05EA \u05D0\u05D5\u05D9\u05E8",h:true},{t:"\u05DE\u05D7\u05DE\u05EA \u05D0\u05D5\u05D1\u05E6\u05E0\u05D0",h:true},{t:"\u05D4\u05DB\u05D9\u05E9\u05D4 \u05E0\u05D7\u05E9",h:true},{t:"R. Meir's opinion",h:false}]}
+];
+var cTiles=[],cSel=[],cMistakes=0,cSolved=[],cGameOver=false;
+var C_MAX=4;
+
+function connShuffle(){cTiles=[...cTiles].sort(function(){return Math.random()-.5});cSel=[];renderConn();}
+function connDeselect(){cSel=[];renderConn();}
+
+function startConnections(){
+  cTiles=[];cSel=[];cMistakes=0;cSolved=[];cGameOver=false;
+  CONN_CATS.forEach(function(cat,ci){cat.items.forEach(function(item){cTiles.push({t:item.t,h:item.h,ci:ci,solved:false});});});
+  cTiles=[...cTiles].sort(function(){return Math.random()-.5});
+  showScreen('conn-screen');
+  renderConn();
+}
+
+function renderConn(){
+  var mistRow=document.getElementById('conn-mistakes-row');
+  mistRow.innerHTML='Mistakes remaining: '+Array.from({length:C_MAX},function(_,i){return '<span class="conn-dot'+(i<cMistakes?' used':'')+'"></span>';}).join('');
+
+  var sa=document.getElementById('conn-solved-area');
+  sa.innerHTML='';
+  cSolved.forEach(function(ci){
+    var cat=CONN_CATS[ci];
+    var row=document.createElement('div');row.className='conn-row';row.style.background=cat.color;
+    row.innerHTML='<div class="conn-row-label">'+cat.label+'</div><div class="conn-row-words">'+cat.items.map(function(i){return i.t;}).join(' \u00B7 ')+'</div>';
+    sa.appendChild(row);
+  });
+
+  var grid=document.getElementById('conn-grid');
+  grid.innerHTML='';
+  cTiles.filter(function(t){return !t.solved;}).forEach(function(tile){
+    var d=document.createElement('div');
+    d.className='conn-tile'+(tile.h?' heb':'')+(cSel.indexOf(tile)>-1?' conn-sel':'');
+    d.textContent=tile.t;
+    d.onclick=function(){connToggle(tile);};
+    grid.appendChild(d);
+  });
+
+  document.getElementById('conn-found').textContent=cSolved.length;
+  document.getElementById('conn-submit').disabled=cSel.length!==4;
+
+  var fb=document.getElementById('conn-feedback');
+  if(!window._connMsg){fb.style.display='none';}
+  else{fb.className='feedback '+window._connMsgType;fb.textContent=window._connMsg;fb.style.display='block';}
+}
+
+function connToggle(tile){
+  if(tile.solved||cGameOver)return;
+  var idx=cSel.indexOf(tile);
+  if(idx>-1){cSel.splice(idx,1);}else if(cSel.length<4){cSel.push(tile);}
+  window._connMsg=null;renderConn();
+}
+
+function connSubmit(){
+  if(cSel.length!==4)return;
+  var cats=cSel.map(function(t){return t.ci;});
+  var allSame=cats.every(function(c){return c===cats[0];});
+  if(allSame){
+    var ci=cats[0];
+    cSel.forEach(function(t){t.solved=true;});
+    cSolved.push(ci);cSel=[];
+    if(cSolved.length===4){connWin();return;}
+    window._connMsg='\u2713 Correct! '+CONN_CATS[ci].label;
+    window._connMsgType='correct';
+  } else {
+    cMistakes++;
+    var counts={};cats.forEach(function(c){counts[c]=(counts[c]||0)+1;});
+    var oneAway=Math.max.apply(null,Object.values(counts))===3;
+    window._connMsg=oneAway?'One away!':'Not quite \u2014 try again!';
+    window._connMsgType='wrong';
+    renderConn();
+    document.querySelectorAll('.conn-tile.conn-sel').forEach(function(el){
+      el.classList.add('conn-shake');
+      setTimeout(function(){el.classList.remove('conn-shake');},400);
+    });
+    setTimeout(function(){
+      cSel=[];
+      if(cMistakes>=C_MAX){connLoss();}else{renderConn();}
+    },700);
+    return;
+  }
+  renderConn();
+}
+
+function connWin(){
+  var fb=document.getElementById('conn-feedback');
+  fb.className='feedback correct';
+  fb.textContent=(cMistakes===0?'Perfect! ':'Well done! ')+cMistakes+' mistake'+(cMistakes!==1?'s':'')+'. Bava Metzia master!';
+  fb.style.display='block';
+  document.getElementById('conn-submit').style.display='none';
+}
+
+function connLoss(){
+  cGameOver=true;
+  CONN_CATS.forEach(function(_,i){if(cSolved.indexOf(i)===-1)cSolved.push(i);});
+  cTiles.forEach(function(t){t.solved=true;});
+  window._connMsg='Out of guesses \u2014 here are the answers!';
+  window._connMsgType='wrong';
+  renderConn();
+}
+</script>
+<script>
+var Qs=[heb:"\u05DB\u05B8\u05DC \u05D4\u05DE\u05BC\u05B7\u05E2\u05B2\u05D1\u05B4\u05D9\u05E8 \u05E2\u05B7\u05DC \u05D3\u05B7\u05E2\u05B7\u05EA \u05D1\u05B7\u05BC\u05E2\u05B7\u05DC \u05D4\u05B7\u05D1\u05BC\u05B7\u05D9\u05B4\u05EA \u05E0\u05B4\u05E7\u05B0\u05E8\u05B8\u05D0 \u05D2\u05B7\u05D6\u05B0\u05DC\u05B8\u05DF",opts:["Anyone who steals sheep is a robber","Anyone who deviates from the owner's instructions is called a robber","A dyer who changes the color owes double","A poor person who buys the wrong item is forgiven"],ans:1,exp:"The Gemara is trying to prove R. Meir holds this rule: even without taking anything by force, going against the owner's instructions makes you legally a robber."},
   {q:"In the dyer case, what does R. Meir say the dyer must pay?",heb:"\u05E0\u05D5\u05EA\u05DF \u05DC\u05D5 \u05D3\u05DE\u05D9 \u05E6\u05DE\u05E8\u05D5",opts:["The improvement value (\u05E9\u05B6\u05D1\u05B7\u05D7) only","The cost of dyeing (\u05D9\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4) only","The original value of the wool","Half the wool's value"],ans:2,exp:"R. Meir treats the dyer as a \u05D2\u05D6\u05DC\u05DF who acquired the wool entirely. He pays the original wool value and keeps the dyed result \u2014 the harshest ruling."},
   {q:"According to R. Yehuda, if the improvement (\u05E9\u05B6\u05D1\u05B7\u05D7) is GREATER than the cost (\u05D9\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4), what does the dyer pay?",heb:"\u05D0\u05B4\u05DD \u05D4\u05B7\u05E9\u05BC\u05B0\u05D1\u05B7\u05D7 \u05D9\u05B8\u05EA\u05B5\u05E8 \u05E2\u05B7\u05DC \u05D4\u05B7\u05D9\u05BC\u05B0\u05E6\u05B4\u05D9\u05D0\u05B8\u05D4 \u05E0\u05D5\u05EA\u05DF \u05DC\u05D5 \u05D0\u05EA \u05D4\u05D9\u05E6\u05D9\u05D0\u05D4",opts:["He pays the improvement value","He pays the cost of dyeing","He pays the original wool value","He pays nothing"],ans:1,exp:"When improvement > cost, R. Yehuda says: pay the cost. The owner gets compensated for what the dyer spent and keeps the improved wool."},
   {q:"Why does the Gemara reject the dyer case as proof of R. Meir's principle?",heb:"\u05D3\u05BC\u05B4\u05DC\u05B0\u05DE\u05B8\u05D0 \u05E9\u05B8\u05C1\u05D0\u05E0\u05B5\u05D9 \u05D4\u05B8\u05EA\u05B8\u05DD \u05D3\u05B0\u05E7\u05B7\u05E0\u05B0\u05D9\u05B5\u05D4\u05D5\u05BC \u05D1\u05B0\u05E9\u05B4\u05C1\u05D9\u05E0\u05BC\u05D5\u05BC\u05D9 \u05DE\u05B7\u05E2\u05B2\u05E9\u05C2\u05B6\u05D4",opts:["Because the dyer was working for free","Because R. Meir agrees with R. Yehuda in that case","Because the dyer performed a physical act of transformation (\u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4)","Because the owner never gave permission"],ans:2,exp:"The pushback: maybe the dyer only becomes a \u05D2\u05D6\u05DC\u05DF because he physically transformed the object \u2014 not because of the general deviation rule. \u05E9\u05D9\u05E0\u05D5\u05D9 \u05DE\u05E2\u05E9\u05D4 is a separate way to acquire something."},
@@ -402,5 +549,6 @@ function answerScenario(i){
 }
 function nextScenario(){scIdx++;if(scIdx>=scenarios.length){showResult('Scenarios',scScore,scenarios.length,startScenario);return}renderScenario()}
 </script>
-</body>
-</html>
+
+
+</body></html>
