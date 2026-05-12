@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!-- saved from url=(0062)file:///C:/Users/nywie/Downloads/BavaMetzia_Connections_2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bava Metzia Connections</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.wrap{max-width:640px;width:100%}
+.game{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.title{font-size:18px;font-weight:600;color:#111}
+.subtitle{font-size:13px;color:#888;margin-bottom:1rem}
+.mistakes-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#666;margin-bottom:1rem}
+.dot{width:11px;height:11px;border-radius:50%;background:#ddd;display:inline-block;transition:background .3s}
+.dot.used{background:#E24B4A}
+.how{font-size:13px;color:#888;margin-bottom:1rem;line-height:1.5;border-left:3px solid #eee;padding-left:.75rem}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:1rem}
+.tile{background:#f0ede8;border:1.5px solid #e0ddd7;border-radius:10px;padding:.6rem .35rem;cursor:pointer;text-align:center;font-size:13px;color:#222;transition:background .12s,border-color .12s,transform .1s;min-height:58px;display:flex;align-items:center;justify-content:center;line-height:1.35;user-select:none}
+.tile.heb{font-family:'Times New Roman',serif;font-size:15px}
+.tile:hover:not(.solved):not(.selected){background:#e8e4de;border-color:#ccc}
+.tile.selected{background:#ddeeff;border-color:#378ADD;color:#0C447C}
+.tile.solved{cursor:default;border-color:transparent;color:#fff;font-weight:600}
+.tile.wrong-flash{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.solved-row{border-radius:10px;padding:.8rem 1rem;margin-bottom:7px;color:#fff;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.solved-label{font-size:11px;opacity:.85;margin-bottom:3px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+.solved-words{font-size:13px;opacity:.95}
+.btn-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.btn{padding:8px 18px;border-radius:8px;border:1.5px solid #ddd;background:#fff;color:#333;cursor:pointer;font-size:13px;font-family:inherit;transition:background .12s}
+.btn:hover{background:#f5f5f0}
+.btn.primary{background:#222;color:#fff;border-color:#222}
+.btn.primary:hover{background:#444}
+.btn:disabled{opacity:.35;cursor:default}
+.msg{font-size:14px;padding:9px 14px;border-radius:9px;margin-bottom:.75rem;line-height:1.5;font-weight:500}
+.msg.correct{background:#EAF3DE;color:#27500A}
+.msg.wrong{background:#FCEBEB;color:#501313}
+.msg.info{background:#E6F1FB;color:#0C447C}
+.progress{font-size:12px;color:#999;margin-bottom:.75rem}
+.win-screen{text-align:center;padding:1rem 0 .5rem}
+.win-score{font-size:44px;margin:.5rem 0}
+.win-sub{font-size:15px;color:#555;margin-bottom:1.5rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="game" id="game">
+    <div class="top-bar"><span class="title">Bava Metzia — Connections</span></div>
+    <p class="subtitle">בבא מציעא עח עמוד א–ב</p>
+    <div class="mistakes-row">Mistakes remaining: <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+    <p class="how">Group the 16 terms into 4 categories. Select 4 tiles and press Submit. You have 4 mistakes before the answers are revealed.</p>
+  <div class="grid"><div class="tile heb">שומר חינם</div><div class="tile">Pay the lesser</div><div class="tile heb">יציאה</div><div class="tile heb">הכישה נחש</div><div class="tile heb">שבח</div><div class="tile">R. Meir's opinion</div><div class="tile heb">מעביר</div><div class="tile heb">מחמת אובצנא</div><div class="tile heb">שוכר</div><div class="tile heb">גזלן</div><div class="tile">Improvement vs. cost</div><div class="tile heb">שואל</div><div class="tile heb">שינוי מעשה</div><div class="tile heb">דעת בעל הבית</div><div class="tile heb">שומר שכר</div><div class="tile heb">מחמת אויר</div></div><p class="progress">0 of 4 categories found</p><div class="btn-row"><button class="btn">Shuffle</button><button class="btn">Deselect all</button><button class="btn primary" disabled="">Submit</button></div></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    label: "The four שומרים",
+    color: "#3B6D11",
+    items: [
+      { text: "שומר חינם", heb: true },
+      { text: "שומר שכר", heb: true },
+      { text: "שוכר", heb: true },
+      { text: "שואל", heb: true },
+    ]
+  },
+  {
+    label: "R. Meir's principle — key terms",
+    color: "#185FA5",
+    items: [
+      { text: "גזלן", heb: true },
+      { text: "דעת בעל הבית", heb: true },
+      { text: "שינוי מעשה", heb: true },
+      { text: "מעביר", heb: true },
+    ]
+  },
+  {
+    label: "The dyer case — R. Yehuda's rule",
+    color: "#993C1D",
+    items: [
+      { text: "שבח", heb: true },
+      { text: "יציאה", heb: true },
+      { text: "Pay the lesser", heb: false },
+      { text: "Improvement vs. cost", heb: false },
+    ]
+  },
+  {
+    label: "The 4 answers to the Gemara's שאלה",
+    color: "#533AB7",
+    items: [
+      { text: "מחמת אויר", heb: true },
+      { text: "מחמת אובצנא", heb: true },
+      { text: "הכישה נחש", heb: true },
+      { text: "R. Meir's opinion", heb: false },
+    ]
+  }
+];
+
+let tiles = [], selected = [], mistakes = 0, solvedCats = [], gameOver = false;
+const MAX = 4;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildTiles() {
+  tiles = [];
+  CATEGORIES.forEach((cat, ci) => cat.items.forEach(item => tiles.push({ ...item, catIdx: ci, solved: false })));
+  tiles = shuffle(tiles);
+}
+
+function render() {
+  const g = document.getElementById('game');
+  g.innerHTML = '';
+
+  g.insertAdjacentHTML('beforeend', `
+    <div class="top-bar"><span class="title">Bava Metzia — Connections</span></div>
+    <p class="subtitle">בבא מציעא עח עמוד א–ב</p>
+    <div class="mistakes-row">Mistakes remaining: ${Array.from({length:MAX},(_,i)=>`<span class="dot${i<mistakes?' used':''}"></span>`).join('')}</div>
+    <p class="how">Group the 16 terms into 4 categories. Select 4 tiles and press Submit. You have 4 mistakes before the answers are revealed.</p>
+  `);
+
+  if (window._msg) {
+    const m = document.createElement('div');
+    m.className = 'msg ' + window._msgType;
+    m.textContent = window._msg;
+    g.appendChild(m);
+  }
+
+  solvedCats.forEach(ci => {
+    const cat = CATEGORIES[ci];
+    const row = document.createElement('div');
+    row.className = 'solved-row';
+    row.style.background = cat.color;
+    row.innerHTML = `<div class="solved-label">${cat.label}</div><div class="solved-words">${cat.items.map(i=>i.text).join(' · ')}</div>`;
+    g.appendChild(row);
+  });
+
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  tiles.filter(t => !t.solved).forEach(tile => {
+    const div = document.createElement('div');
+    div.className = 'tile' + (tile.heb ? ' heb' : '') + (selected.includes(tile) ? ' selected' : '');
+    div.textContent = tile.text;
+    div.onclick = () => toggleTile(tile);
+    grid.appendChild(div);
+  });
+  g.appendChild(grid);
+
+  g.insertAdjacentHTML('beforeend', `<p class="progress">${solvedCats.length} of 4 categories found</p>`);
+
+  const btnRow = document.createElement('div');
+  btnRow.className = 'btn-row';
+
+  const shuffleBtn = document.createElement('button');
+  shuffleBtn.className = 'btn';
+  shuffleBtn.textContent = 'Shuffle';
+  shuffleBtn.onclick = () => { tiles = shuffle(tiles); selected = []; window._msg = null; render(); };
+
+  const clearBtn = document.createElement('button');
+  clearBtn.className = 'btn';
+  clearBtn.textContent = 'Deselect all';
+  clearBtn.onclick = () => { selected = []; render(); };
+
+  const submitBtn = document.createElement('button');
+  submitBtn.className = 'btn primary';
+  submitBtn.textContent = 'Submit';
+  submitBtn.disabled = selected.length !== 4;
+  submitBtn.onclick = submitGuess;
+
+  btnRow.appendChild(shuffleBtn);
+  btnRow.appendChild(clearBtn);
+  btnRow.appendChild(submitBtn);
+  g.appendChild(btnRow);
+}
+
+function toggleTile(tile) {
+  if (tile.solved || gameOver) return;
+  if (selected.includes(tile)) selected = selected.filter(t => t !== tile);
+  else if (selected.length < 4) selected.push(tile);
+  window._msg = null;
+  render();
+}
+
+function submitGuess() {
+  if (selected.length !== 4) return;
+  const cats = selected.map(t => t.catIdx);
+  const allSame = cats.every(c => c === cats[0]);
+  if (allSame) {
+    const ci = cats[0];
+    selected.forEach(t => t.solved = true);
+    solvedCats.push(ci);
+    selected = [];
+    if (solvedCats.length === 4) { showWin(); return; }
+    window._msg = '✓ Correct! ' + CATEGORIES[ci].label;
+    window._msgType = 'correct';
+  } else {
+    mistakes++;
+    const counts = {};
+    cats.forEach(c => counts[c] = (counts[c]||0)+1);
+    const oneAway = Math.max(...Object.values(counts)) === 3;
+    window._msgType = 'wrong';
+    window._msg = oneAway ? 'Not quite — you\'re one away!' : 'Not the right grouping. Try again!';
+    render();
+    document.querySelectorAll('.tile.selected').forEach(el => {
+      el.classList.add('wrong-flash');
+      setTimeout(() => el.classList.remove('wrong-flash'), 400);
+    });
+    setTimeout(() => {
+      selected = [];
+      if (mistakes >= MAX) showLoss();
+      else render();
+    }, 700);
+    return;
+  }
+  render();
+}
+
+function showWin() {
+  const g = document.getElementById('game');
+  g.innerHTML = '';
+  solvedCats.forEach(ci => {
+    const cat = CATEGORIES[ci];
+    const row = document.createElement('div');
+    row.className = 'solved-row';
+    row.style.background = cat.color;
+    row.innerHTML = `<div class="solved-label">${cat.label}</div><div class="solved-words">${cat.items.map(i=>i.text).join(' · ')}</div>`;
+    g.appendChild(row);
+  });
+  const score = mistakes === 0 ? '🏆 Perfect!' : mistakes <= 1 ? '⭐ Excellent!' : mistakes <= 2 ? '✓ Well done!' : '✓ Finished!';
+  g.insertAdjacentHTML('beforeend', `<div class="win-screen"><div class="win-score">${score}</div><div class="win-sub">${mistakes} mistake${mistakes!==1?'s':''} — Bava Metzia master!</div><button class="btn" onclick="restart()">Play again</button></div>`);
+}
+
+function showLoss() {
+  gameOver = true;
+  window._msg = 'Out of guesses — here are the answers:';
+  window._msgType = 'info';
+  CATEGORIES.forEach((_,i) => { if (!solvedCats.includes(i)) solvedCats.push(i); });
+  tiles.forEach(t => t.solved = true);
+  render();
+  const btnRow = document.querySelector('.btn-row');
+  if (btnRow) { const r = document.createElement('button'); r.className='btn'; r.textContent='Play again'; r.onclick=restart; btnRow.appendChild(r); }
+}
+
+function restart() {
+  selected = []; mistakes = 0; solvedCats = []; gameOver = false; window._msg = null;
+  buildTiles(); render();
+}
+
+buildTiles();
+render();
+</script>
+
+
+</body></html>
