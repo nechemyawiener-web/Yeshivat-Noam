@@ -1,8 +1,8 @@
 
 <!DOCTYPE html>
-<!-- saved from url=(0056)file:///C:/Users/nywie/Downloads/shmuel-bet-games_1.html -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>שמואל ב פרקים יח–יט — Learning Games</title>
 <style>
@@ -99,20 +99,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="screen active" id="hub">
   <div class="hub-heb">שמואל ב — פרקים יח–יט</div>
   <div class="hub-title">Shmuel Bet Learning Games</div>
-  <div class="hub-sub">8th Grade Navi — choose a game</div>
+  <div class="hub-sub">8th Grade Navi &mdash; choose a game</div>
   <div class="hub-grid">
     <div class="mode-card" onclick="startQuiz()">
-      <div class="mode-icon">❓</div>
+      <div class="mode-icon">&#x2753;</div>
       <div class="mode-title">Quiz</div>
       <div class="mode-desc">12 questions on both perakim — events, characters, and פסוקים</div>
     </div>
     <div class="mode-card" onclick="startMatch()">
-      <div class="mode-icon">🔀</div>
+      <div class="mode-icon">&#x1F500;</div>
       <div class="mode-title">מי אמר למי / על מי</div>
       <div class="mode-desc">Match each quote to its speaker or subject</div>
     </div>
     <div class="mode-card full" onclick="startConnections()">
-      <div class="mode-icon">🔗</div>
+      <div class="mode-icon">&#x1F517;</div>
       <div class="mode-title">Connections</div>
       <div class="mode-desc">Group 16 terms from פרקים יח–יט into 4 categories</div>
     </div>
@@ -122,7 +122,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- QUIZ -->
 <div class="screen" id="quiz-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">← games</button>
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
     <div class="score-pill">score <span id="q-score">0</span> / <span id="q-total">12</span></div>
   </div>
   <div class="pdots" id="q-dots"></div>
@@ -137,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- MATCH -->
 <div class="screen" id="match-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">← games</button>
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
     <div class="score-pill">matched <span id="m-done">0</span> / <span id="m-total">8</span></div>
   </div>
   <div class="q-text" style="margin-bottom:.2rem">Match the quote to its speaker or subject</div>
@@ -153,14 +153,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- CONNECTIONS -->
 <div class="screen" id="conn-screen">
   <div class="score-bar">
-    <button class="back-btn" onclick="goHub()">← games</button>
+    <button class="back-btn" onclick="goHub()">&#8592; games</button>
     <div class="score-pill">found <span id="c-found">0</span> / 4</div>
   </div>
   <div class="cmist" id="c-mist"></div>
   <div id="c-solved"></div>
   <div class="conn-grid" id="c-grid"></div>
   <div class="feedback" id="c-fb" style="display:none"></div>
-  <button class="csub" id="c-sub" onclick="cSubmit()" disabled="">Submit</button>
+  <button class="csub" id="c-sub" onclick="cSubmit()" disabled>Submit</button>
   <div class="cbtns">
     <button class="cbtn" onclick="cShuffle()">Shuffle</button>
     <button class="cbtn" onclick="cDesel()">Deselect all</button>
@@ -444,6 +444,5 @@ function cSubmit(){
   renderC();
 }
 </script>
-
-
-</body></html>
+</body>
+</html>
