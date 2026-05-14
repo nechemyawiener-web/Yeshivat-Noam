@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gemara Daf 78 Battleship</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    h2 { margin: 0; }
+    .subtitle { color: #64748b; margin: 0 0 16px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      background: #111827;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      padding: 18px;
+    }
+    .question-box {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 14px 0;
+      background: #ffffff;
+    }
+    .question {
+      font-size: 19px;
+      font-weight: bold;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #111827;
+      color: white;
+      margin: 3px;
+    }
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    button.outline {
+      background: white;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .answer-box {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .muted { color: #64748b; font-size: 14px; }
+    .result {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 12px 0;
+      background: white;
+    }
+    .grid-wrap { overflow-x: auto; }
+    .battle-grid {
+      display: grid;
+      grid-template-columns: 44px repeat(8, 1fr);
+      gap: 5px;
+      min-width: 540px;
+    }
+    .grid-label {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .cell {
+      height: 58px;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      color: #111827;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cell:hover { background: #f8fafc; }
+    .cell.hit {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+    .cell.miss {
+      background: #dbeafe;
+      border-color: #3b82f6;
+      color: #1e3a8a;
+    }
+    .cell.preview {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+    .message {
+      display: none;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      padding: 18px;
+      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .message.show { display: flex; }
+    .message-title { font-size: 26px; font-weight: bold; }
+    .fleet {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 14px;
+      background: white;
+    }
+    .fleet-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 4px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .fleet-row:last-child { border-bottom: none; }
+    .rules {
+      margin-top: 20px;
+      border: 1px dashed #94a3b8;
+      border-radius: 18px;
+      padding: 14px;
+      background: white;
+      color: #64748b;
+      font-size: 14px;
+    }
+    .hebrew { direction: rtl; text-align: right; font-size: 18px; }
+    @media (max-width: 850px) {
+      .layout { grid-template-columns: 1fr; }
+      .container { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="topbar">
+    <div>
+      <h1>Gemara Daf 78 Battleship</h1>
+      <p class="subtitle">Answer correctly to earn 2 guesses. Sink all ships before using 24 total shots.</p>
+    </div>
+    <div class="badges">
+      <div class="badge">Guesses: <span id="earnedShots">0</span></div>
+      <div class="badge">Shots Left: <span id="shotsLeft">24</span></div>
+      <div class="badge">Ships Sunk: <span id="shipsSunk">0</span>/5</div>
+    </div>
+  </div>
+
+  <div id="gameMessage" class="message">
+    <div>
+      <div id="messageTitle" class="message-title"></div>
+      <div id="messageText" class="muted"></div>
+    </div>
+    <button onclick="resetGame()">New Game</button>
+  </div>
+
+  <div class="layout">
+    <div class="card">
+      <h2>Question Card</h2>
+      <div class="question-box">
+        <div id="questionText" class="question"></div>
+        <button id="correctBtn" onclick="markCorrect()">Correct (+2)</button>
+        <button class="outline" id="incorrectBtn" onclick="markIncorrect()">Incorrect</button>
+        <p id="scoredNote" class="muted" style="display:none;">This question has already been scored.</p>
+      </div>
+
+      <div id="answerBox" class="answer-box" style="display:none;">
+        <p><strong>Answer:</strong> <span id="answerText"></span></p>
+        <p id="hebrewText" class="hebrew"></p>
+        <p id="detailText"></p>
+        <button class="secondary" onclick="nextQuestion()">Next Question</button>
+      </div>
+
+      <div class="fleet">
+        <strong>Fleet</strong>
+        <div id="fleetList"></div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <button class="outline" onclick="toggleTeacherMode()" id="teacherBtn">Teacher Preview</button>
+        <button class="secondary" onclick="resetGame()">Reset Game</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Battle Grid</h2>
+      <p class="muted">Choose a square only after earning guesses.</p>
+      <div id="lastResult" class="result" style="display:none;"></div>
+      <div class="grid-wrap">
+        <div id="battleGrid" class="battle-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <p><strong>Class rule:</strong> A team must answer the content question correctly. If correct, the class earns 2 guesses. Each question can only be scored once.</p>
+    <p><strong>Win:</strong> sink all ships. <strong>Lose:</strong> use all 24 shots before sinking all ships.</p>
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    question: "What masechta are these packets learning?",
+    answer: "Baba Metzia",
+    hebrew: "בבא מציעא",
+    detail: "The packets identify the masechta as Baba Metzia."
+  },
+  {
+    question: "What does Baba Metzia mean?",
+    answer: "Middle Gate",
+    hebrew: "",
+    detail: "The packet translates Baba Metzia as Middle Gate."
+  },
+  {
+    question: "What is the name of the perek?",
+    answer: "השוכר את האומנין",
+    hebrew: "השוכר את האומנין",
+    detail: "The perek means one who hires craftsmen."
+  },
+  {
+    question: "In the רישא, what did the renter change?",
+    answer: "He rented a donkey for the mountain and took it to the valley, or the reverse.",
+    hebrew: "להוליכו בהר והוליכו בבקעה / בבקעה והוליכו בהר",
+    detail: "In the רישא the renter changed the intended place."
+  },
+  {
+    question: "What is the halacha in the רישא?",
+    answer: "The renter is חייב.",
+    hebrew: "חייב",
+    detail: "The mishna says the renter must pay."
+  },
+  {
+    question: "In the מציעתא, if a mountain donkey is taken to the valley and slips, what is the halacha?",
+    answer: "פטור",
+    hebrew: "אם החליקה - פטור",
+    detail: "A mountain donkey is not especially expected to slip in the valley."
+  },
+  {
+    question: "In the מציעתא, if a mountain donkey is taken to the valley and overheats, what is the halacha?",
+    answer: "חייב",
+    hebrew: "ואם הוחמה - חייב",
+    detail: "Mountain donkeys may overheat in the valley, so this is connected to the renter's change."
+  },
+  {
+    question: "In the מציעתא, if a valley donkey is taken to the mountain and slips, what is the halacha?",
+    answer: "חייב",
+    hebrew: "אם החליקה - חייב",
+    detail: "Valley donkeys might slip in the mountains."
+  },
+  {
+    question: "If a valley donkey is taken to the mountain and overheats just from getting hot, what is the halacha?",
+    answer: "פטור",
+    hebrew: "ואם הוחמה - פטור",
+    detail: "Valley donkeys generally do not overheat just because of the mountain."
+  },
+  {
+    question: "If a valley donkey overheats because of going uphill, what is the halacha?",
+    answer: "חייב",
+    hebrew: "אם מחמת המעלה - חייב",
+    detail: "If the uphill climb caused the overheating, the renter's change caused the damage."
+  },
+  {
+    question: "According to דבי רבי ינאי, what is the רישא talking about?",
+    answer: "The donkey died because of the weather / air of the wrong place.",
+    hebrew: "שמתה מחמת אויר",
+    detail: "The weather of the mountain or valley killed it."
+  },
+  {
+    question: "According to רבי יוסי בר חנינא, what is the רישא talking about?",
+    answer: "The donkey died from exhaustion.",
+    hebrew: "שמתה מחמת אובצנא",
+    detail: "It became exhausted because it was taken somewhere it was not used to."
+  },
+  {
+    question: "According to רבה, what is the רישא talking about?",
+    answer: "A local snake bit and killed the donkey.",
+    hebrew: "שהכישה נחש",
+    detail: "The snake danger came from taking the donkey to the wrong place."
+  },
+  {
+    question: "According to רבי חייא בר אבא בשם רבי יוחנן, who is the author of the רישא?",
+    answer: "Rabbi Meir",
+    hebrew: "רבי מאיר היא",
+    detail: "Rabbi Meir holds that changing from the owner's intent makes one a gazlan."
+  },
+  {
+    question: "According to Rabbi Meir, what is someone called if he changes from the owner's intent?",
+    answer: "A gazlan / robber",
+    hebrew: "גזלן",
+    detail: "כל המעביר על דעתו של בעל הבית נקרא גזלן."
+  },
+  {
+    question: "What is the case of the dyer in the Gemara?",
+    answer: "The owner gave wool to dye one color, and the dyer dyed it another color.",
+    hebrew: "לצבוע לו אדום וצבעו שחור / שחור וצבעו אדום",
+    detail: "This is used to discuss Rabbi Meir and Rabbi Yehuda."
+  },
+  {
+    question: "According to Rabbi Meir in the dyer case, what does the dyer pay?",
+    answer: "The original value of the wool.",
+    hebrew: "נותן לו דמי צמרו",
+    detail: "Rabbi Meir treats him like a gazlan."
+  },
+  {
+    question: "According to Rabbi Yehuda in the dyer case, what does the dyer receive?",
+    answer: "Either the cost of supplies or the increase in value, whichever is less.",
+    hebrew: "",
+    detail: "Rabbi Yehuda says the owner pays for the benefit, but only the lower amount."
+  },
+  {
+    question: "Why might the dyer case not prove the general rule of Rabbi Meir?",
+    answer: "Because the dyer made a physical change in the object.",
+    hebrew: "שינוי מעשה",
+    detail: "Maybe he is a gazlan only because there was a physical change."
+  },
+  {
+    question: "What is the case of the poor person and the dinar?",
+    answer: "Someone gives a poor person money for a robe, and he may not buy a tallit instead, or the reverse.",
+    hebrew: "לא יקח בו טלית / טלית לא יקח בו חלוק",
+    detail: "The poor person must use the money for the purpose it was given."
+  },
+  {
+    question: "What alternative reason does the Gemara suggest for the poor person case?",
+    answer: "People may suspect the donor did not keep his promise.",
+    hebrew: "דאתי למחשדיה",
+    detail: "The issue might be suspicion, not the general rule of gazlan."
+  },
+  {
+    question: "What wording does the Gemara use to prove the reason is not suspicion?",
+    answer: "מפני שמעביר על דעתו של בעל הבית",
+    hebrew: "מפני שמעביר על דעתו של בעל הבית",
+    detail: "If the reason were suspicion, the Braita should have said מפני החשד."
+  },
+  {
+    question: "In the blind/tax usage donkey case, does the owner need to provide a new donkey?",
+    answer: "No. He can say, 'Yours is before you.'",
+    hebrew: "הרי שלך לפניך",
+    detail: "The renter still has a usable donkey."
+  },
+  {
+    question: "In the lame/dead donkey case, what must the owner do?",
+    answer: "Provide a replacement donkey.",
+    hebrew: "חייב להעמיד לו חמור",
+    detail: "The original donkey can no longer be used."
+  },
+  {
+    question: "Are blind/taken-for-tax and dead/lame categorized as אונס?",
+    answer: "Yes.",
+    hebrew: "אונס",
+    detail: "The packet classifies both cases as אונס, not negligence."
+  }
+];
+
+const SIZE = 8;
+const MAX_SHOTS = 24;
+const GUESSES_PER_CORRECT = 2;
+
+const SHIPS = [
+  {name:"רישא", length:4},
+  {name:"מציעתא", length:3},
+  {name:"גזלן", length:3},
+  {name:"צבע", length:2},
+  {name:"אונס", length:2}
+];
+
+let questions = [];
+let questionIndex = 0;
+let earnedShots = 0;
+let shotsUsed = 0;
+let hits = new Set();
+let misses = new Set();
+let occupied = new Map();
+let placedShips = [];
+let questionResolved = false;
+let teacherMode = false;
+let gameOver = false;
+
+function shuffle(array){
+  const copy=[...array];
+  for(let i=copy.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]]=[copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function cellKey(r,c){ return r+"-"+c; }
+
+function makeBoard(){
+  occupied = new Map();
+  placedShips = [];
+  SHIPS.forEach(ship=>{
+    let placed=false;
+    let attempts = 0;
+    while(!placed && attempts < 500){
+      attempts++;
+      const horizontal=Math.random()>0.5;
+      const row=Math.floor(Math.random()*SIZE);
+      const col=Math.floor(Math.random()*SIZE);
+      const cells=[];
+      for(let i=0;i<ship.length;i++){
+        const r=row+(horizontal?0:i);
+        const c=col+(horizontal?i:0);
+        if(r>=SIZE || c>=SIZE) break;
+        cells.push(cellKey(r,c));
+      }
+      if(cells.length!==ship.length) continue;
+      if(cells.some(c=>occupied.has(c))) continue;
+      const id=placedShips.length;
+      cells.forEach(c=>occupied.set(c,id));
+      placedShips.push({...ship,id,cells});
+      placed=true;
+    }
+  });
+}
+
+function getCurrentQuestion(){ return questions[questionIndex % questions.length]; }
+
+function getSunkShips(){
+  return placedShips.filter(ship => ship.cells.every(c=>hits.has(c)));
+}
+
+function hasWon(){
+  return placedShips.flatMap(s=>s.cells).every(c=>hits.has(c));
+}
+
+function hasLost(){
+  return !hasWon() && shotsUsed >= MAX_SHOTS;
+}
+
+function updateGameOver(){
+  gameOver = hasWon() || hasLost();
+}
+
+function renderStatus(){
+  document.getElementById("earnedShots").textContent = earnedShots;
+  document.getElementById("shotsLeft").textContent = MAX_SHOTS - shotsUsed;
+  document.getElementById("shipsSunk").textContent = getSunkShips().length;
+}
+
+function renderQuestion(){
+  const q=getCurrentQuestion();
+  document.getElementById("questionText").textContent=q.question;
+  document.getElementById("answerText").textContent=q.answer;
+  document.getElementById("hebrewText").textContent=q.hebrew || "";
+  document.getElementById("hebrewText").style.display = q.hebrew ? "block" : "none";
+  document.getElementById("detailText").textContent=q.detail;
+
+  document.getElementById("answerBox").style.display = questionResolved ? "block" : "none";
+  document.getElementById("scoredNote").style.display = questionResolved ? "block" : "none";
+  document.getElementById("correctBtn").disabled = gameOver || questionResolved;
+  document.getElementById("incorrectBtn").disabled = gameOver || questionResolved;
+}
+
+function renderFleet() {
+  const fleetList = document.getElementById("fleetList");
+  fleetList.innerHTML = "";
+  placedShips.forEach(ship => {
+    const sunk = ship.cells.every(c => hits.has(c));
+    const row = document.createElement("div");
+    row.className = "fleet-row";
+    row.innerHTML = "<span>" + ship.name + "</span><span>" + (sunk ? "Sunk" : ship.length + " spaces") + "</span>";
+    fleetList.appendChild(row);
+  });
+}
+
+function renderGrid(){
+  const grid=document.getElementById("battleGrid");
+  grid.innerHTML="";
+  const blank=document.createElement("div");
+  grid.appendChild(blank);
+
+  for(let c=0;c<SIZE;c++){
+    const label=document.createElement("div");
+    label.className="grid-label";
+    label.textContent=c+1;
+    grid.appendChild(label);
+  }
+
+  for(let r=0;r<SIZE;r++){
+    const rowLabel=document.createElement("div");
+    rowLabel.className="grid-label";
+    rowLabel.textContent=String.fromCharCode(65+r);
+    grid.appendChild(rowLabel);
+
+    for(let c=0;c<SIZE;c++){
+      const key=cellKey(r,c);
+      const cell=document.createElement("button");
+      cell.className="cell";
+      cell.setAttribute("aria-label", String.fromCharCode(65+r) + (c+1));
+
+      if(hits.has(key)){
+        cell.classList.add("hit");
+        cell.textContent="X";
+      } else if(misses.has(key)){
+        cell.classList.add("miss");
+        cell.textContent="•";
+      } else if(teacherMode && occupied.has(key)){
+        cell.classList.add("preview");
+        cell.textContent="S";
+      }
+
+      cell.disabled = gameOver || earnedShots<=0 || hits.has(key) || misses.has(key);
+      cell.onclick=()=>fireAt(r,c);
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function renderGameMessage(){
+  const box = document.getElementById("gameMessage");
+  const title = document.getElementById("messageTitle");
+  const text = document.getElementById("messageText");
+
+  if(!gameOver){
+    box.classList.remove("show");
+    return;
+  }
+
+  box.classList.add("show");
+  if(hasWon()){
+    title.textContent = "Class Victory!";
+    text.textContent = "You sank every ship.";
+  } else {
+    title.textContent = "Mission Failed";
+    text.textContent = "You ran out of shots before sinking every ship.";
+  }
+}
+
+function renderAll(){
+  updateGameOver();
+  renderStatus();
+  renderQuestion();
+  renderFleet();
+  renderGrid();
+  renderGameMessage();
+}
+
+function markCorrect(){
+  if(gameOver || questionResolved) return;
+  earnedShots += GUESSES_PER_CORRECT;
+  questionResolved = true;
+  renderAll();
+}
+
+function markIncorrect(){
+  if(gameOver || questionResolved) return;
+  questionResolved = true;
+  renderAll();
+}
+
+function nextQuestion(){
+  questionIndex++;
+  questionResolved=false;
+  renderAll();
+}
+
+function fireAt(r,c){
+  if(gameOver || earnedShots<=0 || shotsUsed >= MAX_SHOTS) return;
+  const key=cellKey(r,c);
+  if(hits.has(key) || misses.has(key)) return;
+
+  earnedShots--;
+  shotsUsed++;
+
+  const result=document.getElementById("lastResult");
+  result.style.display="block";
+
+  if(occupied.has(key)){
+    hits.add(key);
+    const ship = placedShips[occupied.get(key)];
+    const sunk = ship.cells.every(c => hits.has(c));
+    result.textContent = sunk ? "Hit! You sunk " + ship.name + "." : "Hit!";
+  } else {
+    misses.add(key);
+    result.textContent="Miss.";
+  }
+
+  renderAll();
+}
+
+function toggleTeacherMode() {
+  teacherMode = !teacherMode;
+  document.getElementById("teacherBtn").textContent = teacherMode ? "Hide Ships" : "Teacher Preview";
+  renderGrid();
+}
+
+function resetGame(){
+  questions=shuffle(QUESTIONS);
+  questionIndex=0;
+  earnedShots=0;
+  shotsUsed=0;
+  hits=new Set();
+  misses=new Set();
+  questionResolved=false;
+  teacherMode=false;
+  gameOver=false;
+  document.getElementById("teacherBtn").textContent = "Teacher Preview";
+  document.getElementById("lastResult").style.display="none";
+  makeBoard();
+  renderAll();
+}
+
+resetGame();
+</script>
+</body>
+</html>
