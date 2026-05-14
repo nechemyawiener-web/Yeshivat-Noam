@@ -3,70 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gemara Adventure — Bava Metzia 78</title>
+<title>The Donkey Renter — Mishna Game</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a2e;color:#eee;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
-.wrap{max-width:620px;width:100%}
-.screen{display:none}
-.screen.active{display:block;animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a0a2e;color:#eee;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem}
+.wrap{max-width:640px;width:100%}
+.screen{display:none}.screen.active{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-/* TITLE */
-.title-screen{text-align:center;padding:2rem 1rem}
-.game-title{font-size:32px;font-weight:800;color:#f0c040;margin-bottom:.25rem;text-shadow:0 0 20px rgba(240,192,64,.4)}
-.game-subtitle{font-size:16px;color:#c99a2b;font-family:Georgia,serif;margin-bottom:.5rem}
-.game-desc{font-size:14px;color:#aaa;margin-bottom:2rem;line-height:1.6}
-.start-btn{background:#c99a2b;color:#1a1a2e;border:none;padding:14px 32px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,box-shadow .1s;font-family:inherit}
-.start-btn:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(201,154,43,.4)}
-.stars{font-size:28px;margin-bottom:1rem}
+/* ── SCENE CANVAS ── */
+.scene-canvas{width:100%;height:200px;border-radius:16px 16px 0 0;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.sky{position:absolute;top:0;left:0;right:0;bottom:0;transition:background 1s}
+.ground{position:absolute;bottom:0;left:0;right:0;height:60px;border-radius:0;transition:background 1s}
+.mountain{position:absolute;bottom:60px;transition:opacity .6s}
+.mountain svg{display:block}
+.cloud{position:absolute;top:20px;animation:drift 8s ease-in-out infinite alternate}
+.cloud2{position:absolute;top:40px;animation:drift 11s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(20px)}}
+.sun{position:absolute;top:18px;right:24px;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle,#ffe066,#ffb300);box-shadow:0 0 24px #ffb300aa;transition:all 1s}
+.sun.valley{background:radial-gradient(circle,#ff8c00,#ff4500);box-shadow:0 0 30px #ff450088}
 
-/* GAME */
-.game-screen{background:#16213e;border-radius:16px;padding:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.4)}
-.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid #2a2a4e}
-.score-display{font-size:13px;color:#c99a2b;font-weight:600}
-.chapter-display{font-size:11px;color:#666;letter-spacing:.08em;text-transform:uppercase}
-.lives{font-size:16px}
+/* ── CHARACTERS ── */
+.chars{position:absolute;bottom:60px;left:0;right:0;display:flex;align-items:flex-end;gap:0;transition:all .5s}
 
-.scene-img{font-size:48px;text-align:center;margin-bottom:1rem;animation:bounce .6s ease}
-@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* Shmerel - CSS character */
+.shmerel{position:absolute;bottom:0;left:60px;transition:left .8s ease}
+.shmerel-body{position:relative;width:40px}
+.sh-hat{width:24px;height:10px;background:#2c1a6e;border-radius:3px 3px 0 0;margin:0 auto;position:relative}
+.sh-hat::before{content:'';position:absolute;bottom:0;left:-4px;width:32px;height:4px;background:#2c1a6e;border-radius:2px}
+.sh-head{width:22px;height:22px;background:#f5c592;border-radius:50% 50% 45% 45%;margin:0 auto;position:relative;z-index:2}
+.sh-eyes{display:flex;justify-content:space-around;padding-top:7px;padding-left:2px;padding-right:2px}
+.sh-eye{width:4px;height:4px;background:#222;border-radius:50%}
+.sh-eye.happy{height:2px;border-radius:2px 2px 0 0;margin-top:1px}
+.sh-eye.sad{transform:scaleY(-1) translateY(-2px)}
+.sh-mouth{width:8px;height:4px;border:2px solid #a0522d;border-top:none;border-radius:0 0 4px 4px;margin:2px auto 0}
+.sh-mouth.happy{border-bottom:none;border-top:2px solid #a0522d;border-radius:4px 4px 0 0;margin-top:4px}
+.sh-mouth.sad{width:8px;border-radius:0 0 4px 4px}
+.sh-beard{width:14px;height:6px;background:#8B4513;border-radius:0 0 6px 6px;margin:-1px auto 0;opacity:.7}
+.sh-coat{width:28px;height:32px;background:#2c1a6e;border-radius:4px 4px 12px 12px;margin:0 auto;position:relative}
+.sh-coat::before{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%);width:4px;height:20px;background:#1a0f4e;border-radius:2px}
+.sh-legs{display:flex;justify-content:center;gap:4px;margin-top:1px}
+.sh-leg{width:8px;height:14px;background:#1a0f4e;border-radius:0 0 3px 3px}
+.sh-leg.walk1{animation:walk1 .4s ease-in-out infinite}
+.sh-leg.walk2{animation:walk2 .4s ease-in-out infinite}
+@keyframes walk1{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(15deg) translateY(-3px)}}
+@keyframes walk2{0%,100%{transform:rotate(0deg) translateY(0)}50%{transform:rotate(-15deg) translateY(-3px)}}
+.sh-arm-l{position:absolute;top:6px;left:-6px;width:8px;height:18px;background:#2c1a6e;border-radius:4px;transform-origin:top center}
+.sh-arm-r{position:absolute;top:6px;right:-6px;width:8px;height:18px;background:#2c1a6e;border-radius:4px;transform-origin:top center}
+.sh-arm-l.wave{animation:waveL .5s ease-in-out 3}
+.sh-arm-r.hold{transform:rotate(-40deg)}
+@keyframes waveL{0%,100%{transform:rotate(0)}50%{transform:rotate(-60deg)}}
+.shmerel.bounce{animation:shBounce .3s ease 2}
+@keyframes shBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.shmerel.shake{animation:shShake .4s ease}
+@keyframes shShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-.scene-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#c99a2b;margin-bottom:.4rem}
-.scene-title{font-size:18px;font-weight:700;color:#f0c040;margin-bottom:.75rem;line-height:1.3}
-.scene-text{font-size:14px;color:#ccc;line-height:1.7;margin-bottom:1rem;background:#0f1629;padding:12px 16px;border-radius:10px;border-left:3px solid #c99a2b}
-.heb-quote{font-family:Georgia,serif;font-size:16px;direction:rtl;text-align:right;color:#f0c040;background:#0f1629;padding:10px 14px;border-radius:8px;margin-bottom:1rem;border-right:3px solid #c99a2b}
+/* Donkey */
+.donkey{position:absolute;bottom:0;left:120px;transition:left .8s ease,opacity .5s}
+.donkey-body{position:relative;width:60px}
+.dk-body{width:50px;height:28px;background:#9e9e9e;border-radius:12px 8px 8px 12px;position:relative;margin-left:5px}
+.dk-head{width:24px;height:20px;background:#9e9e9e;border-radius:10px 12px 6px 8px;position:absolute;top:-10px;right:-14px}
+.dk-ear{width:6px;height:12px;background:#7e7e7e;border-radius:3px;position:absolute;top:-10px;left:4px}
+.dk-ear2{width:6px;height:12px;background:#7e7e7e;border-radius:3px;position:absolute;top:-10px;left:12px}
+.dk-eye{width:4px;height:4px;background:#333;border-radius:50%;position:absolute;top:5px;right:4px}
+.dk-nose{width:8px;height:5px;background:#888;border-radius:0 4px 4px 0;position:absolute;bottom:2px;right:-2px}
+.dk-tail{width:4px;height:18px;background:#7e7e7e;border-radius:2px;position:absolute;top:4px;left:-2px;transform:rotate(20deg)}
+.dk-legs{display:flex;gap:6px;margin-left:6px;margin-top:1px}
+.dk-leg{width:7px;height:18px;background:#7e7e7e;border-radius:0 0 3px 3px}
+.dk-leg.walk1{animation:walk1 .45s ease-in-out infinite}
+.dk-leg.walk2{animation:walk2 .45s ease-in-out infinite}
+.dk-leg.walk3{animation:walk1 .45s ease-in-out infinite .2s}
+.dk-leg.walk4{animation:walk2 .45s ease-in-out infinite .2s}
+.donkey.hurt{animation:hurt .5s ease}
+@keyframes hurt{0%,100%{transform:translateY(0)}30%{transform:translateY(-8px) rotate(-5deg)}60%{transform:translateY(4px)}}
 
-.choice-label{font-size:12px;color:#888;margin-bottom:.5rem;letter-spacing:.05em}
-.choices{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
-.choice{background:#1e2a4e;border:1.5px solid #2a3a6e;border-radius:10px;padding:12px 16px;cursor:pointer;font-size:14px;color:#ddd;text-align:left;font-family:inherit;transition:all .15s;line-height:1.4}
-.choice:hover{border-color:#c99a2b;background:#263050;color:#fff}
-.choice.correct{border-color:#4caf50;background:#1a3a1a;color:#90ee90}
-.choice.wrong{border-color:#e53935;background:#3a1a1a;color:#ff9090}
+/* Speech bubble */
+.bubble{position:absolute;background:#fff;color:#222;border-radius:12px;padding:7px 12px;font-size:12px;font-weight:600;white-space:nowrap;top:-38px;left:0;display:none;animation:popIn .2s ease;z-index:10;max-width:180px;white-space:normal;text-align:center;line-height:1.3}
+.bubble::after{content:'';position:absolute;bottom:-8px;left:16px;border:5px solid transparent;border-top:8px solid #fff}
+.bubble.show{display:block}
+.bubble.heb{font-family:Georgia,serif;font-size:13px}
+@keyframes popIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+/* Trees / props */
+.tree{position:absolute;bottom:58px}
+.tree svg{display:block}
+
+/* ── UI PANEL ── */
+.ui-panel{background:#16213e;border-radius:0 0 16px 16px;padding:1.25rem}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.score-pill{background:#c99a2b22;border:1px solid #c99a2b;color:#c99a2b;border-radius:20px;padding:4px 14px;font-size:13px;font-weight:700}
+.lives-row{font-size:18px;letter-spacing:2px}
+.chapter-tag{font-size:11px;background:#2a2a4e;color:#aaa;border-radius:20px;padding:3px 10px;letter-spacing:.05em}
+.progress-bar{height:5px;background:#2a2a4e;border-radius:3px;margin-bottom:1rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#c99a2b,#f0c040);border-radius:3px;transition:width .5s ease}
+.scene-label{font-size:11px;color:#c99a2b;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem}
+.scene-title{font-size:17px;font-weight:700;color:#f0c040;margin-bottom:.6rem;line-height:1.3}
+.story-text{font-size:13px;color:#ccc;line-height:1.7;background:#0f1629;padding:11px 14px;border-radius:10px;margin-bottom:.9rem;border-left:3px solid #c99a2b}
+.heb-line{font-family:Georgia,serif;font-size:15px;direction:rtl;text-align:right;color:#f0c040;background:#0f1629;padding:8px 12px;border-radius:8px;margin-bottom:.9rem;border-right:3px solid #c99a2b}
+.q-text{font-size:14px;font-weight:600;color:#fff;margin-bottom:.6rem}
+.choices{display:flex;flex-direction:column;gap:7px;margin-bottom:.9rem}
+.choice{background:#1e2a4e;border:1.5px solid #2a3a6e;border-radius:10px;padding:10px 14px;cursor:pointer;font-size:13px;color:#ddd;text-align:left;font-family:inherit;transition:all .15s;line-height:1.4}
+.choice:hover:not(:disabled){border-color:#c99a2b;background:#263050;color:#fff}
+.choice.correct{border-color:#4caf50!important;background:#1a3a1a!important;color:#90ee90!important}
+.choice.wrong{border-color:#e53935!important;background:#3a1a1a!important;color:#ff9090!important}
 .choice:disabled{cursor:default}
-
-.result-box{border-radius:10px;padding:14px 16px;margin-bottom:1rem;font-size:14px;line-height:1.6}
+.result-box{border-radius:10px;padding:12px 14px;margin-bottom:.9rem;font-size:13px;line-height:1.6;display:none}
 .result-box.correct{background:#1a3a1a;border:1px solid #4caf50;color:#90ee90}
 .result-box.wrong{background:#3a1a1a;border:1px solid #e53935;color:#ff9090}
-.result-box.info{background:#1a2a3a;border:1px solid #378add;color:#90c8ff}
-.result-title{font-weight:700;font-size:15px;margin-bottom:.4rem}
-.result-detail{font-size:13px;opacity:.9;line-height:1.6}
+.result-title{font-weight:700;margin-bottom:.3rem;font-size:14px}
+.next-btn{width:100%;padding:11px;border-radius:10px;background:#c99a2b;color:#1a1a2e;border:none;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;display:none}
+.next-btn:hover{opacity:.88}
 
-.next-btn{width:100%;padding:11px;border-radius:10px;background:#c99a2b;color:#1a1a2e;border:none;cursor:pointer;font-size:15px;font-weight:700;font-family:inherit;transition:opacity .12s}
-.next-btn:hover{opacity:.85}
+/* ── TITLE SCREEN ── */
+.title-wrap{background:#16213e;border-radius:16px;padding:2rem 1.5rem;text-align:center}
+.game-logo{font-size:56px;margin-bottom:.5rem}
+.game-title{font-size:28px;font-weight:800;color:#f0c040;margin-bottom:.2rem;text-shadow:0 0 20px #f0c04044}
+.game-sub{font-family:Georgia,serif;font-size:16px;color:#c99a2b;margin-bottom:.5rem}
+.game-desc{font-size:13px;color:#aaa;line-height:1.6;margin-bottom:1.5rem;max-width:400px;margin-left:auto;margin-right:auto}
+.start-btn{background:linear-gradient(135deg,#c99a2b,#f0c040);color:#1a1a2e;border:none;padding:14px 36px;border-radius:12px;font-size:16px;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;font-family:inherit;letter-spacing:.02em}
+.start-btn:hover{transform:translateY(-3px);box-shadow:0 6px 20px #c99a2b55}
 
-.progress-bar{height:4px;background:#2a2a4e;border-radius:2px;margin-bottom:1rem;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,#c99a2b,#f0c040);border-radius:2px;transition:width .4s ease}
-
-/* END SCREEN */
-.end-screen{text-align:center;padding:1.5rem}
-.end-trophy{font-size:64px;margin-bottom:.75rem}
+/* ── END SCREEN ── */
+.end-wrap{background:#16213e;border-radius:16px;padding:2rem 1.5rem;text-align:center}
+.end-trophy{font-size:70px;margin-bottom:.5rem;animation:spin .8s ease}
+@keyframes spin{from{transform:rotate(-15deg) scale(.7)}to{transform:rotate(5deg) scale(1)}}
 .end-title{font-size:26px;font-weight:800;color:#f0c040;margin-bottom:.25rem}
-.end-score{font-size:48px;font-weight:700;color:#fff;margin:.75rem 0 .25rem}
-.end-sub{font-size:14px;color:#aaa;margin-bottom:1.5rem}
-.end-msg{font-size:15px;color:#ccc;background:#0f1629;padding:14px;border-radius:10px;line-height:1.6;margin-bottom:1.5rem}
-.end-btn{background:#c99a2b;color:#1a1a2e;border:none;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin:4px}
-.end-btn:hover{opacity:.85}
+.end-score-big{font-size:52px;font-weight:800;color:#fff;margin:.5rem 0 .1rem}
+.end-pct{font-size:14px;color:#aaa;margin-bottom:1rem}
+.end-msg{font-size:14px;color:#ccc;background:#0f1629;padding:14px;border-radius:10px;line-height:1.6;margin-bottom:1.2rem}
+.badges{margin-bottom:1.2rem}
 .badge{display:inline-block;background:#c99a2b22;border:1px solid #c99a2b;color:#c99a2b;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;margin:3px}
+.end-btns{display:flex;gap:10px;justify-content:center}
+.end-btn{background:#c99a2b;color:#1a1a2e;border:none;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.end-btn.outline{background:transparent;border:1.5px solid #c99a2b;color:#c99a2b}
+.end-btn:hover{opacity:.85}
 </style>
 </head>
 <body>
@@ -74,50 +144,114 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <!-- TITLE -->
 <div class="screen active" id="title-screen">
-  <div class="title-screen">
-    <div class="stars">🏺 📜 ⚖️</div>
-    <div class="game-title">Gemara Adventure</div>
-    <div class="game-subtitle">בבא מציעא דף עח</div>
-    <div class="game-desc">
-      You are Shmerel — a 7th grader in ancient Bavel who keeps getting into halachic trouble.<br><br>
-      Navigate 10 real scenarios from the sugya. Make the right decisions, earn points, and find out what R. Meir and R. Yehuda would say about your choices!
-    </div>
-    <button class="start-btn" onclick="startGame()">🎮 Start Adventure</button>
+  <div class="title-wrap">
+    <div class="game-logo">🐴</div>
+    <div class="game-title">The Donkey Renter</div>
+    <div class="game-sub">משנה: השוכר את החמור</div>
+    <div class="game-desc">You are Shmerel — a donkey renter in ancient Bavel.<br>Make halachic decisions based on the Mishna and discover whether you're חייב or פטור!</div>
+    <button class="start-btn" onclick="startGame()">🎮 Start Game</button>
   </div>
 </div>
 
 <!-- GAME -->
 <div class="screen" id="game-screen">
-  <div class="game-screen">
-    <div class="top-bar">
-      <div class="chapter-display" id="chapter-label">Scene 1 of 10</div>
-      <div class="score-display">⭐ <span id="score-display">0</span> pts</div>
-      <div class="lives" id="lives-display">❤️❤️❤️</div>
+  <!-- Scene Canvas -->
+  <div class="scene-canvas" id="scene-canvas">
+    <div class="sky" id="sky"></div>
+    <div class="sun" id="sun"></div>
+    <div class="cloud" id="cloud1">
+      <svg width="80" height="30" viewBox="0 0 80 30"><ellipse cx="40" cy="20" rx="38" ry="16" fill="white" opacity=".85"/><ellipse cx="28" cy="18" rx="20" ry="14" fill="white" opacity=".85"/><ellipse cx="54" cy="18" rx="18" ry="12" fill="white" opacity=".85"/></svg>
     </div>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-    <div class="scene-img" id="scene-img">🏺</div>
-    <div class="scene-label" id="scene-label"></div>
-    <div class="scene-title" id="scene-title"></div>
-    <div class="scene-text" id="scene-text"></div>
-    <div class="heb-quote" id="heb-quote" style="display:none"></div>
-    <div class="choice-label">What do you do?</div>
-    <div class="choices" id="choices"></div>
-    <div class="result-box" id="result-box" style="display:none"></div>
-    <button class="next-btn" id="next-btn" style="display:none" onclick="nextScene()">Continue →</button>
+    <div class="cloud2" id="cloud2" style="left:140px">
+      <svg width="60" height="24" viewBox="0 0 60 24"><ellipse cx="30" cy="16" rx="28" ry="12" fill="white" opacity=".7"/><ellipse cx="20" cy="14" rx="16" ry="10" fill="white" opacity=".7"/><ellipse cx="42" cy="14" rx="14" ry="9" fill="white" opacity=".7"/></svg>
+    </div>
+    <div class="mountain" id="mountain" style="left:10px">
+      <svg width="180" height="120" viewBox="0 0 180 120"><polygon points="90,10 10,120 170,120" fill="#4a6741"/><polygon points="90,10 60,55 120,55" fill="white" opacity=".6"/><polygon points="130,30 80,120 180,120" fill="#3a5731" opacity=".7"/></svg>
+    </div>
+    <div class="tree" id="tree1" style="right:40px">
+      <svg width="30" height="50" viewBox="0 0 30 50"><rect x="12" y="30" width="6" height="20" fill="#5c3d11"/><polygon points="15,0 2,32 28,32" fill="#2d6a2d"/><polygon points="15,8 4,36 26,36" fill="#3a8a3a"/></svg>
+    </div>
+    <div class="tree" id="tree2" style="right:80px">
+      <svg width="24" height="40" viewBox="0 0 24 40"><rect x="9" y="24" width="5" height="16" fill="#5c3d11"/><polygon points="12,0 1,26 23,26" fill="#2d6a2d"/></svg>
+    </div>
+    <div class="ground" id="ground"></div>
+    <!-- Donkey -->
+    <div class="donkey" id="donkey" style="left:140px">
+      <div class="bubble" id="dk-bubble"></div>
+      <div class="donkey-body">
+        <div style="position:relative;width:60px;height:48px">
+          <div class="dk-body">
+            <div class="dk-tail"></div>
+            <div class="dk-head">
+              <div class="dk-ear"></div>
+              <div class="dk-ear2"></div>
+              <div class="dk-eye"></div>
+              <div class="dk-nose"></div>
+            </div>
+          </div>
+        </div>
+        <div class="dk-legs">
+          <div class="dk-leg walk1"></div>
+          <div class="dk-leg walk2"></div>
+          <div class="dk-leg walk3"></div>
+          <div class="dk-leg walk4"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Shmerel -->
+    <div class="shmerel" id="shmerel" style="left:80px">
+      <div class="bubble" id="sh-bubble"></div>
+      <div class="shmerel-body">
+        <div class="sh-hat"></div>
+        <div class="sh-head">
+          <div class="sh-eyes">
+            <div class="sh-eye" id="eye-l"></div>
+            <div class="sh-eye" id="eye-r"></div>
+          </div>
+          <div class="sh-mouth" id="mouth"></div>
+        </div>
+        <div class="sh-beard"></div>
+        <div class="sh-coat">
+          <div class="sh-arm-l" id="arm-l"></div>
+          <div class="sh-arm-r" id="arm-r"></div>
+        </div>
+        <div class="sh-legs">
+          <div class="sh-leg" id="leg-l"></div>
+          <div class="sh-leg" id="leg-r"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UI Panel -->
+  <div class="ui-panel">
+    <div class="top-bar">
+      <div class="chapter-tag" id="chapter-tag">Scene 1</div>
+      <div class="score-pill">⭐ <span id="score-val">0</span></div>
+      <div class="lives-row" id="lives-row">❤️❤️❤️</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="scene-label" id="sc-label"></div>
+    <div class="scene-title" id="sc-title"></div>
+    <div class="story-text" id="sc-text"></div>
+    <div class="heb-line" id="sc-heb" style="display:none"></div>
+    <div class="q-text" id="sc-q"></div>
+    <div class="choices" id="sc-choices"></div>
+    <div class="result-box" id="result-box"></div>
+    <button class="next-btn" id="next-btn" onclick="nextScene()">Continue →</button>
   </div>
 </div>
 
 <!-- END -->
 <div class="screen" id="end-screen">
-  <div class="game-screen">
-    <div class="end-screen">
-      <div class="end-trophy" id="end-trophy">🏆</div>
-      <div class="end-title" id="end-title">Adventure Complete!</div>
-      <div class="end-score" id="end-score"></div>
-      <div class="end-sub" id="end-sub"></div>
-      <div class="end-msg" id="end-msg"></div>
-      <div id="end-badges"></div>
-      <br>
+  <div class="end-wrap">
+    <div class="end-trophy" id="end-trophy">🏆</div>
+    <div class="end-title" id="end-title"></div>
+    <div class="end-score-big" id="end-score"></div>
+    <div class="end-pct" id="end-pct"></div>
+    <div class="end-msg" id="end-msg"></div>
+    <div class="badges" id="end-badges"></div>
+    <div class="end-btns">
       <button class="end-btn" onclick="restartGame()">🔄 Play Again</button>
     </div>
   </div>
@@ -125,311 +259,333 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 </div>
 <script>
+// ── SCENE ENVIRONMENTS ────────────────────────────────────────────────────
+var ENVS = {
+  stable:{sky:'linear-gradient(180deg,#1a3a5c 0%,#2d6a8a 100%)',ground:'#8B6914',sunClass:'',shLeft:80,dkLeft:140,mountain:true,bubbleSh:'Ready to rent a donkey! 🐴',bubbleDk:'Hee-haw!'},
+  mountain:{sky:'linear-gradient(180deg,#1a2a4a 0%,#4a7aaa 100%)',ground:'#5a7a3a',sunClass:'',shLeft:60,dkLeft:130,mountain:true,bubbleSh:'Up the mountain we go!',bubbleDk:'Hee-haw...'},
+  valley:{sky:'linear-gradient(180deg,#2a1a0a 0%,#8a5a2a 100%)',ground:'#7a9a4a',sunClass:'valley',shLeft:80,dkLeft:150,mountain:false,bubbleSh:'I took the wrong route!',bubbleDk:'It\'s so hot! 🥵'},
+  court:{sky:'linear-gradient(180deg,#1a1a3a 0%,#3a3a6a 100%)',ground:'#5a4a2a',sunClass:'',shLeft:70,dkLeft:160,mountain:false,bubbleSh:'I have to go to Beis Din...'},
+};
+
+function setEnv(name, shBubble, dkBubble) {
+  var e = ENVS[name] || ENVS.stable;
+  document.getElementById('sky').style.background = e.sky;
+  document.getElementById('ground').style.background = e.ground||'#7a6a3a';
+  var sun = document.getElementById('sun');
+  sun.className = 'sun' + (e.sunClass?' '+e.sunClass:'');
+  document.getElementById('mountain').style.opacity = e.mountain ? '1' : '0';
+  document.getElementById('shmerel').style.left = (e.shLeft||80)+'px';
+  document.getElementById('donkey').style.left = (e.dkLeft||140)+'px';
+  if(shBubble !== undefined) showBubble('sh', shBubble);
+  if(dkBubble !== undefined) showBubble('dk', dkBubble);
+}
+
+function showBubble(who, text, duration) {
+  var b = document.getElementById(who+'-bubble');
+  if(!text){b.classList.remove('show');return;}
+  b.textContent = text;
+  b.classList.add('show');
+  if(duration !== false) setTimeout(function(){b.classList.remove('show')}, duration||2500);
+}
+
+function setFace(mood) {
+  var el = document.getElementById('eye-l');
+  var er = document.getElementById('eye-r');
+  var m = document.getElementById('mouth');
+  if(mood==='happy'){
+    el.className='sh-eye happy';er.className='sh-eye happy';
+    m.className='sh-mouth happy';
+  } else if(mood==='sad'){
+    el.className='sh-eye sad';er.className='sh-eye sad';
+    m.className='sh-mouth sad';
+  } else {
+    el.className='sh-eye';er.className='sh-eye';
+    m.className='sh-mouth';
+  }
+}
+
+function walk(on) {
+  var ll = document.getElementById('leg-l');
+  var lr = document.getElementById('leg-r');
+  if(on){ll.className='sh-leg walk1';lr.className='sh-leg walk2';}
+  else{ll.className='sh-leg';lr.className='sh-leg';}
+}
+
+// ── SCENES DATA ───────────────────────────────────────────────────────────
 var SCENES = [
-  // ── PACKET 1: MISHNA + SHOMRIM ──────────────────────────────────────────
   {
-    img:"🐴",
-    chapter:"Packet 1 — The Mishna",
-    label:"Scene 1: The Donkey Rental",
-    title:"You rented a donkey to go to the mountains",
-    text:"You rented a donkey from Reuven to travel through the mountains. But then you decide — the valley route is so much nicer! You take the donkey through the valley instead. Halfway through, the donkey slips and breaks its leg. Reuven is furious.",
-    heb:"",
-    question:"What is the halacha? Are you responsible?",
+    env:'stable', envBubbleSh:'Time to rent a donkey!', envBubbleDk:'Hee-haw!',
+    label:'The Mishna — Introduction',
+    title:'Who is a שוכר?',
+    text:'Before the adventure begins — let\'s check your knowledge! Shmerel wants to rent a donkey from Reuven to travel to the mountains. What type of שומר (guardian) is a שוכר (renter)?',
+    heb:'שוֹכֵר — כְּשׁוֹמֵר שָׂכָר',
+    q:'What is the liability of a שוכר?',
     choices:[
-      {text:"Yes — I changed the route, so I'm responsible even though it's an accident", correct:true},
-      {text:"No — a broken leg is an אונס (unavoidable accident), not my fault", correct:false},
-      {text:"Only if the valley is more dangerous than the mountain", correct:false},
-      {text:"Only if Reuven specifically warned me not to go to the valley", correct:false}
+      {t:'Same as a שומר שכר (paid guard) — חייב for theft and loss, פטור for unavoidable accidents',correct:true},
+      {t:'Same as a שומר חינם (unpaid guard) — only liable for negligence',correct:false},
+      {t:'Same as a שואל (borrower) — liable for everything including accidents',correct:false},
+      {t:'Not liable for anything since he\'s paying for the rental',correct:false}
     ],
-    correct_msg:"Correct! ✅ This is the רישא of the Mishna — if you deviate from the agreed route and the donkey is damaged, you are חייב (responsible) even for what looks like an אונס. The deviation itself makes you a פושע (negligent).",
-    wrong_msg:"Not quite. ❌ The רישא of the Mishna rules: if you took the donkey somewhere different from what was agreed, you are חייב for whatever happens — even an אונס. The deviation makes you responsible.",
-    points:10
+    correct:'✅ Correct! A שוכר has the same liability as a שומר שכר — he is חייב for theft and loss, but פטור for unavoidable accidents (אונס). This is the baseline — but things change when you deviate from the owner\'s instructions!',
+    wrong:'❌ A שוכר (renter) has the same liability as a שומר שכר (paid guard) — חייב for theft and loss, פטור for true אונס. But as we\'ll see, this changes when you take the donkey somewhere you weren\'t supposed to!',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"☀️",
-    chapter:"Packet 1 — The Mishna",
-    label:"Scene 2: Mountain vs. Valley",
-    title:"You took the donkey to the valley instead of the mountain",
-    text:"You rented a donkey for the mountain path. You took it to the valley instead. The donkey overheats from the hot valley sun and gets very sick. Reuven says you owe him for the donkey. But you say — I would have had to pay either way!",
-    heb:"",
-    question:"What does the Mishna say — are you חייב for the overheating?",
+    env:'mountain', envBubbleSh:'Up the mountain!', envBubbleDk:'Hee-haw! 🏔️',
+    label:'The Mishna — רישא',
+    title:'You took the donkey the WRONG way!',
+    text:'Shmerel rented the donkey to go through the valley. But then he thought — the mountain path is so scenic! He took the donkey up the mountain instead. Same distance — 10 mil each way. Halfway up, the donkey suddenly dies.',
+    heb:'הַשּׂוֹכֵר אֶת הַחֲמוֹר לְהוֹלִיכוֹ בָּהָר וְהוֹלִיכוֹ בַּבִּקְעָה — וּמֵתָה — חַיָּיב',
+    q:'Is Shmerel חייב (responsible) for the donkey dying?',
     choices:[
-      {text:"Yes — the valley is hotter than the mountain, so this damage is related to my deviation", correct:true},
-      {text:"No — overheating can happen anywhere, it has nothing to do with the valley", correct:false},
-      {text:"Only if the donkey was already sick before the trip", correct:false},
-      {text:"No — since both routes are the same distance", correct:false}
+      {t:'Yes — חייב. Even though the death looks like an accident, I deviated from the route so I\'m responsible',correct:true},
+      {t:'No — פטור. The death was an unavoidable accident (אונס), and both routes were the same distance',correct:false},
+      {t:'Only if the mountain was clearly more dangerous than the valley',correct:false},
+      {t:'It depends what caused the donkey to die',correct:false}
     ],
-    correct_msg:"Excellent! ✅ The מציעתא of the Mishna teaches: if the damage is related to the deviation — חייב. The valley is hotter, so overheating IS related to taking the wrong route.",
-    wrong_msg:"Almost! ❌ The Mishna (מציעתא) rules: if the damage was caused by the deviation, you're חייב. The valley is hotter than the mountain — so overheating is directly linked to your wrong choice.",
-    points:10
+    correct:'✅ Yes! The Mishna rules: חַיָּיב. When you deviate from the agreed route, you become a פושע (negligent person). You are responsible for EVERYTHING that happens — even accidents — because your deviation is what put the donkey in that situation.',
+    wrong:'❌ The Mishna rules חַיָּיב! Even though the death might look like an אונס, the fact that Shmerel took the donkey somewhere he wasn\'t supposed to makes him a פושע. He\'s responsible for whatever happens on the unauthorized route.',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"🧊",
-    chapter:"Packet 1 — The Mishna",
-    label:"Scene 3: The Slippery Slope",
-    title:"You took the donkey to the valley — it slipped",
-    text:"Same deal — you rented a donkey for the mountain, but took it through the valley. This time, the donkey slips on a wet stone in the valley and gets hurt. Reuven says you're responsible. You argue that slipping happens everywhere!",
-    heb:"",
-    question:"Are you חייב for the donkey slipping in the valley?",
+    env:'valley', envBubbleSh:'The valley is so HOT!', envBubbleDk:'I\'m overheating! 🥵',
+    label:'The Mishna — מציעתא',
+    title:'Took the donkey to the valley — it overheated!',
+    text:'Shmerel rented the donkey for the mountain path. He took it through the hot valley instead. The donkey overheated from the blazing valley sun and got sick. Reuven says Shmerel owes him. Shmerel argues: overheating can happen anywhere!',
+    heb:'לְהוֹלִיכָהּ בָּהָר וְהוֹלִיכָה בַּבִּקְעָה — וְאִם הוּחֲמָה — חַיָּיב',
+    q:'Is Shmerel חייב for the donkey overheating?',
     choices:[
-      {text:"No — slipping is more dangerous on the mountain, so the valley was actually safer. The damage isn't related to the deviation.", correct:true},
-      {text:"Yes — I deviated from the route, so I'm responsible for everything", correct:false},
-      {text:"Yes — wet stones are a valley problem, not a mountain problem", correct:false},
-      {text:"Only if Reuven can prove the mountain was safer", correct:false}
+      {t:'Yes — the valley is hotter than the mountain, so the overheating IS related to my deviation. חייב.',correct:true},
+      {t:'No — overheating can happen anywhere, not just in the valley. פטור.',correct:false},
+      {t:'Only if it was summer',correct:false},
+      {t:'Depends if Reuven warned Shmerel about the heat',correct:false}
     ],
-    correct_msg:"Brilliant! ✅ The Mishna rules פטור here — slipping is MORE dangerous on a mountain than a valley. So the deviation actually made it SAFER for this kind of damage. Since the damage isn't related to the deviation — פטור!",
-    wrong_msg:"Not this time! ❌ The Mishna rules פטור — slipping is more of a mountain problem than a valley problem. Since the deviation didn't cause this specific damage (and actually made it safer), you're not responsible.",
-    points:10
-  },
-  // ── PACKET 2: THE GEMARA'S שאלה ──────────────────────────────────────────
-  {
-    img:"📖",
-    chapter:"Packet 2 — The Gemara's שאלה",
-    label:"Scene 4: The Gemara's Question",
-    title:"The Gemara asks a שאלה",
-    text:"The Mishna's רישא says: if you deviate from the route and the donkey dies — חייב, no matter what. But the מציעתא differentiates — sometimes חייב, sometimes פטור. The Gemara asks: why doesn't the רישא also differentiate?",
-    heb:"מַאי שְׁנָא רֵישָׁא דְּלָא קָא מְפַלֵּיג — וּמַאי שְׁנָא סֵיפָא דְּקָא מְפַלֵּיג",
-    question:"Why does the רישא give only ONE halacha (always חייב)?",
-    choices:[
-      {text:"Because the רישא is talking about a specific type of death that is always caused by the deviation — so there's nothing to differentiate", correct:true},
-      {text:"Because the רישא is a stricter rule that applies to all שומרים", correct:false},
-      {text:"Because in the רישא the owner gave explicit permission", correct:false},
-      {text:"Because the רישא only applies when the distances are equal", correct:false}
-    ],
-    correct_msg:"Perfect! ✅ Each Amora answers differently — but they all say the רישא is describing a situation where the damage is ALWAYS caused by the deviation. That's why no differentiation is needed. The damage always connects to the wrong route.",
-    wrong_msg:"Good try! ❌ The answer is that the רישא describes a type of death that is always caused by the deviation itself — so there's nothing to differentiate between. The four Amoraim each explain it differently.",
-    points:15
+    correct:'✅ Exactly right! The Mishna rules חַיָּיב here. The valley is hotter than the mountain — so overheating is DIRECTLY connected to taking the wrong route. When the damage is caused by the deviation → חַיָּיב.',
+    wrong:'❌ The Mishna rules חַיָּיב. The key question is: is the damage related to the deviation? The valley IS hotter than the mountain, so overheating is caused by taking the wrong route. Related damage = חייב.',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"🌬️",
-    chapter:"Packet 2 — Four Answers",
-    label:"Scene 5: R. Yannai's Answer",
-    title:"R. Yannai explains the רישא",
-    text:"R. Yannai says the רישא is talking about a donkey that died from the air/climate (מֵחֲמַת אֲוִיר) of the wrong place. You went to the valley instead of the mountain — and the valley air killed the donkey.",
-    heb:"רֵישָׁא שֶׁמֵּתָה מֵחֲמַת אֲוִיר — דְּאָמְרִינַן אַוֵּירָא דְהַר קַטְלַהּ",
-    question:"How does this answer the Gemara's שאלה?",
+    env:'valley', envBubbleSh:'The donkey slipped!', envBubbleDk:'Whoops! 😵',
+    label:'The Mishna — מציעתא',
+    title:'Took the donkey to the valley — it slipped!',
+    text:'Same scenario — Shmerel was supposed to go through the mountain but took the valley instead. This time, the donkey slipped on a wet stone in the valley and got hurt. Reuven says Shmerel is responsible.',
+    heb:'לְהוֹלִיכָהּ בָּהָר וְהוֹלִיכָה בַּבִּקְעָה — אִם הֶחְלִיקָה — פָּטוּר',
+    q:'Is Shmerel חייב for the donkey slipping in the valley?',
     choices:[
-      {text:"Whether you went to the mountain or valley, the air of the WRONG place killed the donkey — so the death is always connected to the deviation. No differentiation needed.", correct:true},
-      {text:"Mountain air is always more dangerous than valley air — so the death is always your fault", correct:false},
-      {text:"The donkey was allergic to valley air specifically", correct:false},
-      {text:"Air damage is always considered אונס, so you're never responsible", correct:false}
+      {t:'No — פטור! Slipping is more dangerous on a mountain than a valley. The deviation actually made it SAFER for this type of damage.',correct:true},
+      {t:'Yes — חייב. I deviated, so I\'m responsible for everything.',correct:false},
+      {t:'Yes — wet stones are a valley problem specifically.',correct:false},
+      {t:'Depends if the mountain path was also wet',correct:false}
     ],
-    correct_msg:"Excellent! ✅ R. Yannai's point: whether the donkey died from mountain air OR valley air — either way, the death is caused by being in the WRONG place. So we don't need to differentiate — it's always חייב because the wrong climate is always connected to the deviation.",
-    wrong_msg:"Almost! ❌ R. Yannai's answer: in both cases (mountain instead of valley, or valley instead of mountain) the donkey died from the climate of the WRONG place. Since it's always linked to the deviation — always חייב, no differentiation needed.",
-    points:15
+    correct:'✅ Perfect! The Mishna rules פָּטוּר. Slipping is MORE dangerous on a mountain than a valley. Since the deviation actually made it SAFER for this kind of damage — the damage is unrelated to the deviation → פָּטוּר!',
+    wrong:'❌ The Mishna rules פָּטוּר here! Slipping is more dangerous on a mountain than a valley. The deviation actually made it SAFER for this type of accident. Unrelated damage = פטור.',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"🐍",
-    chapter:"Packet 2 — Four Answers",
-    label:"Scene 6: Rabbah's Answer",
-    title:"Rabbah explains the רישא — snakebite!",
-    text:"Rabbah says the רישא is talking about a donkey that was bitten by a snake (הִכִּישָׁהּ נָחָשׁ). You deviated from the agreed route — and on the wrong path, a snake bit the donkey.",
-    heb:"רַבָּה אָמַר — כְּגוֹן שֶׁהִכִּישָׁהּ נָחָשׁ",
-    question:"How does this explain why the רישא always rules חייב?",
+    env:'mountain', envBubbleSh:'Mountain → Valley... slipped!', envBubbleDk:'Ouch! 😖',
+    label:'The Mishna — מציעתא',
+    title:'Took the donkey UP the mountain — it slipped!',
+    text:'This time: Shmerel rented the donkey for the VALLEY path. He took it up the mountain instead. The donkey slipped on a rocky mountain path and got hurt.',
+    heb:'לְהוֹלִיכָהּ בַּבִּקְעָה וְהוֹלִיכָה בָּהָר — אִם הֶחְלִיקָה — חַיָּיב',
+    q:'Is Shmerel חייב for the donkey slipping on the mountain?',
     choices:[
-      {text:"Snakes are found everywhere — but once you deviated, you are responsible for everything that happens on the unauthorized route", correct:true},
-      {text:"There are only snakes in valleys, not mountains", correct:false},
-      {text:"Snakebites are always the renter's fault regardless of route", correct:false},
-      {text:"You could have avoided the snake if you stayed on the right path", correct:false}
+      {t:'Yes — חייב! Slipping is more dangerous on a mountain. I took it somewhere MORE dangerous for this type of damage.',correct:true},
+      {t:'No — פטור. Slipping is an accident that can happen anywhere.',correct:false},
+      {t:'Only if the mountain was unusually slippery',correct:false},
+      {t:'No — since the donkey slipped on its own',correct:false}
     ],
-    correct_msg:"Brilliant! ✅ Rabbah's point: a snakebite could happen anywhere — mountain or valley. But once you deviated from the agreed route, you are fully responsible for EVERYTHING that happens, even random events like a snakebite. No differentiation — always חייב.",
-    wrong_msg:"Good try! ❌ Rabbah's answer: snakes can be found anywhere (mountain OR valley). The key is — once you deviated, you're responsible for whatever happens on the wrong route. So it's always חייב regardless of what caused the death.",
-    points:15
-  },
-  // ── PACKET 3: R. MEIR'S PRINCIPLE + DYER ─────────────────────────────────
-  {
-    img:"🧵",
-    chapter:"Packet 3 — R. Meir's Principle",
-    label:"Scene 7: You're the Dyer",
-    title:"You're a dyer and you dyed the wool the wrong color!",
-    text:"Reuven gives you his beautiful white wool and says: 'Dye it red.' You think blue would look better, so you dye it blue instead. Now Reuven wants his wool back — but it's blue! He comes to the Beis Din. R. Meir and R. Yehuda disagree about what you owe.",
-    heb:"הַנּוֹתֵן צֶמֶר לַצַּבָּע לִצְבּוֹעַ לוֹ אָדוֹם וּצְבָעוֹ שָׁחוֹר",
-    question:"According to R. MEIR — what do you owe Reuven?",
-    choices:[
-      {text:"The original value of the wool — because I'm considered a גזלן (robber) who took his wool", correct:true},
-      {text:"The cost of the dye I used", correct:false},
-      {text:"The increase in value the wool gained from being dyed", correct:false},
-      {text:"Nothing — I improved his wool", correct:false}
-    ],
-    correct_msg:"Correct! ✅ R. Meir rules: you pay the ORIGINAL value of the wool (דְּמֵי צַמְרוֹ). Since you deviated from the owner's instructions, you are considered a גזלן — you 'acquired' the wool through your action, so you pay its original value and you keep the dyed wool.",
-    wrong_msg:"Not quite! ❌ R. Meir says you pay the ORIGINAL value of the wool. By deviating from Reuven's instructions, you are treated as a גזלן — you acquired the wool through your deviation and must compensate the owner for what he lost.",
-    points:15
+    correct:'✅ Correct! The Mishna rules חַיָּיב. The mountain IS more slippery and dangerous than the valley. By taking the donkey to the mountain (against instructions), Shmerel put it in a MORE dangerous situation for this type of damage → חַיָּיב.',
+    wrong:'❌ The Mishna rules חַיָּיב. Slipping is more dangerous on a mountain than a valley. By taking the donkey up the mountain against instructions, Shmerel increased the risk of this exact type of damage. Related damage = חייב.',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"💰",
-    chapter:"Packet 3 — R. Yehuda",
-    label:"Scene 8: R. Yehuda's Calculation",
-    title:"R. Yehuda has a different calculation",
-    text:"Same scenario — you dyed the wool the wrong color. But now let's apply R. Yehuda's opinion. The wool was worth $10. After dyeing it's worth $16. You spent $4 on dye.",
-    heb:"אִם הַשֶּׁבַח יָתֵר עַל הַיְּצִיאָה נוֹתֵן לוֹ אֶת הַיְּצִיאָה",
-    question:"According to R. YEHUDA — what does Reuven owe you for the dye?",
+    env:'valley', envBubbleSh:'Why is it so HOT?!', envBubbleDk:'I can\'t take this heat! 🔥',
+    label:'The Mishna — מציעתא',
+    title:'Took the donkey to the mountain — it overheated?',
+    text:'Shmerel was supposed to go through the valley but took the mountain path instead. On the mountain, the donkey overheated. Shmerel is confused — he thought the mountain would be cooler!',
+    heb:'',
+    q:'Is Shmerel חייב for the donkey overheating on the mountain?',
     choices:[
-      {text:"$4 — the cost of the dye (יציאה), because the improvement ($6) is greater than the cost ($4)", correct:true},
-      {text:"$6 — the improvement in value (שבח)", correct:false},
-      {text:"Nothing — you made a mistake so you get nothing", correct:false},
-      {text:"$10 — the full value of the wool", correct:false}
+      {t:'No — פטור. Heat is worse in the valley than the mountain. The deviation actually made it SAFER from heat. Unrelated damage.',correct:true},
+      {t:'Yes — חייב. I deviated, so I\'m responsible for everything.',correct:false},
+      {t:'Yes — overheating can happen anywhere, so it\'s always my fault',correct:false},
+      {t:'Only if the Beis Din decides',correct:false}
     ],
-    correct_msg:"Perfect! ✅ R. Yehuda's rule: pay whichever is LESS — the cost (יציאה = $4) or the improvement (שבח = $6). Here improvement ($6) > cost ($4), so Reuven pays you the cost: $4. The owner keeps the improved wool.",
-    wrong_msg:"Almost! ❌ R. Yehuda: compare the cost of supplies (יציאה = $4) to the improvement in value (שבח = $6). Pay whichever is LESS. Since $4 < $6, Reuven owes you $4 for the dye.",
-    points:15
+    correct:'✅ Right! The Mishna rules פָּטוּר — the valley is hotter than the mountain, not the other way around. By going to the mountain, Shmerel actually reduced the risk of overheating. The damage is unrelated to the deviation → פָּטוּר.',
+    wrong:'❌ The Mishna rules פָּטוּר. The valley is hotter than the mountain — so overheating on the mountain is NOT related to taking the wrong route. In fact, the mountain is cooler! Unrelated damage = פטור.',
+    pts:10, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"👕",
-    chapter:"Packet 3 — T-Shirt Scenario",
-    label:"Scene 9: The Yeshivat Noam T-Shirt",
-    title:"You're Shmerel — you painted the wrong design!",
-    text:"Berel gives you his white T-shirt worth $10. He says: 'Spray paint the words Yeshivat Noam 25 on it.' Instead, you spray paint the logo. The T-shirt is now worth $15. The spray paint cost $4.\n\nNow Berel wants to know — according to R. MEIR, what do you owe him?",
-    heb:"",
-    question:"According to R. Meir — what does Shmerel owe Berel?",
+    env:'mountain', envBubbleSh:'But the mountain caused it!', envBubbleDk:'The climb got me... 😵',
+    label:'The Mishna — Special Case',
+    title:'The donkey overheated because of the CLIMB',
+    text:'Shmerel rented the donkey for the valley but took it up the mountain. On the way up the steep mountain climb (מַעֲלָה), the donkey got exhausted from the effort of climbing and overheated. This is a special case!',
+    heb:'',
+    q:'Is Shmerel חייב if the overheating was specifically caused by the mountain CLIMB?',
     choices:[
-      {text:"$10 — the original value of the T-shirt. Shmerel is a גזלן and keeps the shirt.", correct:true},
-      {text:"$5 — the increase in value ($15 - $10)", correct:false},
-      {text:"$4 — the cost of the spray paint", correct:false},
-      {text:"Nothing — Berel's shirt went up in value!", correct:false}
+      {t:'Yes — חייב! The steep climb is a mountain-specific cause. The deviation directly caused this overheating.',correct:true},
+      {t:'No — פטור. Overheating is always unrelated to the route.',correct:false},
+      {t:'No — the donkey should have rested',correct:false},
+      {t:'Only if the mountain was steeper than average',correct:false}
     ],
-    correct_msg:"Excellent! ✅ According to R. Meir: Shmerel pays Berel the ORIGINAL value of the shirt — $10. Shmerel is treated as a גזלן who 'acquired' the shirt through his deviation. He keeps the now-$15 shirt and pays $10 to Berel.",
-    wrong_msg:"Not quite! ❌ R. Meir: Shmerel pays $10 (the original value). He deviated from instructions = גזלן. He acquired the shirt, so he pays its original value and keeps it.",
-    points:15
+    correct:'✅ Excellent! The Mishna has a special rule: if the overheating was caused specifically by the CLIMB (מֵחֲמַת הַמַּעֲלָה), then it IS related to the deviation — and Shmerel is חַיָּיב! The climb is unique to the mountain — he caused that.',
+    wrong:'❌ The Mishna rules חַיָּיב for this case! When the overheating is caused specifically by the difficulty of the mountain climb (מַעֲלָה), that IS related to the deviation of going to the mountain. Related damage = חייב.',
+    pts:15, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   },
   {
-    img:"🤲",
-    chapter:"Packet 3 — R. Meir's Principle",
-    label:"Scene 10: The Tzedakah Dilemma",
-    title:"You got tzedakah money for a specific item",
-    text:"A generous donor gives you a coin and says: 'Use this to buy yourself a חָלוּק (shirt).' You see an amazing deal on a טַלִּית (cloak) — same price, but way nicer and more useful. What does R. Meir say?",
-    heb:"הַנּוֹתֵן דִּינָר לְעָנִי לִיקַּח לוֹ חָלוּק — לֹא יִקַּח בּוֹ טַלִּית",
-    question:"According to R. Meir, what should you do?",
+    env:'court', envBubbleSh:'The donkey went blind!',
+    label:'The Mishna — סיפא',
+    title:'The donkey went blind — הִבְרִיקָה!',
+    text:'While Shmerel was using the rented donkey, it suddenly went blind (הִבְרִיקָה) — a completely random event with no connection to anything Shmerel did. What does the Mishna say?',
+    heb:'',
+    q:'What does Reuven say to Shmerel when the donkey suddenly went blind?',
     choices:[
-      {text:"Buy the חָלוּק (shirt) — I must follow the donor's exact instructions even if the טַלִּית is a better deal", correct:true},
-      {text:"Buy the טַלִּית — same price, and it's more useful. The donor would agree!", correct:false},
-      {text:"Ask the donor first, then decide", correct:false},
-      {text:"Split the money between both items", correct:false}
+      {t:'"הֲרֵי שֶׁלְּךָ לְפָנֶיךָ" — This is the donkey you get to use. I\'m not responsible to replace it.',correct:true},
+      {t:'"I\'ll pay for a new donkey" - since it was not your fault',correct:false},
+      {t:'"I\'ll pay half the value" — since it partially happened on my watch',correct:false},
+      {t:'"I\'ll say tehillim"',correct:false}
     ],
-    correct_msg:"🏆 Perfect final answer! ✅ R. Meir rules: you MUST buy the חָלוּק. כָּל הַמַּעֲבִיר עַל דַּעַת בַּעַל הַבַּיִת נִקְרָא גַּזְלָן — anyone who deviates from the owner's intent is called a robber. It doesn't matter if the טַלִּית is better — the donor's instruction is what matters!",
-    wrong_msg:"So close but not quite! ❌ R. Meir's principle: כָּל הַמַּעֲבִיר עַל דַּעַת בַּעַל הַבַּיִת נִקְרָא גַּזְלָן. Deviating from the donor's instructions — even for something better — makes you a גזלן. You must buy the חָלוּק.",
-    points:20
+    correct:'✅ Correct! When something completely random happens to the donkey (like blindness or being conscripted — אַנְגַּרְיָא), the owner says הֲרֵי שֶׁלְּךָ לְפָנֶיךָ — "here is your property before you."',
+    wrong:'❌ The Mishna says: when the donkey suffers a random unavoidable event (blindness, conscription), the owner says הֲרֵי שֶׁלְּךָ לְפָנֶיךָ — here is your animal, I\'m returning it. True אונס = not responsible.',
+    pts:15, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
+  },
+  {
+    env:'court', envBubbleSh:'The donkey DIED!',
+    label:'The Mishna — סיפא',
+    title:'The donkey died — what does Shmerel owe?',
+    text:'While Shmerel was renting the donkey (without deviating from the route), the donkey suddenly died or broke its leg. This was a random event, not caused by anything Shmerel did wrong.',
+    heb:'',
+    q:'What does Reuven owe Shmerel when the donkey unexpectedly died?',
+    choices:[
+      {t:'Reuven must provide Shmerel with a replacement donkey — חַיָּיב לְהַעֲמִיד לוֹ חֲמוֹר',correct:true},
+      {t:'Nothing — the donkey dying is a true אונס, so Reuven can say "הֲרֵי שֶׁלְּךָ לְפָנֶיךָ"',correct:false},
+      {t:'Half the value of the donkey',correct:false},
+      {t:'The cost of a new donkey minus the rental fee',correct:false}
+    ],
+    correct:'✅ Right! The Mishna rules: if the donkey died or broke its leg, the renter (שוכר) must provide a REPLACEMENT donkey — חַיָּיב לְהַעֲמִיד לוֹ חֲמוֹר. Unlike blindness (which ends the deal), death means the renter has to give the owner a working donkey to complete the job.',
+    wrong:'❌ The Mishna rules חַיָּיב לְהַעֲמִיד לוֹ חֲמוֹר — Shmerel must provide a replacement donkey! Even though the death was random, the renter has an obligation to ensure the owner has a donkey to replace what was lost.',
+    pts:15, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
+  },
+  {
+    env:'court', envBubbleSh:'Time for the big question!',
+    label:'The Mishna — Key Principle',
+    title:'The BIG question — what is the rule?',
+    text:'Shmerel has been through a lot! Now the Beis Din asks him the big question to test his understanding of the entire Mishna. What is the core principle that determines whether Shmerel is חייב or פטור?',
+    heb:'',
+    q:'What is the KEY rule from the Mishna for deciding חייב or פטור when you deviated?',
+    choices:[
+      {t:'If the damage was CAUSED by the deviation — חייב. If the damage is unrelated to the deviation — פטור.',correct:true},
+      {t:'If you deviated from the route — always חייב for everything, no exceptions.',correct:false},
+      {t:'If the damage was an אונס — always פטור, even if you deviated.',correct:false},
+      {t:'It depends on the distance — if both routes are equal, always פטור.',correct:false}
+    ],
+    correct:'🏆 PERFECT! That\'s the core rule of the entire Mishna! Related damage (the deviation caused it or made it more likely) → חַיָּיב. Unrelated damage (the deviation had nothing to do with it, or even made it safer) → פָּטוּר. You truly understand the Mishna!',
+    wrong:'❌ The key rule is: if the damage is RELATED to the deviation — חייב. If it\'s UNRELATED (or the deviation made it safer) — פטור. For example: overheating in the valley = related = חייב. Slipping in the valley when you should be on the mountain = unrelated (mountains are more slippery) = פטור.',
+    pts:20, mood_correct:'happy', mood_wrong:'sad', anim_correct:'bounce', anim_wrong:'shake'
   }
 ];
 
-var currentScene = 0;
-var score = 0;
-var lives = 3;
-var answered = false;
+var idx=0, score=0, lives=3, answered=false;
+var MAX_PTS = SCENES.reduce(function(a,s){return a+s.pts},0);
 
-function startGame() {
-  currentScene = 0; score = 0; lives = 3; answered = false;
-  showScreen('game-screen');
+function startGame(){idx=0;score=0;lives=3;answered=false;showScreen('game-screen');renderScene();}
+function restartGame(){startGame();}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');}
+
+function renderScene(){
+  answered=false;
+  var s=SCENES[idx];
+  setEnv(s.env, s.envBubbleSh, s.envBubbleDk);
+  setFace('normal');
+  walk(false);
+
+  document.getElementById('chapter-tag').textContent='Scene '+(idx+1)+' of '+SCENES.length;
+  document.getElementById('score-val').textContent=score;
+  document.getElementById('lives-row').textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);
+  document.getElementById('prog').style.width=(idx/SCENES.length*100)+'%';
+  document.getElementById('sc-label').textContent=s.label;
+  document.getElementById('sc-title').textContent=s.title;
+  document.getElementById('sc-text').textContent=s.text;
+  var heb=document.getElementById('sc-heb');
+  if(s.heb){heb.textContent=s.heb;heb.style.display='block';}else{heb.style.display='none';}
+  document.getElementById('sc-q').textContent=s.q;
+
+  var ch=document.getElementById('sc-choices');ch.innerHTML='';
+  var shuffled=s.choices.map(function(c){return c}).sort(function(){return Math.random()-.5});
+  shuffled.forEach(function(c){
+    var b=document.createElement('button');b.className='choice';b.textContent=c.t;b.dataset.correct=c.correct;
+    b.onclick=function(){if(!answered)pick(b,c.correct,s);};
+    ch.appendChild(b);
+  });
+
+  document.getElementById('result-box').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+
+  setTimeout(function(){showBubble('sh','',false);showBubble('dk','',false);},2600);
+}
+
+function pick(btn, correct, s){
+  answered=true;
+  document.querySelectorAll('.choice').forEach(function(b){b.disabled=true;});
+  var rb=document.getElementById('result-box');
+
+  if(correct){
+    btn.classList.add('correct');
+    score+=s.pts;
+    document.getElementById('score-val').textContent=score;
+    setFace('happy');
+    showBubble('sh','Correct! 🎉');
+    var sh=document.getElementById('shmerel');
+    sh.classList.add('bounce');
+    setTimeout(function(){sh.classList.remove('bounce');},600);
+    rb.className='result-box correct';
+    rb.innerHTML='<div class="result-title">✅ Correct! +'+s.pts+' points</div><div>'+s.correct+'</div>';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.choice').forEach(function(b){if(b.dataset.correct==='true')b.classList.add('correct');});
+    lives=Math.max(0,lives-1);
+    document.getElementById('lives-row').textContent='❤️'.repeat(lives)+'🖤'.repeat(3-lives);
+    setFace('sad');
+    showBubble('sh','Oops! 😬');
+    var dk=document.getElementById('donkey');
+    dk.classList.add('hurt');setTimeout(function(){dk.classList.remove('hurt');},500);
+    var sh2=document.getElementById('shmerel');
+    sh2.classList.add('shake');setTimeout(function(){sh2.classList.remove('shake');},400);
+    rb.className='result-box wrong';
+    rb.innerHTML='<div class="result-title">❌ Not quite!</div><div>'+s.wrong+'</div>';
+  }
+  rb.style.display='block';
+  var nx=document.getElementById('next-btn');
+  nx.textContent=idx<SCENES.length-1?'Continue →':'See Final Score 🏆';
+  nx.style.display='block';
+}
+
+function nextScene(){
+  idx++;
+  if(idx>=SCENES.length){showEnd();return;}
   renderScene();
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
-  document.getElementById(id).classList.add('active');
-}
-
-function renderScene() {
-  answered = false;
-  var s = SCENES[currentScene];
-  var total = SCENES.length;
-
-  document.getElementById('chapter-label').textContent = 'Scene '+(currentScene+1)+' of '+total;
-  document.getElementById('score-display').textContent = score;
-  document.getElementById('lives-display').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3-lives);
-  document.getElementById('progress-fill').style.width = (currentScene/total*100)+'%';
-
-  document.getElementById('scene-img').textContent = s.img;
-  document.getElementById('scene-label').textContent = s.label;
-  document.getElementById('scene-title').textContent = s.title;
-  document.getElementById('scene-text').textContent = s.text;
-
-  var hebEl = document.getElementById('heb-quote');
-  if (s.heb) { hebEl.textContent = s.heb; hebEl.style.display = 'block'; }
-  else { hebEl.style.display = 'none'; }
-
-  var choicesEl = document.getElementById('choices');
-  choicesEl.innerHTML = '';
-  // shuffle choices
-  var shuffled = s.choices.map(function(c,i){return {c:c,i:i}}).sort(function(){return Math.random()-.5});
-  shuffled.forEach(function(item) {
-    var btn = document.createElement('button');
-    btn.className = 'choice';
-    btn.textContent = item.c.text;
-    btn.dataset.correct = item.c.correct;
-    btn.onclick = function(){ if(!answered) makeChoice(btn, item.c.correct, s); };
-    choicesEl.appendChild(btn);
-  });
-
-  document.getElementById('result-box').style.display = 'none';
-  document.getElementById('next-btn').style.display = 'none';
-}
-
-function makeChoice(btn, isCorrect, scene) {
-  answered = true;
-  var allBtns = document.querySelectorAll('.choice');
-  allBtns.forEach(function(b){ b.disabled = true; });
-
-  if (isCorrect) {
-    btn.classList.add('correct');
-    score += scene.points;
-    document.getElementById('score-display').textContent = score;
-    showResult('correct', '✅ Correct! +'+scene.points+' points', scene.correct_msg);
-  } else {
-    btn.classList.add('wrong');
-    // show correct answer
-    allBtns.forEach(function(b){ if(b.dataset.correct==='true') b.classList.add('correct'); });
-    lives = Math.max(0, lives-1);
-    document.getElementById('lives-display').textContent = '❤️'.repeat(lives)+'🖤'.repeat(3-lives);
-    showResult('wrong', '❌ Not quite!', scene.wrong_msg);
-  }
-
-  var nx = document.getElementById('next-btn');
-  nx.textContent = currentScene < SCENES.length-1 ? 'Continue →' : 'See Final Score 🏆';
-  nx.style.display = 'block';
-}
-
-function showResult(type, title, detail) {
-  var rb = document.getElementById('result-box');
-  rb.className = 'result-box ' + type;
-  rb.innerHTML = '<div class="result-title">'+title+'</div><div class="result-detail">'+detail+'</div>';
-  rb.style.display = 'block';
-}
-
-function nextScene() {
-  currentScene++;
-  if (currentScene >= SCENES.length) {
-    showEndScreen();
-  } else {
-    renderScene();
-  }
-}
-
-function showEndScreen() {
-  document.getElementById('progress-fill').style.width = '100%';
-  var total = SCENES.reduce(function(a,s){return a+s.points},0);
-  var pct = Math.round(score/total*100);
-
-  var trophy, title, msg;
-  if (pct >= 90) { trophy='🏆'; title='Gemara Master!'; msg='Incredible! You know this sugya inside and out. R. Meir and R. Yehuda would be proud!'; }
-  else if (pct >= 70) { trophy='⭐'; title='Great Work!'; msg='Really solid understanding of the sugya. Review the scenes you missed and you\'ll be a master!'; }
-  else if (pct >= 50) { trophy='📖'; title='Good Effort!'; msg='You know the basics — now go back through your packets and review the parts that tripped you up.'; }
-  else { trophy='💪'; title='Keep Learning!'; msg='The sugya is tricky — keep reviewing your packets and try again!'; }
-
-  document.getElementById('end-trophy').textContent = trophy;
-  document.getElementById('end-title').textContent = title;
-  document.getElementById('end-score').textContent = score + ' / ' + total;
-  document.getElementById('end-sub').textContent = pct + '% correct · ' + (3-lives) + ' mistake' + ((3-lives)!==1?'s':'') + ' made';
-  document.getElementById('end-msg').textContent = msg;
-
-  var badges = '';
-  if (pct === 100) badges += '<span class="badge">🌟 Perfect Score</span>';
-  if (lives === 3) badges += '<span class="badge">❤️ No Mistakes</span>';
-  if (pct >= 70) badges += '<span class="badge">📜 Sugya Scholar</span>';
-  document.getElementById('end-badges').innerHTML = badges;
-
+function showEnd(){
+  document.getElementById('prog').style.width='100%';
+  var pct=Math.round(score/MAX_PTS*100);
+  var trophy,title,msg;
+  if(pct>=90){trophy='🏆';title='Mishna Master!';msg='Incredible! You understand every case in the Mishna — when you\'re חייב, when you\'re פטור, and why. The Mishna is proud of you!';}
+  else if(pct>=70){trophy='⭐';title='Great Work!';msg='Solid understanding of the Mishna! Review the cases you missed — pay attention to whether the damage is related or unrelated to the deviation.';}
+  else if(pct>=50){trophy='📖';title='Good Effort!';msg='You know the basics! The key rule to remember: related damage = חייב, unrelated damage = פטור. Go over the Mishna again!';}
+  else{trophy='💪';title='Keep Going!';msg='The Mishna has many cases — keep reviewing! The core idea: when you deviate from the agreed route, you become responsible for related damage.';}
+  document.getElementById('end-trophy').textContent=trophy;
+  document.getElementById('end-title').textContent=title;
+  document.getElementById('end-score').textContent=score+' / '+MAX_PTS;
+  document.getElementById('end-pct').textContent=pct+'% · '+(3-lives)+' mistake'+(3-lives!==1?'s':'')+' made';
+  document.getElementById('end-msg').textContent=msg;
+  var badges='';
+  if(pct===100)badges+='<span class="badge">🌟 Perfect Score</span>';
+  if(lives===3)badges+='<span class="badge">❤️ No Mistakes</span>';
+  if(pct>=80)badges+='<span class="badge">📜 Mishna Scholar</span>';
+  document.getElementById('end-badges').innerHTML=badges;
   showScreen('end-screen');
 }
-
-function restartGame() { startGame(); }
 </script>
 </body>
 </html>
