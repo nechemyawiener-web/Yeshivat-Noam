@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shmuel Alef 21 Battleship</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    h2 { margin: 0; }
+    .subtitle { color: #64748b; margin: 0 0 16px; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      background: #111827;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 330px 1fr;
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      padding: 18px;
+    }
+    .question-box {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 14px 0;
+      background: #ffffff;
+    }
+    .question {
+      font-size: 19px;
+      font-weight: bold;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #111827;
+      color: white;
+      margin: 3px;
+    }
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    button.outline {
+      background: white;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+    button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .answer-box {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .muted { color: #64748b; font-size: 14px; }
+    .fleet {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+    .fleet-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 4px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .fleet-row:last-child { border-bottom: none; }
+    .result {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 12px 0;
+      background: white;
+    }
+    .grid-wrap { overflow-x: auto; }
+    .battle-grid {
+      display: grid;
+      grid-template-columns: 44px repeat(8, 1fr);
+      gap: 5px;
+      min-width: 540px;
+    }
+    .grid-label {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .cell {
+      height: 58px;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      color: #111827;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cell:hover { background: #f8fafc; }
+    .cell.hit {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+    .cell.miss {
+      background: #dbeafe;
+      border-color: #3b82f6;
+      color: #1e3a8a;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+<h1>שמואל א׳ כ״א Battleship</h1>
+<p class="subtitle">Answer correctly to earn 2 guesses. Sink all ships before 24 shots.</p>
+
+<div class="badges">
+<div class="badge">Guesses: <span id="earnedShots">0</span></div>
+<div class="badge">Shots Left: <span id="shotsLeft">24</span></div>
+<div class="badge">Ships Sunk: <span id="shipsSunk">0</span>/5</div>
+</div>
+
+<div class="layout">
+<div class="card">
+<h2>Question</h2>
+<div class="question-box">
+<div id="questionText" class="question"></div>
+<button id="correctBtn" onclick="markCorrect()">Correct (+2)</button>
+<button class="outline" id="incorrectBtn" onclick="markIncorrect()">Incorrect</button>
+<p id="scoredNote" class="muted" style="display:none;">Already scored.</p>
+</div>
+
+<div id="answerBox" class="answer-box" style="display:none;">
+<p><strong>Answer:</strong> <span id="answerText"></span></p>
+<p id="detailText"></p>
+<button class="secondary" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<button class="secondary" onclick="resetGame()">Reset Game</button>
+</div>
+
+<div class="card">
+<h2>Battle Grid</h2>
+<div id="lastResult" class="result" style="display:none;"></div>
+<div class="grid-wrap">
+<div id="battleGrid" class="battle-grid"></div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+const QUESTIONS = [
+{question:"Who does David go to in Nov?",answer:"Achimelech the Kohen",detail:"David comes to Nov and meets Achimelech."},
+{question:"Why is Achimelech surprised?",answer:"David is alone",detail:"Achimelech asks why David is alone."},
+{question:"What does David ask for first?",answer:"Bread or food",detail:"David asks for bread."},
+{question:"What kind of bread is available?",answer:"Holy bread",detail:"Only Lechem HaPanim is there."},
+{question:"Who sees David in Nov?",answer:"Doeg the Edomite",detail:"Doeg is present there that day."},
+{question:"What weapon does David receive?",answer:"The sword of Goliath",detail:"Achimelech gives him Goliath's sword."},
+{question:"Where does David flee afterward?",answer:"Gat",detail:"David goes to Achish king of Gat."},
+{question:"What does David pretend to be?",answer:"Insane",detail:"David acts crazy to escape danger."}
+];
+
+const SIZE = 8;
+const MAX_SHOTS = 24;
+const GUESSES_PER_CORRECT = 2;
+
+const SHIPS = [
+{name:"Ship 1",length:4},
+{name:"Ship 2",length:3},
+{name:"Ship 3",length:3},
+{name:"Ship 4",length:2},
+{name:"Ship 5",length:2}
+];
+
+let questions = [];
+let questionIndex = 0;
+let earnedShots = 0;
+let shotsUsed = 0;
+let hits = new Set();
+let misses = new Set();
+let occupied = new Map();
+let placedShips = [];
+let questionResolved = false;
+
+function shuffle(array){
+const copy=[...array];
+for(let i=copy.length-1;i>0;i--){
+const j=Math.floor(Math.random()*(i+1));
+[copy[i],copy[j]]=[copy[j],copy[i]];
+}
+return copy;
+}
+
+function cellKey(r,c){ return r+"-"+c; }
+
+function makeBoard(){
+occupied = new Map();
+placedShips = [];
+
+SHIPS.forEach(ship=>{
+let placed=false;
+
+while(!placed){
+const horizontal=Math.random()>0.5;
+const row=Math.floor(Math.random()*SIZE);
+const col=Math.floor(Math.random()*SIZE);
+const cells=[];
+
+for(let i=0;i<ship.length;i++){
+const r=row+(horizontal?0:i);
+const c=col+(horizontal?i:0);
+if(r>=SIZE || c>=SIZE) break;
+cells.push(cellKey(r,c));
+}
+
+if(cells.length!==ship.length) continue;
+if(cells.some(c=>occupied.has(c))) continue;
+
+const id=placedShips.length;
+cells.forEach(c=>occupied.set(c,id));
+placedShips.push({...ship,id,cells});
+placed=true;
+}
+});
+}
+
+function getCurrentQuestion(){
+return questions[questionIndex % questions.length];
+}
+
+function renderStatus(){
+document.getElementById("earnedShots").textContent = earnedShots;
+document.getElementById("shotsLeft").textContent = MAX_SHOTS - shotsUsed;
+
+const sunk = placedShips.filter(ship =>
+ship.cells.every(c=>hits.has(c))
+).length;
+
+document.getElementById("shipsSunk").textContent = sunk;
+}
+
+function renderQuestion(){
+const q=getCurrentQuestion();
+document.getElementById("questionText").textContent=q.question;
+document.getElementById("answerText").textContent=q.answer;
+document.getElementById("detailText").textContent=q.detail;
+
+document.getElementById("answerBox").style.display =
+questionResolved ? "block" : "none";
+
+document.getElementById("scoredNote").style.display =
+questionResolved ? "block" : "none";
+}
+
+function renderGrid(){
+const grid=document.getElementById("battleGrid");
+grid.innerHTML="";
+
+const blank=document.createElement("div");
+grid.appendChild(blank);
+
+for(let c=0;c<SIZE;c++){
+const label=document.createElement("div");
+label.className="grid-label";
+label.textContent=c+1;
+grid.appendChild(label);
+}
+
+for(let r=0;r<SIZE;r++){
+const rowLabel=document.createElement("div");
+rowLabel.className="grid-label";
+rowLabel.textContent=String.fromCharCode(65+r);
+grid.appendChild(rowLabel);
+
+for(let c=0;c<SIZE;c++){
+const key=cellKey(r,c);
+
+const cell=document.createElement("button");
+cell.className="cell";
+
+if(hits.has(key)){
+cell.classList.add("hit");
+cell.textContent="X";
+}
+else if(misses.has(key)){
+cell.classList.add("miss");
+cell.textContent="•";
+}
+
+cell.disabled = earnedShots<=0 || hits.has(key) || misses.has(key);
+
+cell.onclick=()=>fireAt(r,c);
+
+grid.appendChild(cell);
+}
+}
+}
+
+function renderAll(){
+renderStatus();
+renderQuestion();
+renderGrid();
+}
+
+function markCorrect(){
+if(questionResolved) return;
+earnedShots += GUESSES_PER_CORRECT;
+questionResolved = true;
+renderAll();
+}
+
+function markIncorrect(){
+if(questionResolved) return;
+questionResolved = true;
+renderAll();
+}
+
+function nextQuestion(){
+questionIndex++;
+questionResolved=false;
+renderAll();
+}
+
+function fireAt(r,c){
+if(earnedShots<=0) return;
+
+const key=cellKey(r,c);
+
+if(hits.has(key) || misses.has(key)) return;
+
+earnedShots--;
+shotsUsed++;
+
+const result=document.getElementById("lastResult");
+result.style.display="block";
+
+if(occupied.has(key)){
+hits.add(key);
+result.textContent="Hit!";
+}
+else{
+misses.add(key);
+result.textContent="Miss.";
+}
+
+if(shotsUsed >= MAX_SHOTS){
+alert("Game Over!");
+}
+
+const allCells=placedShips.flatMap(s=>s.cells);
+const won=allCells.every(c=>hits.has(c));
+
+if(won){
+alert("You sunk all the ships!");
+}
+
+renderAll();
+}
+
+function resetGame(){
+questions=shuffle(QUESTIONS);
+questionIndex=0;
+earnedShots=0;
+shotsUsed=0;
+hits=new Set();
+misses=new Set();
+questionResolved=false;
+makeBoard();
+renderAll();
+}
+
+resetGame();
+</script>
+</body>
+</html>
