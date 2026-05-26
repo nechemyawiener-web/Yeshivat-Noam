@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)file:///C:/Users/nywie/Downloads/perek-kaf-gimel_2.html -->
+<html lang="he" dir="rtl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>פרק כג — Review | Yeshivat Noam</title>
+<link href="./Review_Perek23_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #378ADD;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --text: #1a1a1a;
+    --text-muted: #666;
+    --text-hint: #999;
+    --border: #e0ddd6;
+    --border-strong: #b0ada6;
+    --bg: #faf9f7;
+    --bg-card: #ffffff;
+    --bg-surface: #f3f1ec;
+    --success: #0F6E56;
+    --success-bg: #E1F5EE;
+    --warn-bg: #FAEEDA;
+    --warn: #854F0B;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .page-header {
+    background: var(--blue);
+    color: white;
+    text-align: center;
+    padding: 1.25rem 1rem;
+    direction: rtl;
+  }
+  .page-header h1 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .page-header p {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg-card);
+  }
+  .tab {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    border: none;
+    background: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.15s, border-color 0.15s;
+    font-family: 'Rubik', sans-serif;
+  }
+  .tab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .tab:hover:not(.active) { color: var(--text); }
+
+  .panel { display: none; padding: 1.5rem 1rem; max-width: 820px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* ── FLASHCARDS ── */
+  .fc-progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+  .fc-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; }
+  .fc-bar-fill { height: 100%; background: var(--blue-mid); border-radius: 3px; transition: width 0.3s; }
+  .fc-count { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+
+  .card-stage { min-height: 230px; display: flex; align-items: stretch; margin-bottom: 1rem; }
+  .fc-card {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .fc-card:hover { border-color: var(--blue-mid); }
+  .fc-step-badge {
+    font-size: 0.72rem;
+    font-weight: 500;
+    background: var(--blue-light);
+    color: var(--blue);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 4px;
+  }
+  .fc-q { font-size: 0.85rem; color: var(--text-muted); direction: ltr; }
+  .fc-clue {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text);
+    direction: rtl;
+    line-height: 1.4;
+  }
+  .fc-tap { font-size: 0.75rem; color: var(--text-hint); margin-top: 4px; }
+  .fc-answer {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: none;
+    width: 100%;
+  }
+  .fc-answer.show { display: block; }
+  .fc-ans-he {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--teal);
+    direction: rtl;
+    margin-bottom: 4px;
+  }
+  .fc-ans-en { font-size: 0.82rem; color: var(--text-muted); direction: ltr; }
+  .fc-pasuk { font-size: 0.75rem; color: var(--blue); margin-top: 6px; }
+
+  .fc-nav { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+  .done-screen { text-align: center; padding: 2.5rem 1rem; }
+  .done-icon { font-size: 3rem; color: var(--teal-mid); margin-bottom: 0.5rem; }
+  .done-title { font-family: 'Frank Ruhl Libre', serif; font-size: 1.5rem; margin-bottom: 6px; }
+  .done-sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  /* ── ORDERING GAME ── */
+  .game-instruction { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; text-align: center; direction: ltr; }
+  .tl-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem; }
+  .col-label { font-size: 0.72rem; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .pool {
+    min-height: 80px;
+    padding: 8px;
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-content: flex-start;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .pool.drag-over { border-color: var(--blue-mid); background: var(--blue-light); }
+  .timeline {
+    min-height: 360px;
+    padding: 8px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .timeline.drag-over { border-color: var(--blue-mid); background: var(--blue-light); }
+
+  .ev-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 10px;
+    cursor: grab;
+    font-size: 0.8rem;
+    color: var(--text);
+    user-select: none;
+    direction: rtl;
+    line-height: 1.35;
+    transition: border-color 0.15s;
+  }
+  .ev-card:active { cursor: grabbing; opacity: 0.6; }
+  .ev-card.dragging { opacity: 0.3; }
+  .ev-card .ev-en { font-size: 0.7rem; color: var(--text-muted); direction: ltr; margin-top: 2px; }
+  .timeline .ev-card { display: flex; align-items: center; gap: 8px; }
+  .ev-num {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--blue);
+    background: var(--blue-light);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ev-body { flex: 1; }
+
+  .drop-hint { font-size: 0.75rem; color: var(--text-hint); text-align: center; padding: 1rem; width: 100%; }
+
+  .game-footer { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .result-bar {
+    margin-top: 1rem;
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: none;
+    text-align: center;
+    direction: ltr;
+  }
+  .result-bar.show { display: block; }
+  .result-bar.good { background: var(--success-bg); color: var(--success); }
+  .result-bar.bad { background: var(--warn-bg); color: var(--amber); }
+
+  /* ── BUTTONS ── */
+  button {
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.825rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border-strong);
+    background: var(--bg-card);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  button:hover { background: var(--bg-surface); border-color: var(--blue-mid); }
+  button:active { transform: scale(0.97); }
+  button.primary { background: var(--blue); color: white; border-color: var(--blue); }
+  button.primary:hover { background: var(--blue-mid); border-color: var(--blue-mid); }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>שמואל א — פרק כג</h1>
+  <p>Yeshivat Noam | Interactive Review</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(&#39;fc&#39;)">📇 Flashcards</button>
+  <button class="tab" onclick="switchTab(&#39;order&#39;)">🗂 Order the Events</button>
+</div>
+
+<!-- FLASHCARDS PANEL -->
+<div class="panel active" id="panel-fc">
+  <div id="fc-main">
+    <div class="fc-progress-row">
+      <div class="fc-bar-bg"><div class="fc-bar-fill" id="fc-bar" style="width:0%"></div></div>
+      <span class="fc-count" id="fc-count">1 / 10</span>
+    </div>
+    <div class="card-stage">
+      <div class="fc-card" id="fc-card" onclick="toggleAnswer()">
+        <div class="fc-step-badge" id="fc-step">אירוע 1</div>
+        <p class="fc-q" id="fc-q">What was happening in Keilah?</p>
+        <p class="fc-clue" id="fc-clue">מה קרה בקעילה?</p>
+        <p class="fc-tap">↓ tap to reveal answer</p>
+        <div class="fc-answer" id="fc-answer">
+          <p class="fc-ans-he" id="fc-ans-he">פלישתים שסו את הגרנות</p>
+          <p class="fc-ans-en" id="fc-ans-en">Philistines were raiding the threshing floors of Keilah</p>
+          <p class="fc-pasuk" id="fc-pasuk">פסוק א</p>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button onclick="fcPrev()">← Back</button>
+      <button class="primary" onclick="fcNext()">Next →</button>
+      <button onclick="fcReset()">↺ Restart</button>
+    </div>
+  </div>
+  <div class="done-screen" id="fc-done" style="display:none">
+    <div class="done-icon">✓</div>
+    <p class="done-title">כל הכבוד!</p>
+    <p class="done-sub">You reviewed all 10 events from פרק כג in order</p>
+    <button class="primary" onclick="fcReset()">↺ Go again</button>
+  </div>
+</div>
+
+<!-- ORDERING PANEL -->
+<div class="panel" id="panel-order">
+  <p class="game-instruction">Drag the 9 events into the correct order — first event at the top</p>
+  <div class="tl-cols">
+    <div>
+      <div class="col-label">Events — גרור לימין ←</div>
+      <div class="pool" id="pool">
+        <p class="drop-hint" id="pool-hint" style="display: none;">All cards moved!</p>
+      <div class="ev-card" draggable="true" data-key="4"><div>דוד שואל ה׳ — האם יסגירוני? — ובורח עם 600 אנשים</div><div class="ev-en">David asks God, learns Keilah will betray him, flees with 600 men</div></div><div class="ev-card" draggable="true" data-key="5"><div>יהונתן מחזק את דוד ביער — אתה תמלוך!</div><div class="ev-en">Jonathan strengthens David in the forest — you will be king!</div></div><div class="ev-card" draggable="true" data-key="8"><div>שאול מקיף את דוד — מלאך מביא חדשות על פלישתים</div><div class="ev-en">Saul surrounds David — a messenger brings urgent news of Philistines</div></div><div class="ev-card" draggable="true" data-key="6"><div>הזיפים מלשינים לשאול על דוד</div><div class="ev-en">The Ziphites inform Saul about David's location</div></div><div class="ev-card" draggable="true" data-key="9"><div>דוד ניצל — המקום נקרא סֶלַע הַמַּחְלְקוֹת</div><div class="ev-en">David escapes — the place is named Rock of Divisions</div></div><div class="ev-card" draggable="true" data-key="7"><div>שאול יורד עם 3,000 איש למדבר זיף</div><div class="ev-en">Saul descends with 3,000 men to the wilderness of Ziph</div></div><div class="ev-card" draggable="true" data-key="1"><div>דוד שואל את ה׳ פעמיים — ומקבל אישור ללכת לקעילה</div><div class="ev-en">David asks God twice — gets permission to go to Keilah</div></div><div class="ev-card" draggable="true" data-key="2"><div>דוד מציל את קעילה מהפלישתים</div><div class="ev-en">David saves Keilah from the Philistines</div></div><div class="ev-card" draggable="true" data-key="3"><div>שאול שומע ומתכנן לתפוס את דוד בקעילה</div><div class="ev-en">Saul plans to trap David in Keilah</div></div></div>
+    </div>
+    <div>
+      <div class="col-label">Timeline — correct order</div>
+      <div class="timeline" id="timeline">
+        <p class="drop-hint" id="tl-hint" style="display: block;">Drop events here — first at top</p>
+      </div>
+    </div>
+  </div>
+  <div class="game-footer">
+    <button onclick="checkOrder()">✓ Check order</button>
+    <button onclick="resetGame()">↺ Reset</button>
+    <button onclick="revealOrder()">👁 Reveal answer</button>
+  </div>
+  <div class="result-bar" id="result"></div>
+</div>
+
+<script>
+const CARDS = [
+  { step: "אירוע 1", q: "What was happening in Keilah?", clue: "מה קרה בקעילה?", ansHe: "פלישתים שסו את הגרנות", ansEn: "Philistines were raiding the threshing floors of Keilah", pasuk: "פסוק א" },
+  { step: "אירוע 2", q: "David asked God — what was the first answer, and why did he have to ask twice?", clue: "למה דוד שאל פעמיים?", ansHe: 'ה׳ אמר "לך" — אך אנשיו פחדו, אז שאל שוב', ansEn: "God said go — but his men were afraid, so David asked again for their sake", pasuk: "פסוק ב–ד" },
+  { step: "אירוע 3", q: "What did David do in Keilah — and what did Evyatar bring?", clue: "מה עשה דוד? מה הביא אביתר?", ansHe: "הציל את קעילה; אביתר הביא אפוד", ansEn: "David saved Keilah from the Philistines; Evyatar brought an ephod", pasuk: "פסוק ה–ו" },
+  { step: "אירוע 4", q: "Saul heard David was in Keilah — what did he think?", clue: "מה חשב שאול כשדוד היה בקעילה?", ansHe: "נִכַּר אֹתוֹ אֱלֹהִים בְּיָדִי — הוא נלכד בעיר!", ansEn: "God has delivered him into my hands — he's trapped in a walled city!", pasuk: "פסוק ז" },
+  { step: "אירוע 5", q: "David asked God TWO questions — what were they and what were the answers?", clue: "שתי שאלות ושתי תשובות?", ansHe: "האם שאול יבוא? כן. האם יסגירוני? כן.", ansEn: "Will Saul come? Yes. Will Keilah hand me over? Yes.", pasuk: "פסוק יא–יב" },
+  { step: "אירוע 6", q: "What did David do after God's answers?", clue: "מה עשה דוד לאחר תשובות ה׳?", ansHe: "ברח מקעילה עם כשש מאות אנשים", ansEn: "Fled Keilah with about 600 men, moving from place to place", pasuk: "פסוק יג" },
+  { step: "אירוע 7", q: "Who came to David in the forest — and what did he promise?", clue: "מי בא לדוד ביער? מה הבטיח?", ansHe: "יהונתן — אתה תמלוך ואני אהיה משנה לך", ansEn: "Jonathan — you will be king and I will be second to you", pasuk: "פסוק טז–יז" },
+  { step: "אירוע 8", q: "Who betrayed David's location to Saul — and where was Saul headed?", clue: "מי הלשין? לאן הלך שאול?", ansHe: "הזיפים הלשינו — ושאול ירד למדבר זיף", ansEn: "The Ziphites informed Saul, who came down with 3,000 men to Ziph", pasuk: "פסוק יט–כה" },
+  { step: "אירוע 9", q: "What happened at the rock — what stopped Saul — and what is the place called?", clue: "מה קרה בסלע ומה שם המקום?", ansHe: "שאול כמעט תפס את דוד — מלאך הציל — סֶלַע הַמַּחְלְקוֹת", ansEn: "Saul nearly surrounded David — a messenger reported Philistines attacking — Rock of Divisions", pasuk: "פסוק כו–כח" },
+  { step: "אירוע 10", q: "Where did David go at the very end of the chapter — and why does it matter?", clue: "לאן הלך דוד בסוף הפרק?", ansHe: "מצדות עין גדי — מכין את פרק כד!", ansEn: "The strongholds of Ein Gedi — setting up the famous cave story in ch. 24!", pasuk: "פסוק כט" },
+];
+
+const EVENTS = [
+  { he: "דוד שואל את ה׳ פעמיים — ומקבל אישור ללכת לקעילה", en: "David asks God twice — gets permission to go to Keilah", key: 1 },
+  { he: "דוד מציל את קעילה מהפלישתים", en: "David saves Keilah from the Philistines", key: 2 },
+  { he: "שאול שומע ומתכנן לתפוס את דוד בקעילה", en: "Saul plans to trap David in Keilah", key: 3 },
+  { he: "דוד שואל ה׳ — האם יסגירוני? — ובורח עם 600 אנשים", en: "David asks God, learns Keilah will betray him, flees with 600 men", key: 4 },
+  { he: "יהונתן מחזק את דוד ביער — אתה תמלוך!", en: "Jonathan strengthens David in the forest — you will be king!", key: 5 },
+  { he: "הזיפים מלשינים לשאול על דוד", en: "The Ziphites inform Saul about David's location", key: 6 },
+  { he: "שאול יורד עם 3,000 איש למדבר זיף", en: "Saul descends with 3,000 men to the wilderness of Ziph", key: 7 },
+  { he: "שאול מקיף את דוד — מלאך מביא חדשות על פלישתים", en: "Saul surrounds David — a messenger brings urgent news of Philistines", key: 8 },
+  { he: "דוד ניצל — המקום נקרא סֶלַע הַמַּחְלְקוֹת", en: "David escapes — the place is named Rock of Divisions", key: 9 },
+];
+
+let fcIdx = 0;
+let dragSrc = null;
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function fcRender() {
+  const c = CARDS[fcIdx];
+  document.getElementById('fc-step').textContent = c.step;
+  document.getElementById('fc-q').textContent = c.q;
+  document.getElementById('fc-clue').textContent = c.clue;
+  document.getElementById('fc-ans-he').textContent = c.ansHe;
+  document.getElementById('fc-ans-en').textContent = c.ansEn;
+  document.getElementById('fc-pasuk').textContent = c.pasuk;
+  document.getElementById('fc-answer').classList.remove('show');
+  const pct = Math.round((fcIdx / CARDS.length) * 100);
+  document.getElementById('fc-bar').style.width = pct + '%';
+  document.getElementById('fc-count').textContent = (fcIdx + 1) + ' / ' + CARDS.length;
+}
+
+function toggleAnswer() {
+  document.getElementById('fc-answer').classList.toggle('show');
+}
+
+function fcNext() {
+  if (fcIdx < CARDS.length - 1) { fcIdx++; fcRender(); }
+  else {
+    document.getElementById('fc-main').style.display = 'none';
+    document.getElementById('fc-done').style.display = 'block';
+  }
+}
+
+function fcPrev() { if (fcIdx > 0) { fcIdx--; fcRender(); } }
+
+function fcReset() {
+  fcIdx = 0;
+  document.getElementById('fc-main').style.display = 'block';
+  document.getElementById('fc-done').style.display = 'none';
+  fcRender();
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function makeCard(ev, inTl) {
+  const card = document.createElement('div');
+  card.className = 'ev-card';
+  card.draggable = true;
+  card.dataset.key = ev.key;
+  if (inTl) {
+    card.innerHTML = `<span class="ev-num">?</span><div class="ev-body"><div>${ev.he}</div><div class="ev-en">${ev.en}</div></div>`;
+  } else {
+    card.innerHTML = `<div>${ev.he}</div><div class="ev-en">${ev.en}</div>`;
+  }
+  card.addEventListener('dragstart', function(e) { dragSrc = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+  card.addEventListener('dragend', function() { this.classList.remove('dragging'); updateHints(); updateNums(); });
+  return card;
+}
+
+function setupZone(el) {
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => {
+    e.preventDefault(); el.classList.remove('drag-over');
+    if (!dragSrc) return;
+    const inTl = el.id === 'timeline';
+    const srcHe = dragSrc.querySelector('.ev-body div') ? dragSrc.querySelector('.ev-body div').textContent : dragSrc.querySelector('div').textContent;
+    const srcEn = dragSrc.querySelector('.ev-en') ? dragSrc.querySelector('.ev-en').textContent : '';
+    const clone = document.createElement('div');
+    clone.className = 'ev-card'; clone.draggable = true; clone.dataset.key = dragSrc.dataset.key;
+    if (inTl) clone.innerHTML = `<span class="ev-num">?</span><div class="ev-body"><div>${srcHe}</div><div class="ev-en">${srcEn}</div></div>`;
+    else clone.innerHTML = `<div>${srcHe}</div><div class="ev-en">${srcEn}</div>`;
+    clone.addEventListener('dragstart', function(e) { dragSrc = this; this.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    clone.addEventListener('dragend', function() { this.classList.remove('dragging'); updateHints(); updateNums(); });
+    const after = getDragAfter(el, e.clientY);
+    if (after) el.insertBefore(clone, after); else el.appendChild(clone);
+    dragSrc.remove();
+    updateHints(); updateNums();
+    document.getElementById('result').classList.remove('show');
+  });
+}
+
+function getDragAfter(container, y) {
+  const els = [...container.querySelectorAll('.ev-card:not(.dragging)')];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) return { offset, element: child };
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function updateHints() {
+  document.getElementById('pool-hint').style.display = document.getElementById('pool').querySelectorAll('.ev-card').length ? 'none' : 'block';
+  document.getElementById('tl-hint').style.display = document.getElementById('timeline').querySelectorAll('.ev-card').length ? 'none' : 'block';
+}
+
+function updateNums() {
+  document.getElementById('timeline').querySelectorAll('.ev-card').forEach((c, i) => {
+    const n = c.querySelector('.ev-num'); if (n) n.textContent = i + 1;
+  });
+}
+
+function checkOrder() {
+  const cards = [...document.getElementById('timeline').querySelectorAll('.ev-card')];
+  if (!cards.length) { showResult('Drag some events in first!', false); return; }
+  const keys = cards.map(c => parseInt(c.dataset.key));
+  let correct = 0;
+  for (let i = 1; i < keys.length; i++) if (keys[i] > keys[i - 1]) correct++;
+  const pct = keys.length > 1 ? Math.round((correct / (keys.length - 1)) * 100) : 100;
+  if (keys.length === EVENTS.length && pct === 100) showResult('Perfect! All 9 events in the right order!', true);
+  else if (pct >= 70) showResult(pct + '% of pairs correct — almost! Check the order again.', false);
+  else showResult(pct + '% correct — keep trying!', false);
+}
+
+function showResult(msg, good) {
+  const r = document.getElementById('result');
+  r.textContent = msg; r.className = 'result-bar show ' + (good ? 'good' : 'bad');
+}
+
+function revealOrder() {
+  document.getElementById('pool').querySelectorAll('.ev-card').forEach(c => c.remove());
+  document.getElementById('timeline').querySelectorAll('.ev-card').forEach(c => c.remove());
+  EVENTS.forEach((ev, i) => {
+    const card = document.createElement('div');
+    card.className = 'ev-card'; card.draggable = false; card.dataset.key = ev.key;
+    card.innerHTML = `<span class="ev-num">${i + 1}</span><div class="ev-body"><div>${ev.he}</div><div class="ev-en">${ev.en}</div></div>`;
+    document.getElementById('timeline').appendChild(card);
+  });
+  document.getElementById('tl-hint').style.display = 'none';
+  showResult('Answer revealed — 9 events in correct order.', true);
+}
+
+function resetGame() {
+  document.getElementById('pool').querySelectorAll('.ev-card').forEach(c => c.remove());
+  document.getElementById('timeline').querySelectorAll('.ev-card').forEach(c => c.remove());
+  shuffle(EVENTS).forEach(ev => document.getElementById('pool').appendChild(makeCard(ev, false)));
+  updateHints(); document.getElementById('result').classList.remove('show');
+}
+
+setupZone(document.getElementById('pool'));
+setupZone(document.getElementById('timeline'));
+resetGame();
+fcRender();
+</script>
+
+
+</body></html>
