@@ -3,68 +3,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>גלגל המילים</title>
-
+<title>גלגל המילים - Game Show Edition</title>
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f3f6fb;
-    margin: 0;
-    padding: 25px;
-    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 10px;
     color: #222;
+    overflow-x: hidden;
 }
 
 .container {
-    max-width: 1100px;
-    margin: auto;
-    background: white;
-    padding: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100vh;
+}
+
+/* SCOREBOARD */
+.scoreboard {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255,255,255,0.95);
     border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,.12);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
 }
 
-h1 {
-    font-size: 44px;
-    margin-top: 0;
-}
-
-input {
-    font-size: 22px;
-    padding: 12px;
-    margin: 7px;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    width: 70%;
-    max-width: 650px;
-    direction: rtl;
-    text-align: right;
-}
-
-button {
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.mainButton {
+.team-card {
+    flex: 1;
+    text-align: center;
+    padding: 15px;
+    border-radius: 15px;
     font-size: 20px;
-    padding: 12px 25px;
-    margin: 10px;
-    background: #315efb;
+    font-weight: bold;
+    transition: transform 0.3s;
+}
+
+.team-card.team1 {
+    background: linear-gradient(135deg, #667eea 0%, #5a67d8 100%);
     color: white;
 }
 
-.mainButton:hover {
-    background: #2349c7;
+.team-card.team2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
 }
 
-#category {
-    font-size: 27px;
+.team-name { font-size: 18px; margin-bottom: 5px; }
+.team-score { font-size: 36px; font-weight: bold; margin: 10px 0; }
+.team-hearts { font-size: 24px; }
+
+/* MAIN GAME AREA */
+.game-area {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    min-height: 0;
+}
+
+/* WHEEL */
+.wheel-section {
+    flex: 0 0 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.wheel-container {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin-bottom: 10px;
+}
+
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 0deg,
+        #FF6B6B 0deg 36deg,
+        #4ECDC4 36deg 72deg,
+        #45B7D1 72deg 108deg,
+        #FFA07A 108deg 144deg,
+        #98D8C8 144deg 180deg,
+        #F7DC6F 180deg 216deg,
+        #BB8FCE 216deg 252deg,
+        #85C1E2 252deg 288deg,
+        #F8B88B 288deg 324deg,
+        #52C79F 324deg 360deg
+    );
+    box-shadow: 0 0 30px rgba(0,0,0,0.3), inset 0 0 20px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
-    margin: 20px 0;
+    font-size: 14px;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+    transition: transform 0.1s linear;
+}
+
+.wheel-segment {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    transform-origin: 100% 100%;
+}
+
+.wheel.spinning {
+    animation: spin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(3600deg); }
+}
+
+.wheel-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 20px solid gold;
+    z-index: 10;
+    filter: drop-shadow(2px 2px 3px rgba(0,0,0,0.3));
+}
+
+.wheel-values {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    font-size: 12px;
+    color: white;
+}
+
+.wheel-value {
+    background: rgba(0,0,0,0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* GAME BOARD */
+.board-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.puzzle-container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #puzzle {
@@ -72,406 +190,892 @@ button {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 25px;
-    margin: 35px auto;
-    min-height: 100px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .word {
     display: flex;
     direction: rtl;
-    gap: 5px;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
 .tile {
-    width: 55px;
-    height: 65px;
-    border: 3px solid #444;
-    border-radius: 7px;
+    width: 50px;
+    height: 60px;
+    border: 3px solid #333;
+    border-radius: 8px;
     background: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 39px;
+    font-size: 32px;
     font-weight: bold;
-    box-sizing: border-box;
     cursor: pointer;
-    transition: .15s;
+    transition: all 0.3s;
+    position: relative;
 }
 
-.tile:hover {
-    background: #eef2ff;
+.tile:hover:not(.revealed) {
+    background: #f0f0f0;
     transform: translateY(-2px);
 }
 
 .tile.revealed {
-    background: #fff5ad;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     cursor: default;
+    animation: flipReveal 0.6s ease-out;
 }
 
+@keyframes flipReveal {
+    0% { transform: rotateY(0deg) scale(1); background: white; }
+    50% { transform: rotateY(90deg) scale(0.9); }
+    100% { transform: rotateY(0deg) scale(1); }
+}
+
+.tile.blank {
+    background: #e8e8e8;
+}
+
+/* MESSAGE */
+#message {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    min-height: 40px;
+    color: #333;
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.shake {
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+/* KEYBOARD */
 #keyboard {
     direction: rtl;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
-    max-width: 800px;
-    margin: 30px auto 10px;
+    gap: 6px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
 .letterButton {
-    width: 55px;
-    height: 55px;
-    font-size: 26px;
-    background: #e5eaf3;
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #e8eef5;
+    border: 2px solid #999;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-.letterButton:hover {
-    background: #ccd7ea;
+.letterButton:hover:not(:disabled) {
+    background: #d0dbe8;
+    transform: scale(1.1);
 }
 
 .letterButton.correct {
-    background: #bfecc8;
-    color: #145d25;
+    background: #52C79F;
+    color: white;
+    border-color: #2d8a6d;
 }
 
 .letterButton.wrong {
-    background: #f2bcbc;
-    color: #7c1515;
+    background: #FF6B6B;
+    color: white;
+    border-color: #c93333;
 }
 
 .letterButton:disabled {
+    opacity: 0.5;
     cursor: default;
-    opacity: .75;
 }
 
-#message {
-    font-size: 28px;
+/* CONTROL BUTTONS */
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 15px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 15px;
+}
+
+button {
+    padding: 12px 20px;
+    font-size: 16px;
     font-weight: bold;
-    min-height: 40px;
-    margin: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.instructions {
-    font-size: 17px;
-    color: #666;
-    margin-top: 10px;
+#spinButton {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #333;
+    padding: 15px 30px;
+    font-size: 18px;
+    min-width: 120px;
 }
 
-#gameArea {
+#spinButton:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(255,165,0,0.4);
+}
+
+#spinButton:disabled {
+    opacity: 0.6;
+}
+
+#solveButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 25px;
+}
+
+#solveButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
+
+.teacher-button {
+    background: #95a5a6;
+    color: white;
+    padding: 10px 15px;
+    font-size: 14px;
+}
+
+.teacher-button:hover {
+    background: #7f8c8d;
+}
+
+/* MODAL */
+.modal {
     display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #999;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.modal-buttons .confirm {
+    background: #52C79F;
+    color: white;
+}
+
+.modal-buttons .cancel {
+    background: #bdc3c7;
+    color: white;
+}
+
+/* CONFETTI */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    animation: confettiFall 3s linear forwards;
+    z-index: 999;
+}
+
+@keyframes confettiFall {
+    to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* FULLSCREEN */
+body.fullscreen {
+    padding: 0;
+}
+
+.container.fullscreen {
+    height: 100vh;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+    .game-area {
+        flex-direction: column;
+    }
+    
+    .wheel-section {
+        flex: 0 0 auto;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .scoreboard {
+        flex-direction: column;
+    }
+    
+    .tile {
+        width: 40px;
+        height: 50px;
+        font-size: 24px;
+    }
+    
+    #keyboard {
+        gap: 4px;
+    }
+    
+    .letterButton {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
 }
 </style>
 </head>
-
 <body>
 
 <div class="container">
-
-<h1>גלגל המילים</h1>
-
-<div id="setup">
-    <div>
-        <input
-            id="phraseInput"
-            type="password"
-            placeholder="הקלד משפט או ביטוי"
-        >
+    <!-- SCOREBOARD -->
+    <div class="scoreboard">
+        <div class="team-card team1">
+            <div class="team-name">🔵 TEAM 1</div>
+            <div class="team-score" id="team1Score">0</div>
+            <div class="team-hearts" id="team1Hearts">❤️❤️❤️</div>
+        </div>
+        
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 16px; color: white; font-weight: bold;">CURRENT TURN</div>
+            <div id="currentTeam" style="font-size: 24px; color: white; margin-top: 10px;">🔵 TEAM 1</div>
+        </div>
+        
+        <div class="team-card team2">
+            <div class="team-name">🔴 TEAM 2</div>
+            <div class="team-score" id="team2Score">0</div>
+            <div class="team-hearts" id="team2Hearts">❤️❤️❤️</div>
+        </div>
     </div>
 
-    <div>
-        <input
-            id="categoryInput"
-            type="text"
-            placeholder="קטגוריה / רמז - לא חובה"
-        >
-    </div>
+    <!-- GAME AREA -->
+    <div class="game-area">
+        <!-- WHEEL -->
+        <div class="wheel-section">
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="wheel"></div>
+            </div>
+            <div class="wheel-values" id="wheelValues"></div>
+        </div>
 
-    <button class="mainButton" id="startButton">
-        התחל משחק
-    </button>
+        <!-- BOARD -->
+        <div class="board-section">
+            <div class="puzzle-container">
+                <div id="puzzle"></div>
+                <div id="message"></div>
+            </div>
+
+            <div id="keyboard"></div>
+
+            <div class="controls">
+                <button id="spinButton">🎡 SPIN</button>
+                <button id="solveButton">💡 SOLVE</button>
+                <button class="teacher-button" id="revealButton">👨‍🏫 Reveal</button>
+                <button class="teacher-button" id="setupButton">⚙️ Setup</button>
+                <button class="teacher-button" id="fullscreenButton">🖥️ Fullscreen</button>
+                <button class="teacher-button" id="resetButton">🔄 Reset</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div id="gameArea">
-
-    <div id="category"></div>
-
-    <div id="puzzle"></div>
-
-    <div class="instructions">
-        לחץ על אות למטה כדי לגלות את כל האותיות מסוג זה
-        <br>
-        או לחץ על משבצת כדי לגלות רק אותה
+<!-- MODALS -->
+<div id="setupModal" class="modal">
+    <div class="modal-content">
+        <h2>גלגל המילים - Setup</h2>
+        <input id="phraseInput" type="text" placeholder="הקלד משפט או ביטוי" dir="rtl">
+        <input id="categoryInput" type="text" placeholder="קטגוריה / רמז" dir="rtl">
+        <div class="modal-buttons">
+            <button class="confirm" onclick="startNewGame()">התחל משחק</button>
+            <button class="cancel" onclick="closeSetupModal()">ביטול</button>
+        </div>
     </div>
-
-    <div id="keyboard"></div>
-
-    <div id="message"></div>
-
-    <button class="mainButton" id="newPuzzle">
-        משפט חדש
-    </button>
-
 </div>
 
+<div id="solveModal" class="modal">
+    <div class="modal-content">
+        <h2>💡 SOLVE THE PUZZLE</h2>
+        <input id="solveInput" type="text" placeholder="Type the answer" dir="rtl" autofocus>
+        <div class="modal-buttons">
+            <button class="confirm" onclick="checkSolve()">Submit</button>
+            <button class="cancel" onclick="closeSolveModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="revealModal" class="modal">
+    <div class="modal-content">
+        <h2>👨‍🏫 Click a tile to reveal it</h2>
+        <button class="cancel" style="width: 100%;" onclick="closeRevealModal()">Done</button>
+    </div>
 </div>
 
 <script>
+// ========== CONFIG ==========
+const WHEEL_VALUES = [100, 200, 300, 500, 'DOUBLE', 'FREE LETTER', 'LOSE TURN', 'BANKRUPT'];
+const MAX_HEARTS = 3;
 const hebrewLetters = [
-"א","ב","ג","ד","ה","ו","ז","ח","ט",
-"י","כ","ל","מ","נ","ס","ע","פ","צ",
-"ק","ר","ש","ת"
+    "א","ב","ג","ד","ה","ו","ז","ח","ט",
+    "י","כ","ל","מ","נ","ס","ע","פ","צ",
+    "ק","ר","ש","ת"
 ];
 
-let phrase = "";
-let guessedLetters = [];
-let individuallyRevealed = new Set();
+// ========== STATE ==========
+let gameState = {
+    phrase: "",
+    category: "",
+    guessedLetters: [],
+    individuallyRevealed: new Set(),
+    currentTeam: 1,
+    team1Score: 0,
+    team2Score: 0,
+    team1Hearts: MAX_HEARTS,
+    team2Hearts: MAX_HEARTS,
+    wheelValue: null,
+    isSpinning: false,
+    gameActive: false,
+    revealMode: false
+};
 
-function normalizeLetter(letter) {
-    const finals = {
-        "ך":"כ",
-        "ם":"מ",
-        "ן":"נ",
-        "ף":"פ",
-        "ץ":"צ"
-    };
-
-    return finals[letter] || letter;
+// ========== WHEEL SETUP ==========
+function setupWheel() {
+    const wheel = document.getElementById('wheel');
+    const wheelValues = document.getElementById('wheelValues');
+    
+    wheel.innerHTML = '';
+    wheelValues.innerHTML = '';
+    
+    WHEEL_VALUES.forEach((val, i) => {
+        const angle = (360 / WHEEL_VALUES.length) * i;
+        const segment = document.createElement('div');
+        segment.className = 'wheel-segment';
+        segment.textContent = val;
+        segment.style.transform = `rotate(${angle}deg) translateY(-70px)`;
+        wheel.appendChild(segment);
+        
+        const valueDiv = document.createElement('div');
+        valueDiv.className = 'wheel-value';
+        valueDiv.textContent = val;
+        wheelValues.appendChild(valueDiv);
+    });
 }
 
-function startGame() {
-    phrase =
-        document
-        .getElementById("phraseInput")
-        .value
-        .trim();
+// ========== WHEEL SPIN ==========
+function spinWheel() {
+    if (gameState.isSpinning || !gameState.gameActive) return;
+    
+    gameState.isSpinning = true;
+    document.getElementById('spinButton').disabled = true;
+    
+    const wheel = document.getElementById('wheel');
+    const spinSpins = Math.floor(Math.random() * 5) + 5;
+    const randomStop = Math.floor(Math.random() * WHEEL_VALUES.length);
+    const rotation = spinSpins * 360 + (randomStop * (360 / WHEEL_VALUES.length));
+    
+    wheel.style.transition = 'none';
+    wheel.classList.remove('spinning');
+    wheel.offsetHeight; // trigger reflow
+    
+    wheel.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+    wheel.classList.add('spinning');
+    wheel.style.transform = `rotate(${rotation}deg)`;
+    
+    setTimeout(() => {
+        gameState.wheelValue = WHEEL_VALUES[randomStop];
+        showMessage(`🎡 ${gameState.wheelValue}! Choose a letter!`);
+        playSound('spin');
+        gameState.isSpinning = false;
+        document.getElementById('spinButton').disabled = false;
+        wheel.classList.remove('spinning');
+    }, 3000);
+}
 
-    const category =
-        document
-        .getElementById("categoryInput")
-        .value
-        .trim();
-
-    if (!phrase) {
-        alert("נא להקליד משפט");
-        return;
+// ========== GUESS LETTER ==========
+function guessLetter(letter, button) {
+    if (!gameState.gameActive || gameState.isSpinning || gameState.wheelValue === null) return;
+    
+    gameState.guessedLetters.push(letter);
+    button.disabled = true;
+    
+    const found = gameState.phrase.toUpperCase().includes(letter.toUpperCase()) || 
+                  gameState.phrase.includes(letter);
+    
+    let count = 0;
+    for (let char of gameState.phrase) {
+        if (normalizeLetter(char) === letter) count++;
     }
+    
+    if (found) {
+        button.classList.add('correct');
+        playSound('correct');
+        
+        let points = 0;
+        if (gameState.wheelValue === 'DOUBLE') {
+            points = count * 500;
+            showMessage(`🎉 +${points} (DOUBLE!) ${count} × 500`);
+        } else if (gameState.wheelValue === 'FREE LETTER') {
+            points = count * 300;
+            showMessage(`🎁 FREE LETTER! +${points}`);
+        } else if (typeof gameState.wheelValue === 'number') {
+            points = count * gameState.wheelValue;
+            showMessage(`🎉 יש ${count} ${letter}׳! +${points}`);
+        }
+        
+        addScore(points);
+        gameState.wheelValue = null;
+        displayPuzzle();
+        
+        checkWin();
+    } else {
+        button.classList.add('wrong');
+        playSound('wrong');
+        document.getElementById('puzzle').classList.add('shake');
+        setTimeout(() => document.getElementById('puzzle').classList.remove('shake'), 500);
+        
+        if (gameState.wheelValue === 'BANKRUPT') {
+            showMessage(`💥 BANKRUPT! Reset to 0`);
+            if (gameState.currentTeam === 1) {
+                gameState.team1Score = 0;
+            } else {
+                gameState.team2Score = 0;
+            }
+        } else if (gameState.wheelValue === 'LOSE TURN') {
+            showMessage(`❌ LOSE A TURN!`);
+        } else {
+            showMessage(`❌ אין ${letter}!`);
+            loseHeart();
+        }
+        
+        updateScore();
+        gameState.wheelValue = null;
+        switchTeam();
+    }
+}
 
-    guessedLetters = [];
-    individuallyRevealed = new Set();
+// ========== SOLVE ==========
+function openSolveModal() {
+    document.getElementById('solveModal').classList.add('show');
+    setTimeout(() => document.getElementById('solveInput').focus(), 100);
+}
 
-    document.getElementById("setup").style.display = "none";
-    document.getElementById("gameArea").style.display = "block";
+function closeSolveModal() {
+    document.getElementById('solveModal').classList.remove('show');
+    document.getElementById('solveInput').value = '';
+}
 
-    document.getElementById("category").textContent =
-        category ? "קטגוריה: " + category : "";
+function checkSolve() {
+    const answer = document.getElementById('solveInput').value.trim();
+    const correct = normalizePuzzle(answer) === normalizePuzzle(gameState.phrase);
+    
+    if (correct) {
+        playSound('win');
+        confetti();
+        showMessage(`🎉🎉🎉 CORRECT! +1000 BONUS!`);
+        addScore(1000);
+        setTimeout(() => {
+            closeSolveModal();
+            showSetupModal();
+        }, 2000);
+    } else {
+        playSound('wrong');
+        document.getElementById('puzzle').classList.add('shake');
+        setTimeout(() => document.getElementById('puzzle').classList.remove('shake'), 500);
+        showMessage(`❌ Wrong!`);
+        loseHeart();
+        updateScore();
+        closeSolveModal();
+        switchTeam();
+    }
+}
 
-    document.getElementById("message").textContent = "";
+function normalizePuzzle(text) {
+    return text.replace(/\s+/g, '').toLowerCase();
+}
 
-    createKeyboard();
+// ========== REVEAL TILE ==========
+function enableRevealMode() {
+    gameState.revealMode = !gameState.revealMode;
+    document.getElementById('revealModal').classList.add('show');
+    document.getElementById('revealButton').style.opacity = gameState.revealMode ? '0.5' : '1';
+}
+
+function revealTile(index) {
+    if (!gameState.revealMode) return;
+    gameState.individuallyRevealed.add(index);
     displayPuzzle();
 }
 
+function closeRevealModal() {
+    gameState.revealMode = false;
+    document.getElementById('revealModal').classList.remove('show');
+    document.getElementById('revealButton').style.opacity = '1';
+}
+
+// ========== DISPLAY PUZZLE ==========
 function displayPuzzle() {
-    const puzzle =
-        document.getElementById("puzzle");
-
-    puzzle.innerHTML = "";
-
+    const puzzle = document.getElementById('puzzle');
+    puzzle.innerHTML = '';
+    
     let characterIndex = 0;
-
-    const words = phrase.split(" ");
-
+    const words = gameState.phrase.split(' ');
+    
     words.forEach(wordText => {
-        const wordDiv =
-            document.createElement("div");
-
-        wordDiv.className = "word";
-
+        const wordDiv = document.createElement('div');
+        wordDiv.className = 'word';
+        
         [...wordText].forEach(character => {
             const thisIndex = characterIndex;
-
-            const tile =
-                document.createElement("div");
-
-            tile.className = "tile";
-
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            
             if (!isHebrewLetter(character)) {
                 tile.textContent = character;
-                tile.classList.add("revealed");
-            }
-
-            else if (
-                guessedLetters.includes(
-                    normalizeLetter(character)
-                )
-                ||
-                individuallyRevealed.has(thisIndex)
+                tile.classList.add('blank');
+            } else if (
+                gameState.guessedLetters.includes(normalizeLetter(character)) ||
+                gameState.individuallyRevealed.has(thisIndex)
             ) {
                 tile.textContent = character;
-                tile.classList.add("revealed");
+                tile.classList.add('revealed');
+            } else {
+                tile.textContent = '?';
+                if (gameState.revealMode) {
+                    tile.style.cursor = 'pointer';
+                    tile.addEventListener('click', () => revealTile(thisIndex));
+                } else {
+                    tile.addEventListener('click', () => revealTile(thisIndex));
+                }
             }
-
-            else {
-                tile.textContent = "";
-
-                tile.addEventListener(
-                    "click",
-                    function() {
-                        revealIndividualLetter(
-                            thisIndex
-                        );
-                    }
-                );
-            }
-
+            
             wordDiv.appendChild(tile);
             characterIndex++;
         });
-
+        
         puzzle.appendChild(wordDiv);
-
         characterIndex++;
     });
-
-    checkWin();
 }
 
-function revealIndividualLetter(index) {
-    individuallyRevealed.add(index);
-    displayPuzzle();
-}
-
-function isHebrewLetter(character) {
-    return /[\u05D0-\u05EA]/.test(character);
-}
-
+// ========== CREATE KEYBOARD ==========
 function createKeyboard() {
-    const keyboard =
-        document.getElementById("keyboard");
-
-    keyboard.innerHTML = "";
-
+    const keyboard = document.getElementById('keyboard');
+    keyboard.innerHTML = '';
+    
     hebrewLetters.forEach(letter => {
-        const button =
-            document.createElement("button");
-
+        const button = document.createElement('button');
         button.textContent = letter;
-        button.className = "letterButton";
-
-        button.addEventListener(
-            "click",
-            function() {
-                guessLetter(
-                    letter,
-                    button
-                );
-            }
-        );
-
+        button.className = 'letterButton';
+        button.addEventListener('click', () => guessLetter(letter, button));
         keyboard.appendChild(button);
     });
 }
 
-function guessLetter(letter, button) {
-    guessedLetters.push(letter);
-    button.disabled = true;
-
-    let found = false;
-
-    [...phrase].forEach(character => {
-        if (
-            normalizeLetter(character)
-            === letter
-        ) {
-            found = true;
-        }
-    });
-
-    if (found) {
-        button.classList.add("correct");
+// ========== SCORE & HEARTS ==========
+function addScore(points) {
+    if (gameState.currentTeam === 1) {
+        gameState.team1Score += points;
+    } else {
+        gameState.team2Score += points;
     }
-    else {
-        button.classList.add("wrong");
-    }
-
-    displayPuzzle();
+    updateScore();
 }
 
+function loseHeart() {
+    if (gameState.currentTeam === 1) {
+        gameState.team1Hearts = Math.max(0, gameState.team1Hearts - 1);
+        if (gameState.team1Hearts === 0) {
+            showMessage(`💔 TEAM 1 is out! TEAM 2 wins!`);
+            gameState.gameActive = false;
+        }
+    } else {
+        gameState.team2Hearts = Math.max(0, gameState.team2Hearts - 1);
+        if (gameState.team2Hearts === 0) {
+            showMessage(`💔 TEAM 2 is out! TEAM 1 wins!`);
+            gameState.gameActive = false;
+        }
+    }
+}
+
+function updateScore() {
+    document.getElementById('team1Score').textContent = gameState.team1Score;
+    document.getElementById('team2Score').textContent = gameState.team2Score;
+    document.getElementById('team1Hearts').textContent = '❤️'.repeat(gameState.team1Hearts) || '💔';
+    document.getElementById('team2Hearts').textContent = '❤️'.repeat(gameState.team2Hearts) || '💔';
+    document.getElementById('currentTeam').textContent = gameState.currentTeam === 1 ? '🔵 TEAM 1' : '🔴 TEAM 2';
+}
+
+function switchTeam() {
+    gameState.currentTeam = gameState.currentTeam === 1 ? 2 : 1;
+    updateScore();
+    setTimeout(() => {
+        document.getElementById('spinButton').disabled = false;
+    }, 500);
+}
+
+// ========== WIN CHECK ==========
 function checkWin() {
-    let index = 0;
-    let complete = true;
-
-    for (const character of phrase) {
-        if (character === " ") {
-            index++;
-            continue;
+    let allRevealed = true;
+    
+    for (const character of gameState.phrase) {
+        if (isHebrewLetter(character)) {
+            let revealed = false;
+            let idx = 0;
+            for (let char of gameState.phrase) {
+                if (char === character && (gameState.guessedLetters.includes(normalizeLetter(char)) || gameState.individuallyRevealed.has(idx))) {
+                    revealed = true;
+                }
+                idx++;
+            }
+            
+            if (gameState.guessedLetters.includes(normalizeLetter(character))) {
+                revealed = true;
+            }
+            
+            if (!revealed) {
+                allRevealed = false;
+            }
         }
-
-        if (
-            isHebrewLetter(character)
-            &&
-            !guessedLetters.includes(
-                normalizeLetter(character)
-            )
-            &&
-            !individuallyRevealed.has(index)
-        ) {
-            complete = false;
-        }
-
-        index++;
     }
+    
+    if (allRevealed) {
+        confetti();
+        playSound('win');
+        showMessage(`🎉 PUZZLE SOLVED! 🎉`);
+        gameState.gameActive = false;
+        addScore(500);
+        setTimeout(() => showSetupModal(), 2000);
+    }
+}
 
-    if (complete) {
-        document
-        .getElementById("message")
-        .textContent =
-        "🎉 כל הכבוד!";
+// ========== UTILITIES ==========
+function isHebrewLetter(char) {
+    return /[\u05D0-\u05EA]/.test(char);
+}
 
-        document
-        .querySelectorAll(".letterButton")
-        .forEach(button => {
-            button.disabled = true;
+function normalizeLetter(letter) {
+    const finals = {
+        "ך":"כ", "ם":"מ", "ן":"נ", "ף":"פ", "ץ":"צ"
+    };
+    return finals[letter] || letter;
+}
+
+function showMessage(msg) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.style.animation = 'none';
+    setTimeout(() => el.style.animation = 'slideDown 0.5s ease-out', 10);
+}
+
+// ========== SETUP MODAL ==========
+function showSetupModal() {
+    document.getElementById('setupModal').classList.add('show');
+    document.getElementById('phraseInput').focus();
+}
+
+function closeSetupModal() {
+    document.getElementById('setupModal').classList.remove('show');
+}
+
+function startNewGame() {
+    const phrase = document.getElementById('phraseInput').value.trim();
+    const category = document.getElementById('categoryInput').value.trim();
+    
+    if (!phrase) {
+        alert("Please enter a phrase");
+        return;
+    }
+    
+    gameState.phrase = phrase;
+    gameState.category = category;
+    gameState.guessedLetters = [];
+    gameState.individuallyRevealed = new Set();
+    gameState.wheelValue = null;
+    gameState.gameActive = true;
+    gameState.currentTeam = 1;
+    
+    closeSetupModal();
+    displayPuzzle();
+    createKeyboard();
+    updateScore();
+    showMessage('Ready to play! 🎡 SPIN the wheel!');
+}
+
+// ========== FULLSCREEN ==========
+function toggleFullscreen() {
+    const el = document.documentElement;
+    if (!document.fullscreenElement) {
+        el.requestFullscreen().catch(err => {
+            alert(`Error: ${err.message}`);
         });
+        document.body.classList.add('fullscreen');
+    } else {
+        document.exitFullscreen();
+        document.body.classList.remove('fullscreen');
     }
 }
 
-function newPuzzle() {
-    phrase = "";
-    guessedLetters = [];
-    individuallyRevealed = new Set();
-
-    document
-        .getElementById("phraseInput")
-        .value = "";
-
-    document
-        .getElementById("categoryInput")
-        .value = "";
-
-    document
-        .getElementById("gameArea")
-        .style.display = "none";
-
-    document
-        .getElementById("setup")
-        .style.display = "block";
+// ========== CONFETTI ==========
+function confetti() {
+    for (let i = 0; i < 50; i++) {
+        const conf = document.createElement('div');
+        conf.className = 'confetti';
+        conf.style.left = Math.random() * 100 + '%';
+        conf.style.backgroundColor = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#F7DC6F'][Math.floor(Math.random() * 5)];
+        conf.style.animation = `confettiFall ${2 + Math.random() * 2}s linear`;
+        document.body.appendChild(conf);
+        setTimeout(() => conf.remove(), 4000);
+    }
 }
 
-document
-.getElementById("startButton")
-.addEventListener(
-    "click",
-    startGame
-);
+// ========== SOUND ==========
+function playSound(type) {
+    // Simple beep sounds using Web Audio API
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    if (type === 'correct') {
+        oscillator.frequency.value = 800;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+    } else if (type === 'wrong') {
+        oscillator.frequency.value = 300;
+        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+    } else if (type === 'win') {
+        oscillator.frequency.value = 1000;
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } else if (type === 'spin') {
+        oscillator.frequency.value = 600;
+        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+    }
+}
 
-document
-.getElementById("newPuzzle")
-.addEventListener(
-    "click",
-    newPuzzle
-);
+// ========== EVENT LISTENERS ==========
+document.getElementById('spinButton').addEventListener('click', spinWheel);
+document.getElementById('solveButton').addEventListener('click', openSolveModal);
+document.getElementById('revealButton').addEventListener('click', enableRevealMode);
+document.getElementById('setupButton').addEventListener('click', showSetupModal);
+document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreen);
+document.getElementById('resetButton').addEventListener('click', () => {
+    gameState = {
+        phrase: "",
+        category: "",
+        guessedLetters: [],
+        individuallyRevealed: new Set(),
+        currentTeam: 1,
+        team1Score: 0,
+        team2Score: 0,
+        team1Hearts: MAX_HEARTS,
+        team2Hearts: MAX_HEARTS,
+        wheelValue: null,
+        isSpinning: false,
+        gameActive: false,
+        revealMode: false
+    };
+    updateScore();
+    document.getElementById('puzzle').innerHTML = '';
+    document.getElementById('message').textContent = '';
+    document.getElementById('keyboard').innerHTML = '';
+    showSetupModal();
+});
+
+document.getElementById('solveInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') checkSolve();
+});
+
+document.getElementById('phraseInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') startNewGame();
+});
+
+// ========== INIT ==========
+setupWheel();
+updateScore();
+showSetupModal();
 </script>
 
 </body>
