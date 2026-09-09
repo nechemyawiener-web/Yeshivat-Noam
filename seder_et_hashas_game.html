@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>סדר את הש״ס</title>
+<style>
+  :root{
+    --bg1:#f7f4ea;
+    --bg2:#e9eef7;
+    --ink:#1f2937;
+    --panel:#ffffff;
+    --accent:#2f5ea8;
+    --good:#2f855a;
+    --bad:#c53030;
+    --muted:#6b7280;
+    --shadow:0 10px 25px rgba(0,0,0,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: Arial, "Noto Sans Hebrew", sans-serif;
+    color:var(--ink);
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+  }
+  .wrap{
+    width:min(1200px,96vw);
+    margin:0 auto;
+    padding:18px 0 28px;
+  }
+  h1{
+    text-align:center;
+    font-size:clamp(34px,5vw,64px);
+    margin:4px 0 6px;
+  }
+  .sub{
+    text-align:center;
+    font-size:clamp(18px,2.2vw,28px);
+    color:var(--muted);
+    margin-bottom:16px;
+  }
+  .topbar{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .box{
+    background:rgba(255,255,255,.92);
+    border-radius:18px;
+    padding:12px 16px;
+    box-shadow:var(--shadow);
+    text-align:center;
+  }
+  .label{font-size:16px;color:var(--muted)}
+  .value{font-size:34px;font-weight:700;margin-top:2px}
+  .game{
+    background:rgba(255,255,255,.92);
+    border-radius:24px;
+    padding:20px;
+    box-shadow:var(--shadow);
+  }
+  .instruction{
+    text-align:center;
+    font-size:clamp(20px,2.5vw,30px);
+    margin:0 0 16px;
+    font-weight:700;
+  }
+  #list{
+    display:grid;
+    gap:12px;
+    max-width:760px;
+    margin:0 auto;
+  }
+  .card{
+    user-select:none;
+    cursor:grab;
+    background:var(--panel);
+    border:3px solid #cbd5e1;
+    border-radius:18px;
+    padding:18px 22px;
+    min-height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:clamp(30px,4vw,52px);
+    font-weight:800;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    transition:.18s ease;
+    touch-action:none;
+  }
+  .card:hover{transform:scale(1.01)}
+  .card.dragging{opacity:.45;transform:scale(.98)}
+  .card.correct{
+    border-color:var(--good);
+    background:#ecfdf5;
+  }
+  .card.incorrect{
+    border-color:var(--bad);
+    background:#fff5f5;
+    animation:shake .28s linear 2;
+  }
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    75%{transform:translateX(8px)}
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:12px;
+    margin-top:20px;
+  }
+  button{
+    border:none;
+    border-radius:14px;
+    padding:14px 22px;
+    font-size:20px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.12);
+  }
+  .primary{background:var(--accent);color:white}
+  .secondary{background:#e5e7eb;color:#111827}
+  .goodbtn{background:#2f855a;color:white}
+  .minus{background:#fee2e2;color:#991b1b}
+  .message{
+    text-align:center;
+    min-height:46px;
+    margin-top:14px;
+    font-size:clamp(22px,2.5vw,32px);
+    font-weight:800;
+  }
+  .footer-note{
+    text-align:center;
+    font-size:14px;
+    color:#6b7280;
+    margin-top:12px;
+  }
+  @media (max-width:700px){
+    .topbar{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>סדר את הש״ס</h1>
+    <div class="sub">סדרו מהגדול ביותר לקטן ביותר</div>
+
+    <div class="topbar">
+      <div class="box">
+        <div class="label">זמן</div>
+        <div class="value" id="timer">00:00</div>
+      </div>
+      <div class="box">
+        <div class="label">קבוצה א׳</div>
+        <div class="value" id="scoreA">0</div>
+      </div>
+      <div class="box">
+        <div class="label">קבוצה ב׳</div>
+        <div class="value" id="scoreB">0</div>
+      </div>
+    </div>
+
+    <div class="game">
+      <p class="instruction">גררו את הכרטיסים לסדר הנכון ↓</p>
+      <div id="list"></div>
+
+      <div class="message" id="message"></div>
+
+      <div class="controls">
+        <button class="primary" id="checkBtn">בדוק תשובה</button>
+        <button class="secondary" id="shuffleBtn">ערבב מחדש</button>
+        <button class="secondary" id="resetBtn">איפוס סיבוב</button>
+      </div>
+
+      <div class="controls">
+        <button class="goodbtn" id="aPlus">+ נקודה לקבוצה א׳</button>
+        <button class="minus" id="aMinus">− א׳</button>
+        <button class="goodbtn" id="bPlus">+ נקודה לקבוצה ב׳</button>
+        <button class="minus" id="bMinus">− ב׳</button>
+      </div>
+    </div>
+
+    <div class="footer-note">טיפ למורה: אפשר להזמין תלמידים ללוח ולתת לכל קבוצה ניסיון אחד.</div>
+  </div>
+
+<script>
+const correctOrder = ["ש״ס","סדר","מסכת","פרק","דף","עמוד","משנה"];
+const list = document.getElementById("list");
+const message = document.getElementById("message");
+
+let dragged = null;
+let scoreA = 0, scoreB = 0;
+let seconds = 0;
+let timerId = null;
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function render(order){
+  list.innerHTML="";
+  order.forEach(text=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.draggable=true;
+    card.textContent=text;
+
+    card.addEventListener("dragstart",()=>{
+      dragged=card;
+      setTimeout(()=>card.classList.add("dragging"),0);
+    });
+    card.addEventListener("dragend",()=>{
+      card.classList.remove("dragging");
+      dragged=null;
+    });
+    card.addEventListener("dragover",(e)=>{
+      e.preventDefault();
+      const after = getDragAfterElement(list, e.clientY);
+      if(!dragged) return;
+      if(after==null) list.appendChild(dragged);
+      else list.insertBefore(dragged, after);
+    });
+
+    // Touch support
+    card.addEventListener("pointerdown",(e)=>{
+      if(e.pointerType==="mouse") return;
+      dragged=card;
+      card.setPointerCapture(e.pointerId);
+      card.classList.add("dragging");
+    });
+    card.addEventListener("pointermove",(e)=>{
+      if(!dragged || e.pointerType==="mouse") return;
+      const el=document.elementFromPoint(e.clientX,e.clientY);
+      const target=el?.closest(".card");
+      if(target && target!==dragged){
+        const rect=target.getBoundingClientRect();
+        const before=e.clientY < rect.top + rect.height/2;
+        list.insertBefore(dragged, before ? target : target.nextSibling);
+      }
+    });
+    card.addEventListener("pointerup",(e)=>{
+      if(e.pointerType==="mouse") return;
+      card.classList.remove("dragging");
+      dragged=null;
+    });
+
+    list.appendChild(card);
+  });
+}
+
+function getDragAfterElement(container,y){
+  const els=[...container.querySelectorAll(".card:not(.dragging)")];
+  return els.reduce((closest,child)=>{
+    const box=child.getBoundingClientRect();
+    const offset=y-box.top-box.height/2;
+    if(offset<0 && offset>closest.offset){
+      return {offset,element:child};
+    }
+    return closest;
+  },{offset:Number.NEGATIVE_INFINITY}).element;
+}
+
+function currentOrder(){
+  return [...list.children].map(el=>el.textContent);
+}
+
+function check(){
+  const cards=[...list.children];
+  let all=true;
+  cards.forEach((c,i)=>{
+    c.classList.remove("correct","incorrect");
+    if(c.textContent===correctOrder[i]){
+      c.classList.add("correct");
+    }else{
+      c.classList.add("incorrect");
+      all=false;
+    }
+  });
+  if(all){
+    message.textContent="🎉 מצוין! הסדר נכון!";
+    stopTimer();
+  }else{
+    message.textContent="כמעט! נסו שוב.";
+  }
+}
+
+function newRound(){
+  render(shuffle(correctOrder));
+  message.textContent="";
+  seconds=0;
+  updateTimer();
+  startTimer();
+}
+
+function resetRound(){
+  render(shuffle(correctOrder));
+  message.textContent="";
+  seconds=0;
+  updateTimer();
+  startTimer();
+}
+
+function startTimer(){
+  stopTimer();
+  timerId=setInterval(()=>{
+    seconds++;
+    updateTimer();
+  },1000);
+}
+function stopTimer(){
+  if(timerId) clearInterval(timerId);
+  timerId=null;
+}
+function updateTimer(){
+  const m=String(Math.floor(seconds/60)).padStart(2,"0");
+  const s=String(seconds%60).padStart(2,"0");
+  document.getElementById("timer").textContent=`${m}:${s}`;
+}
+function updateScores(){
+  document.getElementById("scoreA").textContent=scoreA;
+  document.getElementById("scoreB").textContent=scoreB;
+}
+
+document.getElementById("checkBtn").onclick=check;
+document.getElementById("shuffleBtn").onclick=newRound;
+document.getElementById("resetBtn").onclick=resetRound;
+document.getElementById("aPlus").onclick=()=>{scoreA++;updateScores()};
+document.getElementById("aMinus").onclick=()=>{scoreA=Math.max(0,scoreA-1);updateScores()};
+document.getElementById("bPlus").onclick=()=>{scoreB++;updateScores()};
+document.getElementById("bMinus").onclick=()=>{scoreB=Math.max(0,scoreB-1);updateScores()};
+
+newRound();
+updateScores();
+</script>
+</body>
+</html>
